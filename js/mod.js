@@ -1,31 +1,35 @@
 let modInfo = {
-	name: "The ??? Tree",
-	id: "mymod",
-	author: "nobody",
-	pointsName: "points",
-	discordName: "",
+	name: "Universal Reconstruction",
+	id: "universal-reconstruction",
+	author: "Escapee",
+	pointsName: "??",
+	discordName: "Escapee",
 	discordLink: "",
-	initialStartPoints: new Decimal (10), // Used for hard resets and new players
+	initialStartPoints: new Decimal (0), // Used for hard resets and new players
 	
 	offlineLimit: 1,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "Literally nothing",
+	num: "0.0.1",
+	name: "Creation",
 }
 
-let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.0</h3><br>
-		- Added things.<br>
-		- Added stuff.`
+let changelog = `
+	<h1>Changelog:</h1><br>
+	<h3>v0.0.1 - Creation</h3>
+	<br>- Added two layers, Skyrmion and Foam
+	<br>- Pre-foam Skyrmion complete
+	<br>- Protoversal Foam sub-layer and Skyrmion buyables complete
+	<br>- Added framework for Infitesimal through Quantum Foam sub-layers
+`
 
-let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
+let winText = `Congratulations! You have reached the end and beaten this game, for now...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
-var doNotCallTheseFunctionsEveryTick = ["blowUpEverything"]
+var doNotCallTheseFunctionsEveryTick = ['displayBuyable', 'displayBoost', 'buyBuyable', 'getTotalBoost']
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)
@@ -33,7 +37,7 @@ function getStartPoints(){
 
 // Determines if it should show points/sec
 function canGenPoints(){
-	return true
+	return false
 }
 
 // Calculate points/sec!
@@ -51,11 +55,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
+	"Current Endgame: 1 Infitesimal Foam"
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000"))
+	return player.fome && player.fome.fome.infitesimal.points.gte(1)
 }
 
 
