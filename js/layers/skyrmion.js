@@ -133,8 +133,8 @@ addLayer("skyrmion", {
             },
             title: "Pion Upgrade β",
             display() {
-                return layers[this.layer].utils.displayBuyable('Reduce the nerf to Spinor buyable cost by 10%',
-                                                               `Spinor buyable cost nerf reduced by ${format(Decimal.sub(1, this.effect()).times(100))}%`,
+                return layers[this.layer].utils.displayBuyable('Reduce the nerf to Spinor upgrade cost by 10%',
+                                                               `Spinor upgrade cost nerf reduced by ${format(Decimal.sub(1, this.effect()).times(100))}%`,
                                                                getBuyableAmount(this.layer, this.id),
                                                                temp.fome.effect.boosts ? temp.fome.effect.boosts.total.protoversal[2] : 0,
                                                                this.cost(),
@@ -223,8 +223,8 @@ addLayer("skyrmion", {
                 else return Decimal.pow(19.5, amount).dividedBy(1e15).times(temp[this.layer].effect.spinor.costNerf)
             },
             title: "Spinor Upgrade β",
-            display() { return layers[this.layer].utils.displayBuyable('Reduce the nerf to Pion buyable cost by 10%',
-                                                                       `Pion buyable cost nerf reduced by ${format(Decimal.sub(1, this.effect()).times(100))}%`,
+            display() { return layers[this.layer].utils.displayBuyable('Reduce the nerf to Pion upgrade cost by 10%',
+                                                                       `Pion upgrade cost nerf reduced by ${format(Decimal.sub(1, this.effect()).times(100))}%`,
                                                                        getBuyableAmount(this.layer, this.id),
                                                                        temp.fome.effect.boosts ? temp.fome.effect.boosts.total.protoversal[2] : 0,
                                                                        this.cost(),
@@ -295,7 +295,7 @@ addLayer("skyrmion", {
             "Pions": {
                 content: [
                     "blank",
-                    ["display-text", () => `Your Spinor buyables are increasing Pion buyable cost by ${format(temp.skyrmion.effect.pion.costNerf.times(100))}%`],
+                    ["display-text", () => `Your Spinor upgrades are increasing Pion upgrade cost by ${format(temp.skyrmion.effect.pion.costNerf.times(100))}%`],
                     "blank",
                     ["row", [["buyable", "11"], ["buyable", "12"], ["buyable", "13"]]],
                     ["row", [["buyable", "14"], ["buyable", "15"], ["buyable", "16"]]]
@@ -304,7 +304,7 @@ addLayer("skyrmion", {
             "Spinors": {
                 content: [
                     "blank",
-                    ["display-text", () => `Your Pion buyables are increasing Spinor buyable cost by ${format(temp.skyrmion.effect.spinor.costNerf.times(100))}%`],
+                    ["display-text", () => `Your Pion upgrades are increasing Spinor upgrade cost by ${format(temp.skyrmion.effect.spinor.costNerf.times(100))}%`],
                     "blank",
                     ["row", [["buyable", "21"], ["buyable", "22"], ["buyable", "23"]]],
                     ["row", [["buyable", "24"], ["buyable", "25"], ["buyable", "26"]]]
