@@ -423,7 +423,7 @@ function createSkyrmionBuyable(symbol, id, costFunc, text, effectTextFunc, effec
 		effect() { return effectFunc(getBuyableAmount('skyrmion', id).plus(bonusAmountFunc())) },
 		canAfford() { return player.skyrmion[type].points.gte(temp.skyrmion.buyables[id].cost) },
 		buy() {
-			if (isFree()) player.skyrmion[type].points = player.skyrmion[type].points.minus(temp.skyrmion.buyables[id].cost)
+			if (!isFree()) player.skyrmion[type].points = player.skyrmion[type].points.minus(temp.skyrmion.buyables[id].cost)
 			player.skyrmion[type].upgrades = player.skyrmion[type].upgrades.plus(1)
 			setBuyableAmount('skyrmion', id, getBuyableAmount('skyrmion', id).plus(1))
 		}
