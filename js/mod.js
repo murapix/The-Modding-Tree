@@ -12,12 +12,22 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0.1",
-	name: "Creation",
+	num: "0.0.2",
+	name: "Formation",
 }
 
 let changelog = `
-	<h1>Changelog:</h1><br>
+	<h1>Changelog:</h1>
+	<br><br>
+	<h3>v0.0.2 - Formation</h3>
+	<br>- Added Infitesimal through Quantum Foam boosts and buyables
+	<br>- Added Foam milestones
+	<br>- Rebalanced Foam formation levels
+	<br>- Rebalanced Pion and Spinor α and γ buyables
+	<br>- Added 6 more Pion and Spinor buyables each
+	<br>- Added Pion and Spinor autobuyer upgrades
+	<br>- Barebones third row added - no content yet
+	<br><br>
 	<h3>v0.0.1 - Creation</h3>
 	<br>- Added two layers, Skyrmion and Foam
 	<br>- Pre-foam Skyrmion complete
@@ -29,7 +39,7 @@ let winText = `Congratulations! You have reached the end and beaten this game, f
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
-var doNotCallTheseFunctionsEveryTick = ['displayBuyable', 'displayBoost', 'buyBuyable', 'getTotalBoost']
+var doNotCallTheseFunctionsEveryTick = ['displayBoost', 'buyBuyable', 'getTotalBoost', 'buyableAmount', 'createBuyable']
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)
@@ -55,15 +65,13 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	"Current Endgame: 1 Infitesimal Foam"
+	"Current Endgame: 1 Acceleron or Inflaton"
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.fome && player.fome.fome.infitesimal.points.gte(1)
+	return player.acceleron.points.gte(1) || player.inflaton.points.gte(1)
 }
-
-
 
 // Less important things beyond this point!
 

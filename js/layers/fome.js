@@ -5,74 +5,79 @@ addLayer("fome", {
     position: 0,
     branches: ['skyrmion'],
 
-    layerShown() { return hasMilestone("skyrmion", 0) },
+    layerShown() { return player.fome.unlocked },
     resource() {
-        if (player[this.layer].fome.quantum.expansion.gte(1)) return "Quantum Foam"
-        if (player[this.layer].fome.subplanck.expansion.gte(1)) return "Subplanck Foam"
-        if (player[this.layer].fome.subspatial.expansion.gte(1)) return "Subspatial Foam"
-        if (player[this.layer].fome.infitesimal.expansion.gte(1)) return "Infitesimal Foam"
+        if (player.fome.fome.quantum.expansion.gte(1)) return "Quantum Foam"
+        if (player.fome.fome.subplanck.expansion.gte(1)) return "Subplanck Foam"
+        if (player.fome.fome.subspatial.expansion.gte(1)) return "Subspatial Foam"
+        if (player.fome.fome.infitesimal.expansion.gte(1)) return "Infitesimal Foam"
         return "Protoversal Foam"
     },
     effectDescription() {
-        if (player[this.layer].fome.quantum.expansion.gte(1)) return (player[this.layer].fome.quantum.expansion.gt(1) ? "<sup>" + formatWhole(player[this.layer].fome.quantum.expansion) + "</sup>" : "")
-        if (player[this.layer].fome.subplanck.expansion.gte(1)) return (player[this.layer].fome.subplanck.expansion.gt(1) ? "<sup>" + formatWhole(player[this.layer].fome.subplanck.expansion) + "</sup>" : "")
-        if (player[this.layer].fome.subspatial.expansion.gte(1)) return (player[this.layer].fome.subspatial.expansion.gt(1) ? "<sup>" + formatWhole(player[this.layer].fome.subspatial.expansion) + "</sup>" : "")
-        if (player[this.layer].fome.infitesimal.expansion.gte(1)) return (player[this.layer].fome.infitesimal.expansion.gt(1) ? "<sup>" + formatWhole(player[this.layer].fome.infitesimal.expansion) + "</sup>" : "")
-        return (player[this.layer].fome.protoversal.expansion.gt(1) ? "<sup>" + formatWhole(player[this.layer].fome.protoversal.expansion) + "</sup>" : "")
+        if (player.fome.fome.quantum.expansion.gte(1)) return (player.fome.fome.quantum.expansion.gt(1) ? "<sup>" + formatWhole(player.fome.fome.quantum.expansion) + "</sup>" : "")
+        if (player.fome.fome.subplanck.expansion.gte(1)) return (player.fome.fome.subplanck.expansion.gt(1) ? "<sup>" + formatWhole(player.fome.fome.subplanck.expansion) + "</sup>" : "")
+        if (player.fome.fome.subspatial.expansion.gte(1)) return (player.fome.fome.subspatial.expansion.gt(1) ? "<sup>" + formatWhole(player.fome.fome.subspatial.expansion) + "</sup>" : "")
+        if (player.fome.fome.infitesimal.expansion.gte(1)) return (player.fome.fome.infitesimal.expansion.gt(1) ? "<sup>" + formatWhole(player.fome.fome.infitesimal.expansion) + "</sup>" : "")
+        return (player.fome.fome.protoversal.expansion.gt(1) ? "<sup>" + formatWhole(player.fome.fome.protoversal.expansion) + "</sup>" : "")
     },
     color: "#ffffff",
     doReset(layer) {
-        if (layer != this.layer) {
+        if (layer != 'fome') {
             let keep = []
-            layerDataReset(this.layer, keep)
+            layerDataReset('fome', keep)
+            player.fome = startData()
         }
         else {
         }
     },
 
     effect() {
-        getTotalBoost = layers[this.layer].utils.getTotalBoost
-
         totalBoosts = {}
         bonusBoosts = {}
 
         baseGain = {}
         boostGain = {}
         enlargeGain = {}
+        expansionGain = {}
         totalGain = {}
 
-        for (let fome of ['protoversal', 'infitesimal', 'subspatial', 'subplanck', 'quantum']) {
+        for (let fome of fomeTypes) {
             totalBoosts[fome] = {}
             bonusBoosts[fome] = {}
             for(let index = 0; index < 5; index++) {
-                totalBoosts[fome][index] = getTotalBoost(fome, index)
-                bonusBoosts[fome][index] = layers[this.layer].bonusBoosts[fome][index]()
+                totalBoosts[fome][index] = getCurrentFomeBoost(fome, index)
+                bonusBoosts[fome][index] = layers.fome.bonusBoosts[fome][index]()
             }
         }
 
-        baseGain.protoversal = player[this.layer].fome.protoversal.expansion.gte(1) ? player.skyrmion.points.dividedBy(1e2).times(buyableEffect('skyrmion', 14)) : new Decimal(0)
-        baseGain.infitesimal = player[this.layer].fome.infitesimal.expansion.gte(1) ? player.skyrmion.points.dividedBy(1e2) : new Decimal(0),
-        baseGain.subspatial = player[this.layer].fome.subspatial.expansion.gte(1) ? player.skyrmion.points.dividedBy(1e2) : new Decimal(0),
-        baseGain.subplanck = player[this.layer].fome.subplanck.expansion.gte(1) ? player.skyrmion.points.dividedBy(1e2) : new Decimal(0),
-        baseGain.quantum = player[this.layer].fome.quantum.expansion.gte(1) ? player.skyrmion.points.dividedBy(1e2) : new Decimal(0)
+        let skyrmions = Decimal.plus(player.skyrmion.points, totalBoosts.subspatial[3])
 
-        boostGain.protoversal = totalBoosts.protoversal[0].times(buyableEffect('skyrmion', 24)).plus(1)
-        boostGain.infitesimal = totalBoosts.infitesimal[0].plus(1)
-        boostGain.subspatial = totalBoosts.subspatial[0].plus(1)
-        boostGain.subplanck = totalBoosts.subplanck[0].plus(1)
-        boostGain.quantum = totalBoosts.quantum[0].plus(1)
+        baseGain.protoversal = player.fome.fome.protoversal.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 121)).times(buyableEffect('skyrmion', 122)).times(buyableEffect('skyrmion', 224)).times(buyableEffect('skyrmion', 131)) : new Decimal(0)
+        baseGain.infitesimal = player.fome.fome.infitesimal.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 222)).times(buyableEffect('skyrmion', 224)).times(buyableEffect('skyrmion', 132)).times(buyableEffect('skyrmion', 232)) : new Decimal(0),
+        baseGain.subspatial = player.fome.fome.subspatial.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 123)).times(buyableEffect('skyrmion', 224)).times(buyableEffect('skyrmion', 231)) : new Decimal(0),
+        baseGain.subplanck = player.fome.fome.subplanck.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 224)) : new Decimal(0),
+        baseGain.quantum = player.fome.fome.quantum.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 224)) : new Decimal(0)
 
-        enlargeGain.protoversal = buyableEffect(this.layer, 11).times(buyableEffect(this.layer, 12)).times(buyableEffect(this.layer, 13))
-        enlargeGain.infitesimal = buyableEffect(this.layer, 21).times(buyableEffect(this.layer, 22)).times(buyableEffect(this.layer, 23))
-        enlargeGain.subspatial = buyableEffect(this.layer, 31).times(buyableEffect(this.layer, 32)).times(buyableEffect(this.layer, 33))
-        enlargeGain.subplanck = buyableEffect(this.layer, 41).times(buyableEffect(this.layer, 42)).times(buyableEffect(this.layer, 43))
-        enlargeGain.quantum = buyableEffect(this.layer, 51).times(buyableEffect(this.layer, 52)).times(buyableEffect(this.layer, 53))
+        boostGain.protoversal = totalBoosts.protoversal[0].times(buyableEffect('skyrmion', 221)).plus(1)
+        boostGain.infitesimal = totalBoosts.infitesimal[0].times(buyableEffect('skyrmion', 133)).plus(1)
+        boostGain.subspatial = totalBoosts.subspatial[0].times(buyableEffect('skyrmion', 133)).plus(1)
+        boostGain.subplanck = totalBoosts.subplanck[0].times(buyableEffect('skyrmion', 233)).times(buyableEffect('skyrmion', 133)).plus(1)
+        boostGain.quantum = totalBoosts.quantum[0].times(buyableEffect('skyrmion', 133)).plus(1)
 
-        totalGain.protoversal = baseGain.protoversal.times(boostGain.protoversal).times(boostGain.quantum).times(enlargeGain.protoversal),
-        totalGain.infitesimal = baseGain.infitesimal.times(boostGain.infitesimal).times(boostGain.quantum).times(enlargeGain.infitesimal),
-        totalGain.subspatial = baseGain.subspatial.times(boostGain.subspatial).times(boostGain.quantum).times(enlargeGain.subspatial),
-        totalGain.subplanck = baseGain.subplanck.times(boostGain.subplanck).times(boostGain.quantum).times(enlargeGain.subplanck),
-        totalGain.quantum = baseGain.quantum.times(boostGain.quantum).times(enlargeGain.quantum)
+        enlargeGain.protoversal = buyableEffect('fome', 11).times(buyableEffect('fome', 12)).times(buyableEffect('fome', 13))
+        enlargeGain.infitesimal = buyableEffect('fome', 21).times(buyableEffect('fome', 22)).times(buyableEffect('fome', 23))
+        enlargeGain.subspatial = buyableEffect('fome', 31).times(buyableEffect('fome', 32)).times(buyableEffect('fome', 33))
+        enlargeGain.subplanck = buyableEffect('fome', 41).times(buyableEffect('fome', 42)).times(buyableEffect('fome', 43))
+        enlargeGain.quantum = buyableEffect('fome', 51).times(buyableEffect('fome', 52)).times(buyableEffect('fome', 53))
+        
+        for (let fome of ['protoversal', 'infitesimal', 'subspatial', 'subplanck', 'quantum'])
+            expansionGain[fome] = player.fome.fome[fome].expansion.cbrt()
+
+        totalGain.protoversal = baseGain.protoversal.times(boostGain.protoversal).times(boostGain.quantum).times(enlargeGain.protoversal).pow(expansionGain.protoversal),
+        totalGain.infitesimal = baseGain.infitesimal.times(boostGain.infitesimal).times(boostGain.quantum).times(enlargeGain.infitesimal).pow(expansionGain.infitesimal),
+        totalGain.subspatial = baseGain.subspatial.times(boostGain.subspatial).times(boostGain.quantum).times(enlargeGain.subspatial).pow(expansionGain.subspatial),
+        totalGain.subplanck = baseGain.subplanck.times(boostGain.subplanck).times(boostGain.quantum).times(enlargeGain.subplanck).pow(expansionGain.subplanck),
+        totalGain.quantum = baseGain.quantum.times(boostGain.quantum).times(enlargeGain.quantum).pow(expansionGain.quantum)
 
         return {
             boosts: {
@@ -88,7 +93,7 @@ addLayer("fome", {
     },
     
     startData() { return {
-        unlocked: true,
+        unlocked: false,
 		points: new Decimal(0),
         fome: {
             protoversal: {
@@ -167,97 +172,88 @@ addLayer("fome", {
     }},
 
     update(delta) {
-        if (!temp[this.layer].layerShown) return
+        if (!temp.fome.layerShown) return
         
-        let gain = temp[this.layer].effect.gain.total
+        let gain = temp.fome.effect.gain.total
 
         for (let fome of ['protoversal', 'infitesimal', 'subspatial', 'subplanck', 'quantum'])
-            player[this.layer].fome[fome].points = player[this.layer].fome[fome].points.plus(gain[fome].times(delta))
+            player.fome.fome[fome].points = player.fome.fome[fome].points.plus(gain[fome].times(delta))
 
-        if (player[this.layer].fome.quantum.expansion.gte(1)) player[this.layer].points = player[this.layer].fome.quantum.points
-        else if (player[this.layer].fome.subplanck.expansion.gte(1)) player[this.layer].points = player[this.layer].fome.subplanck.points
-        else if (player[this.layer].fome.subspatial.expansion.gte(1)) player[this.layer].points = player[this.layer].fome.subspatial.points
-        else if (player[this.layer].fome.infitesimal.expansion.gte(1)) player[this.layer].points = player[this.layer].fome.infitesimal.points
-        else player[this.layer].points = player[this.layer].fome.protoversal.points
-    },
+        if (player.fome.fome.quantum.expansion.gte(1)) player.fome.points = player.fome.fome.quantum.points
+        else if (player.fome.fome.subplanck.expansion.gte(1)) player.fome.points = player.fome.fome.subplanck.points
+        else if (player.fome.fome.subspatial.expansion.gte(1)) player.fome.points = player.fome.fome.subspatial.points
+        else if (player.fome.fome.infitesimal.expansion.gte(1)) player.fome.points = player.fome.fome.infitesimal.points
+        else player.fome.points = player.fome.fome.protoversal.points
 
-    utils: {
-        displayBuyable(id, cost) {
-            let fome, Dim, dim
-            switch (~~(id/10)) {
-                case 1: fome = 'Protoversal'; break
-                case 2: fome = 'Infitesimal'; break
-                case 3: fome = 'Subspatial'; break
-                case 4: fome = 'Subplanck'; break
-                case 5: fome = 'Quantum'; break
-            }
-            switch (~~(id%10)) {
-                case 1: Dim = "Height"; dim = "height"; break
-                case 2: Dim = "Width"; dim = "width"; break
-                case 3: Dim = "Depth"; dim = "depth"; break
-            }
-            return "<h2>Enlarge " + fome + " Foam " + dim + " by 1m</h2><br/><br/><b>Current " + Dim + ":</b> " + formatWhole(getBuyableAmount('fome', id)) + "m<br/><br/><b>Cost:</b> " + format(cost)
-        },
-        displayBoost(fome, name, index, effect) {
-            let boost = player.fome.boosts[fome].boosts[index]
-            let bonus = temp.fome.effect.boosts.bonus[fome][index]
-            return (boost > 0 || bonus > 0) ? `${name} Boost ${index+1} [${(boost > 0 ? formatWhole(boost) : '0') + (bonus > 0 ? ` + ${formatWhole(bonus)}` : ``)}]: ${effect}` : ``
-        },
-        buyBuyable(id, cost) {
-            let fome
-            switch (~~(id/10)) {
-                case 1: fome = 'protoversal'; break
-                case 2: fome = 'infitesimal'; break
-                case 3: fome = 'subspatial'; break
-                case 4: fome = 'subplanck'; break
-                case 5: fome = 'quantum'; break
-            }
-            player.fome.fome[fome].points = player.fome.fome[fome].points.minus(cost)
-            setBuyableAmount(layer, id, getBuyableAmount(layer, id).plus(1))
-            player.fome.boosts[fome].boosts[player.fome.boosts[fome].index] = player.fome.boosts[fome].boosts[player.fome.boosts[fome].index++].plus(1)
-            if (player.fome.boosts[fome].index >= 5)
-                player.fome.boosts[fome].index %= 5
-        },
-        getTotalBoost(fome, index) {
-            return player.fome.boosts[fome].boosts[index].plus(layers.fome.bonusBoosts[fome][index]())
+        if (player.fome.autoProtoversal) {
+            buyBuyable('fome', 11)
+            buyBuyable('fome', 12)
+            buyBuyable('fome', 13)
+        }
+        if (player.fome.autoInfitesimal) {
+            buyBuyable('fome', 21)
+            buyBuyable('fome', 22)
+            buyBuyable('fome', 23)
+        }
+        if (player.fome.autoSubspatial) {
+            buyBuyable('fome', 31)
+            buyBuyable('fome', 32)
+            buyBuyable('fome', 33)
+        }
+        if (player.fome.autoSubplanck) {
+            buyBuyable('fome', 41)
+            buyBuyable('fome', 42)
+            buyBuyable('fome', 43)
+        }
+        if (player.fome.autoQuantum) {
+            buyBuyable('fome', 51)
+            buyBuyable('fome', 52)
+            buyBuyable('fome', 53)
+        }
+        if (player.fome.autoReform) {
+            buyBuyable('fome', 14)
+            buyBuyable('fome', 24)
+            buyBuyable('fome', 34)
+            buyBuyable('fome', 44)
+            buyBuyable('fome', 54)
         }
     },
 
     bonusBoosts: {
         protoversal: [
-            () => { return layers.fome.utils.getTotalBoost('protoversal', 4).times(0.1) },
-            () => { return layers.fome.utils.getTotalBoost('protoversal', 4).times(0.1) },
-            () => { return layers.fome.utils.getTotalBoost('protoversal', 4).times(0.1) },
-            () => { return layers.fome.utils.getTotalBoost('protoversal', 4).times(0.1) },
-            () => { return new Decimal(0) }
+            () => getTotalFomeBoost('protoversal', 4).times(0.1).plus(getTotalFomeBoost('subspatial', 2).times(0.1)).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
+            () => getTotalFomeBoost('protoversal', 4).times(0.1).plus(getTotalFomeBoost('subspatial', 2).times(0.1)).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
+            () => getTotalFomeBoost('protoversal', 4).times(0.1).plus(getTotalFomeBoost('subspatial', 2).times(0.1)).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
+            () => getTotalFomeBoost('protoversal', 4).times(0.1).plus(getTotalFomeBoost('subspatial', 2).times(0.1)).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
+            () => getTotalFomeBoost('subspatial', 2).times(0.1).plus(getTotalFomeBoost('quantum', 4).times(0.1))
         ],
         infitesimal: [
-            () => { return new Decimal(0) },
-            () => { return new Decimal(0) },
-            () => { return new Decimal(0) },
-            () => { return new Decimal(0) },
-            () => { return new Decimal(0) }
+            () => getTotalFomeBoost('subspatial', 2).times(0.1).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
+            () => getTotalFomeBoost('subspatial', 2).times(0.1).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
+            () => getTotalFomeBoost('subspatial', 2).times(0.1).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
+            () => getTotalFomeBoost('subspatial', 2).times(0.1).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
+            () => getTotalFomeBoost('subspatial', 2).times(0.1).plus(getTotalFomeBoost('quantum', 4).times(0.1))
         ],
         subspatial: [
-            () => { return new Decimal(0) },
-            () => { return new Decimal(0) },
-            () => { return new Decimal(0) },
-            () => { return new Decimal(0) },
-            () => { return new Decimal(0) }
+            () => getTotalFomeBoost('subspatial', 2).times(0.1).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
+            () => getTotalFomeBoost('subspatial', 2).times(0.1).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
+            () => getTotalFomeBoost('quantum', 4).times(0.1),
+            () => getTotalFomeBoost('quantum', 4).times(0.1),
+            () => getTotalFomeBoost('quantum', 4).times(0.1)
         ],
         subplanck: [
-            () => { return new Decimal(0) },
-            () => { return new Decimal(0) },
-            () => { return new Decimal(0) },
-            () => { return new Decimal(0) },
-            () => { return new Decimal(0) }
+            () => getTotalFomeBoost('quantum', 4).times(0.1),
+            () => getTotalFomeBoost('quantum', 4).times(0.1),
+            () => getTotalFomeBoost('quantum', 4).times(0.1),
+            () => getTotalFomeBoost('quantum', 4).times(0.1),
+            () => getTotalFomeBoost('quantum', 4).times(0.1)
         ],
         quantum: [
-            () => { return new Decimal(0) },
-            () => { return new Decimal(0) },
-            () => { return new Decimal(0) },
-            () => { return new Decimal(0) },
-            () => { return new Decimal(0) }
+            () => getTotalFomeBoost('quantum', 4).times(0.1),
+            () => getTotalFomeBoost('quantum', 4).times(0.1),
+            () => getTotalFomeBoost('quantum', 4).times(0.1),
+            () => getTotalFomeBoost('quantum', 4).times(0.1),
+            () => new Decimal(0)
         ]
     },
 
@@ -265,247 +261,325 @@ addLayer("fome", {
         rows: 4,
         cols: 5,
         11: {
-            cost() { return new Decimal(2).times(Decimal.pow(4, getBuyableAmount(this.layer, this.id))) },
-            display() { return layers[this.layer].utils.displayBuyable(this.id, this.cost()) },
-            canAfford() { return player[this.layer].fome.protoversal.points.gte(this.cost()) },
-            effect() { return getBuyableAmount(this.layer, this.id).plus(1) },
-            buy() { layers[this.layer].utils.buyBuyable(this.id, this.cost()) }
+            cost() { return new Decimal(2).times(Decimal.pow(4, getBuyableAmount('fome', this.id).pow(1.15))) },
+            display() { return displayFomeBuyable(this.id) },
+            canAfford() { return player.fome.fome.protoversal.points.gte(temp.fome.buyables[this.id].cost) },
+            effect() { return getBuyableAmount('fome', this.id).plus(1) },
+            buy() { buyFomeBuyable(this.id) }
         },
         12: {
-            cost() { return new Decimal(5).times(Decimal.pow(6, getBuyableAmount(this.layer, this.id))) },
-            display() { return layers[this.layer].utils.displayBuyable(this.id, this.cost()) },
-            canAfford() { return player[this.layer].fome.protoversal.points.gte(this.cost()) },
-            effect() { return getBuyableAmount(this.layer, this.id).plus(1) },
-            buy() { layers[this.layer].utils.buyBuyable(this.id, this.cost()) }
+            cost() { return new Decimal(5).times(Decimal.pow(6, getBuyableAmount('fome', this.id).pow(1.15))) },
+            display() { return displayFomeBuyable(this.id) },
+            canAfford() { return player.fome.fome.protoversal.points.gte(temp.fome.buyables[this.id].cost) },
+            effect() { return getBuyableAmount('fome', this.id).plus(1) },
+            buy() { buyFomeBuyable(this.id) }
         },
         13: {
-            cost() { return new Decimal(20).times(Decimal.pow(8, getBuyableAmount(this.layer, this.id))) },
-            display() { return layers[this.layer].utils.displayBuyable(this.id, this.cost()) },
-            canAfford() { return player[this.layer].fome.protoversal.points.gte(this.cost()) },
-            effect() { return getBuyableAmount(this.layer, this.id).plus(1) },
-            buy() { layers[this.layer].utils.buyBuyable(this.id, this.cost()) }
+            cost() { return new Decimal(20).times(Decimal.pow(8, getBuyableAmount('fome', this.id).pow(1.15))) },
+            display() { return displayFomeBuyable(this.id) },
+            canAfford() { return player.fome.fome.protoversal.points.gte(temp.fome.buyables[this.id].cost) },
+            effect() { return getBuyableAmount('fome', this.id).plus(1) },
+            buy() { buyFomeBuyable(this.id) }
         },
         14: {
-            cost() { return new Decimal(1e4).times(Decimal.pow(1e4, getBuyableAmount(this.layer, this.id))) },
-            display() { return "<h2>" + (player[this.layer].fome.infitesimal.expansion.eq(0) ? "Condense" : "Re-form") + " your Protoversal Foam</h2><br/><br/><b>Cost:</b> " + format(this.cost()) + " Protoversal Foam" },
-            canAfford() { return player[this.layer].fome.protoversal.points.gte(this.cost()) },
+            cost() { return Decimal.pow(10, getBuyableAmount('fome', this.id).sqr().plus(1).times(4)) },
+            display() { return `<h3>${player.fome.fome.infitesimal.points.eq(0) ? `Condense` : `Re-form`} your Protoversal Foam</h3><br/><br/><b>Cost:</b> ${format(temp.fome.buyables[this.id].cost)} Protoversal Foam` },
+            canAfford() { return player.fome.fome.protoversal.points.gte(temp.fome.buyables[this.id].cost) },
             buy() {
-                player[this.layer].fome.protoversal.points = player[this.layer].fome.protoversal.points.minus(this.cost())
-                if (player[this.layer].fome.infitesimal.expansion.eq(0)) player[this.layer].fome.infitesimal.expansion = player[this.layer].fome.infitesimal.expansion.plus(1)
-                else player[this.layer].fome.protoversal.expansion = player[this.layer].fome.protoversal.expansion.plus(1)
-                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).plus(1))
+                player.fome.fome.protoversal.points = player.fome.fome.protoversal.points.minus(temp.fome.buyables[this.id].cost)
+                if (player.fome.fome.infitesimal.expansion.eq(0)) player.fome.fome.infitesimal.expansion = player.fome.fome.infitesimal.expansion.plus(1)
+                else player.fome.fome.protoversal.expansion = player.fome.fome.protoversal.expansion.plus(1)
+                setBuyableAmount('fome', this.id, getBuyableAmount('fome', this.id).plus(1))
             }
         },
         21: {
-            cost() { return new Decimal(1) },
-            display() { return layers[this.layer].utils.displayBuyable(this.id, this.cost()) },
-            unlocked() { return player[this.layer].fome.infitesimal.expansion.gte(1) },
-            canAfford() { return player[this.layer].fome.infitesimal.points.gte(this.cost()) },
-            effect() { return getBuyableAmount(this.layer, this.id).plus(1) },
-            buy() { layers[this.layer].utils.buyBuyable(this.id, this.cost()) }
+            cost() { return new Decimal(6).times(Decimal.pow(5, getBuyableAmount('fome', this.id).pow(1.15))) },
+            display() { return displayFomeBuyable(this.id) },
+            unlocked() { return player.fome.fome.infitesimal.expansion.gte(1) },
+            canAfford() { return player.fome.fome.infitesimal.points.gte(temp.fome.buyables[this.id].cost) },
+            effect() { return getBuyableAmount('fome', this.id).plus(1) },
+            buy() { buyFomeBuyable(this.id) }
         },
         22: {
-            cost() { return new Decimal(1) },
-            display() { return layers[this.layer].utils.displayBuyable(this.id, this.cost()) },
-            unlocked() { return player[this.layer].fome.infitesimal.expansion.gte(1) },
-            canAfford() { return player[this.layer].fome.infitesimal.points.gte(this.cost()) },
-            effect() { return getBuyableAmount(this.layer, this.id).plus(1) },
-            buy() { layers[this.layer].utils.buyBuyable(this.id, this.cost()) }
+            cost() { return new Decimal(10).times(Decimal.pow(7, getBuyableAmount('fome', this.id).pow(1.15))) },
+            display() { return displayFomeBuyable(this.id) },
+            unlocked() { return player.fome.fome.infitesimal.expansion.gte(1) },
+            canAfford() { return player.fome.fome.infitesimal.points.gte(temp.fome.buyables[this.id].cost) },
+            effect() { return getBuyableAmount('fome', this.id).plus(1) },
+            buy() { buyFomeBuyable(this.id) }
         },
         23: {
-            cost() { return new Decimal(1) },
-            display() { return layers[this.layer].utils.displayBuyable(this.id, this.cost()) },
-            unlocked() { return player[this.layer].fome.infitesimal.expansion.gte(1) },
-            canAfford() { return player[this.layer].fome.infitesimal.points.gte(this.cost()) },
-            effect() { return getBuyableAmount(this.layer, this.id).plus(1) },
-            buy() { layers[this.layer].utils.buyBuyable(this.id, this.cost()) }
+            cost() { return new Decimal(25).times(Decimal.pow(9, getBuyableAmount('fome', this.id).pow(1.15))) },
+            display() { return displayFomeBuyable(this.id) },
+            unlocked() { return player.fome.fome.infitesimal.expansion.gte(1) },
+            canAfford() { return player.fome.fome.infitesimal.points.gte(temp.fome.buyables[this.id].cost) },
+            effect() { return getBuyableAmount('fome', this.id).plus(1) },
+            buy() { buyFomeBuyable(this.id) }
         },
         24: {
-            cost() { return Decimal.pow(1e6, getBuyableAmount(this.layer, this.id).plus(1)) },
-            display() { return "<h2>" + (player[this.layer].fome.subspatial.expansion.eq(0) ? "Condense" : "Re-form") + " your Infitesimal Foam</h2><br/><br/><b>Cost:</b> " + format(this.cost()) + " Infitesimal Foam" },
-            unlocked() { return player[this.layer].fome.infitesimal.expansion.gte(1) },
-            canAfford() { return player[this.layer].fome.infitesimal.points.gte(this.cost()) },
+            cost() { return Decimal.pow(10, getBuyableAmount('fome', this.id).sqr().plus(1).times(5)).dividedBy(5) },
+            display() {
+                let type = player.fome.fome.subspatial.expansion.eq(0)
+                return `<h3>${type ? `Condense` : `Re-form`} your Infitesimal Foam</h3><br/><br/><b>Cost:</b> ${format(temp.fome.buyables[this.id].cost)} Infitesimal Foam${type ? ``: `<br/><br/><b>Requires:</b> Protoversal Foam<sup>${getBuyableAmount('fome', this.id).plus(2)}</sup>`}`
+            },
+            unlocked() { return player.fome.fome.infitesimal.expansion.gte(1) },
+            canAfford() { return (player.fome.fome.subspatial.expansion.eq(0) || player.fome.fome.protoversal.expansion.gt(getBuyableAmount('fome', this.id).plus(1))) && player.fome.fome.infitesimal.points.gte(temp.fome.buyables[this.id].cost) },
             buy() {
-                player[this.layer].fome.infitesimal.points = player[this.layer].fome.infitesimal.points.minus(this.cost())
-                if (player[this.layer].fome.subspatial.expansion.eq(0))
-                    player[this.layer].fome.subspatial.expansion = player[this.layer].fome.subspatial.expansion.plus(1)
-                player[this.layer].fome.infitesimal.expansion = player[this.layer].fome.infitesimal.expansion.plus(1)
-                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).plus(1))
+                player.fome.fome.infitesimal.points = player.fome.fome.infitesimal.points.minus(temp.fome.buyables[this.id].cost)
+                if (player.fome.fome.subspatial.expansion.eq(0)) player.fome.fome.subspatial.expansion = player.fome.fome.subspatial.expansion.plus(1)
+                else player.fome.fome.infitesimal.expansion = player.fome.fome.infitesimal.expansion.plus(1)
+                setBuyableAmount('fome', this.id, getBuyableAmount('fome', this.id).plus(1))
             }
         },
         31: {
-            cost() { return new Decimal(1) },
-            display() { return layers[this.layer].utils.displayBuyable(this.id, this.cost()) },
-            unlocked() { return player[this.layer].fome.subspatial.expansion.gte(1) },
-            canAfford() { return player[this.layer].fome.subspatial.points.gte(this.cost()) },
-            effect() { return getBuyableAmount(this.layer, this.id).plus(1) },
-            buy() { layers[this.layer].utils.buyBuyable(this.id, this.cost()) }
+            cost() { return new Decimal(10).times(Decimal.pow(6, getBuyableAmount('fome', this.id).pow(1.15))) },
+            display() { return displayFomeBuyable(this.id) },
+            unlocked() { return player.fome.fome.subspatial.expansion.gte(1) },
+            canAfford() { return player.fome.fome.subspatial.points.gte(temp.fome.buyables[this.id].cost) },
+            effect() { return getBuyableAmount('fome', this.id).plus(1) },
+            buy() { buyFomeBuyable(this.id) }
         },
         32: {
-            cost() { return new Decimal(1) },
-            display() { return layers[this.layer].utils.displayBuyable(this.id, this.cost()) },
-            unlocked() { return player[this.layer].fome.subspatial.expansion.gte(1) },
-            canAfford() { return player[this.layer].fome.subspatial.points.gte(this.cost()) },
-            effect() { return getBuyableAmount(this.layer, this.id).plus(1) },
-            buy() { layers[this.layer].utils.buyBuyable(this.id, this.cost()) }
+            cost() { return new Decimal(18).times(Decimal.pow(8, getBuyableAmount('fome', this.id).pow(1.15))) },
+            display() { return displayFomeBuyable(this.id) },
+            unlocked() { return player.fome.fome.subspatial.expansion.gte(1) },
+            canAfford() { return player.fome.fome.subspatial.points.gte(temp.fome.buyables[this.id].cost) },
+            effect() { return getBuyableAmount('fome', this.id).plus(1) },
+            buy() { buyFomeBuyable(this.id) }
         },
         33: {
-            cost() { return new Decimal(1) },
-            display() { return layers[this.layer].utils.displayBuyable(this.id, this.cost()) },
-            unlocked() { return player[this.layer].fome.subspatial.expansion.gte(1) },
-            canAfford() { return player[this.layer].fome.subspatial.points.gte(this.cost()) },
-            effect() { return getBuyableAmount(this.layer, this.id).plus(1) },
-            buy() { layers[this.layer].utils.buyBuyable(this.id, this.cost()) }
+            cost() { return new Decimal(60).times(Decimal.pow(10, getBuyableAmount('fome', this.id).pow(1.15))) },
+            display() { return displayFomeBuyable(this.id) },
+            unlocked() { return player.fome.fome.subspatial.expansion.gte(1) },
+            canAfford() { return player.fome.fome.subspatial.points.gte(temp.fome.buyables[this.id].cost) },
+            effect() { return getBuyableAmount('fome', this.id).plus(1) },
+            buy() { buyFomeBuyable(this.id) }
         },
         34: {
-            cost() { return Decimal.pow(1e6, getBuyableAmount(this.layer, this.id).plus(1)) },
-            display() { return "<h2>" + (player[this.layer].fome.subplanck.expansion.eq(0) ? "Condense" : "Re-form") + " your Subspatial Foam</h2><br/><br/><b>Cost:</b> " + format(this.cost()) + " Subspatial Foam" },
-            unlocked() { return player[this.layer].fome.subspatial.expansion.gte(1) },
-            canAfford() { return player[this.layer].fome.subspatial.points.gte(this.cost()) },
+            cost() { return Decimal.pow(10, getBuyableAmount('fome', this.id).sqr().plus(1).times(6)).dividedBy(2.5) },
+            display() {
+                let type = player.fome.fome.subplanck.expansion.eq(0)
+                return `<h3>${type ? `Condense` : `Re-form`} your Subspatial Foam</h3><br/><br/><b>Cost:</b> ${format(temp.fome.buyables[this.id].cost)} Subspatial Foam${type ? ``: `<br/><br/><b>Requires:</b> Infitesimal Foam<sup>${getBuyableAmount('fome', this.id).plus(2)}</sup>`}`
+            },
+            unlocked() { return player.fome.fome.subspatial.expansion.gte(1) },
+            canAfford() { return (player.fome.fome.subplanck.expansion.eq(0) || player.fome.fome.infitesimal.expansion.gt(getBuyableAmount('fome', this.id).plus(1))) && player.fome.fome.subspatial.points.gte(temp.fome.buyables[this.id].cost) },
             buy() {
-                player[this.layer].fome.subspatial.points = player[this.layer].fome.subspatial.points.minus(this.cost())
-                if (player[this.layer].fome.subplanck.expansion.eq(0))
-                    player[this.layer].fome.subplanck.expansion = player[this.layer].fome.subplanck.expansion.plus(1)
-                player[this.layer].fome.subspatial.expansion = player[this.layer].fome.subspatial.expansion.plus(1)
-                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).plus(1))
+                player.fome.fome.subspatial.points = player.fome.fome.subspatial.points.minus(temp.fome.buyables[this.id].cost)
+                if (player.fome.fome.subplanck.expansion.eq(0)) player.fome.fome.subplanck.expansion = player.fome.fome.subplanck.expansion.plus(1)
+                else player.fome.fome.subspatial.expansion = player.fome.fome.subspatial.expansion.plus(1)
+                setBuyableAmount('fome', this.id, getBuyableAmount('fome', this.id).plus(1))
             }
         },
         41: {
-            cost() { return new Decimal(1) },
-            display() { return layers[this.layer].utils.displayBuyable(this.id, this.cost()) },
-            unlocked() { return player[this.layer].fome.subplanck.expansion.gte(1) },
-            canAfford() { return player[this.layer].fome.subplanck.points.gte(this.cost()) },
-            effect() { return getBuyableAmount(this.layer, this.id).plus(1) },
-            buy() { layers[this.layer].utils.buyBuyable(this.id, this.cost()) }
+            cost() { return new Decimal(15).times(Decimal.pow(7, getBuyableAmount('fome', this.id).pow(1.15))) },
+            display() { return displayFomeBuyable(this.id) },
+            unlocked() { return player.fome.fome.subplanck.expansion.gte(1) },
+            canAfford() { return player.fome.fome.subplanck.points.gte(temp.fome.buyables[this.id].cost) },
+            effect() { return getBuyableAmount('fome', this.id).plus(1) },
+            buy() { buyFomeBuyable(this.id) }
         },
         42: {
-            cost() { return new Decimal(1) },
-            display() { return layers[this.layer].utils.displayBuyable(this.id, this.cost()) },
-            unlocked() { return player[this.layer].fome.subplanck.expansion.gte(1) },
-            canAfford() { return player[this.layer].fome.subplanck.points.gte(this.cost()) },
-            effect() { return getBuyableAmount(this.layer, this.id).plus(1) },
-            buy() { layers[this.layer].utils.buyBuyable(this.id, this.cost()) }
+            cost() { return new Decimal(25).times(Decimal.pow(9, getBuyableAmount('fome', this.id).pow(1.15))) },
+            display() { return displayFomeBuyable(this.id) },
+            unlocked() { return player.fome.fome.subplanck.expansion.gte(1) },
+            canAfford() { return player.fome.fome.subplanck.points.gte(temp.fome.buyables[this.id].cost) },
+            effect() { return getBuyableAmount('fome', this.id).plus(1) },
+            buy() { buyFomeBuyable(this.id) }
         },
         43: {
-            cost() { return new Decimal(1) },
-            display() { return layers[this.layer].utils.displayBuyable(this.id, this.cost()) },
-            unlocked() { return player[this.layer].fome.subplanck.expansion.gte(1) },
-            canAfford() { return player[this.layer].fome.subplanck.points.gte(this.cost()) },
-            effect() { return getBuyableAmount(this.layer, this.id).plus(1) },
-            buy() { layers[this.layer].utils.buyBuyable(this.id, this.cost()) }
+            cost() { return new Decimal(90).times(Decimal.pow(11, getBuyableAmount('fome', this.id).pow(1.15))) },
+            display() { return displayFomeBuyable(this.id) },
+            unlocked() { return player.fome.fome.subplanck.expansion.gte(1) },
+            canAfford() { return player.fome.fome.subplanck.points.gte(temp.fome.buyables[this.id].cost) },
+            effect() { return getBuyableAmount('fome', this.id).plus(1) },
+            buy() { buyFomeBuyable(this.id) }
         },
         44: {
-            cost() { return Decimal.pow(1e6, getBuyableAmount(this.layer, this.id).plus(1)) },
-            display() { return "<h2>" + (player[this.layer].fome.quantum.expansion.eq(0) ? "Condense" : "Re-form") + " your Subplanck Foam</h2><br/><br/><b>Cost:</b> " + format(this.cost()) + " Subplanck Foam" },
-            unlocked() { return player[this.layer].fome.subplanck.expansion.gte(1) },
-            canAfford() { return player[this.layer].fome.subplanck.points.gte(this.cost()) },
+            cost() { return Decimal.pow(10, getBuyableAmount('fome', this.id).sqr().plus(1).times(7)).dividedBy(1) },
+            display() {
+                let type = player.fome.fome.quantum.expansion.eq(0)
+                return `<h3>${type ? `Condense` : `Re-form`} your Subplanck Foam</h3><br/><br/><b>Cost:</b> ${format(temp.fome.buyables[this.id].cost)} Subplanck Foam${type ? `` : `<br/><br/><b>Requires:</b> Subspatial Foam<sup>${getBuyableAmount('fome', this.id).plus(2)}</sup>`}`
+            },
+            unlocked() { return player.fome.fome.subplanck.expansion.gte(1) },
+            canAfford() { return (player.fome.fome.quantum.expansion.eq(0) || player.fome.fome.subspatial.expansion.gt(getBuyableAmount('fome', this.id).plus(1))) && player.fome.fome.subplanck.points.gte(temp.fome.buyables[this.id].cost) },
             buy() {
-                player[this.layer].fome.subplanck.points = player[this.layer].fome.subplanck.points.minus(this.cost())
-                if (player[this.layer].fome.quantum.expansion.eq(0))
-                    player[this.layer].fome.quantum.expansion = player[this.layer].fome.quantum.expansion.plus(1)
-                player[this.layer].fome.subplanck.expansion = player[this.layer].fome.subplanck.expansion.plus(1)
-                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).plus(1))
+                player.fome.fome.subplanck.points = player.fome.fome.subplanck.points.minus(temp.fome.buyables[this.id].cost)
+                if (player.fome.fome.quantum.expansion.eq(0)) player.fome.fome.quantum.expansion = player.fome.fome.quantum.expansion.plus(1)
+                else player.fome.fome.subplanck.expansion = player.fome.fome.subplanck.expansion.plus(1)
+                setBuyableAmount('fome', this.id, getBuyableAmount('fome', this.id).plus(1))
             }
         },
         51: {
-            cost() { return new Decimal(1) },
-            display() { return layers[this.layer].utils.displayBuyable(this.id, this.cost()) },
-            unlocked() { return player[this.layer].fome.quantum.expansion.gte(1) },
-            canAfford() { return player[this.layer].fome.quantum.points.gte(this.cost()) },
-            effect() { return getBuyableAmount(this.layer, this.id).plus(1) },
-            buy() { layers[this.layer].utils.buyBuyable(this.id, this.cost()) }
+            cost() { return new Decimal(20).times(Decimal.pow(8, getBuyableAmount('fome', this.id).pow(1.15))) },
+            display() { return displayFomeBuyable(this.id) },
+            unlocked() { return player.fome.fome.quantum.expansion.gte(1) },
+            canAfford() { return player.fome.fome.quantum.points.gte(temp.fome.buyables[this.id].cost) },
+            effect() { return getBuyableAmount('fome', this.id).plus(1) },
+            buy() { buyFomeBuyable(this.id) }
         },
         52: {
-            cost() { return new Decimal(1) },
-            display() { return layers[this.layer].utils.displayBuyable(this.id, this.cost()) },
-            unlocked() { return player[this.layer].fome.quantum.expansion.gte(1) },
-            canAfford() { return player[this.layer].fome.quantum.points.gte(this.cost()) },
-            effect() { return getBuyableAmount(this.layer, this.id).plus(1) },
-            buy() { layers[this.layer].utils.buyBuyable(this.id, this.cost()) }
+            cost() { return new Decimal(30).times(Decimal.pow(10, getBuyableAmount('fome', this.id).pow(1.15))) },
+            display() { return displayFomeBuyable(this.id) },
+            unlocked() { return player.fome.fome.quantum.expansion.gte(1) },
+            canAfford() { return player.fome.fome.quantum.points.gte(temp.fome.buyables[this.id].cost) },
+            effect() { return getBuyableAmount('fome', this.id).plus(1) },
+            buy() { buyFomeBuyable(this.id) }
         },
         53: {
-            cost() { return new Decimal(1) },
-            display() { return layers[this.layer].utils.displayBuyable(this.id, this.cost()) },
-            unlocked() { return player[this.layer].fome.quantum.expansion.gte(1) },
-            canAfford() { return player[this.layer].fome.quantum.points.gte(this.cost()) },
-            effect() { return getBuyableAmount(this.layer, this.id).plus(1) },
-            buy() { layers[this.layer].utils.buyBuyable(this.id, this.cost()) }
+            cost() { return new Decimal(100).times(Decimal.pow(12, getBuyableAmount('fome', this.id).pow(1.15))) },
+            display() { return displayFomeBuyable(this.id) },
+            unlocked() { return player.fome.fome.quantum.expansion.gte(1) },
+            canAfford() { return player.fome.fome.quantum.points.gte(temp.fome.buyables[this.id].cost) },
+            effect() { return getBuyableAmount('fome', this.id).plus(1) },
+            buy() { buyFomeBuyable(this.id) }
         },
         54: {
-            cost() { return Decimal.pow(1e6, getBuyableAmount(this.layer, this.id).plus(1)) },
-            display() { return "<h2>" + (player[this.layer].fome.quantum.expansion.eq(1) ? "Condense" : "Re-form") + " your Quantum Foam</h2><br/><br/><b>Cost:</b> " + format(this.cost()) + " Quantum Foam" },
-            unlocked() { return player[this.layer].fome.quantum.expansion.gte(1) },
-            canAfford() { return player[this.layer].fome.quantum.points.gte(this.cost()) },
+            cost() { return Decimal.pow(10, getBuyableAmount('fome', this.id).sqr().plus(1).times(7)).times(1e2) },
+            display() {
+                let type = !(player.inflaton.unlocked || player.acceleron.unlocked)
+                return `<h3>${type ? `Condense` : `Re-form`} your Quantum Foam</h3><br/><br/><b>Cost:</b> ${format(temp.fome.buyables[this.id].cost)} Quantum Foam${type ? `` : `<br/><br/><b>Requires:</b> Subplanck Foam<sup>${getBuyableAmount('fome', this.id).plus(2)}</sup>`}`
+            },
+            unlocked() { return player.fome.fome.quantum.expansion.gte(1) },
+            canAfford() { return ((!player.inflaton.unlocked && !player.acceleron.unlocked) || player.fome.fome.subplanck.expansion.gt(getBuyableAmount('fome', this.id).plus(1))) && player.fome.fome.quantum.points.gte(temp.fome.buyables[this.id].cost) },
             buy() {
-                player[this.layer].fome.quantum.points = player[this.layer].fome.quantum.points.minus(this.cost())
-                player[this.layer].fome.quantum.expansion = player[this.layer].fome.quantum.expansion.plus(1)
-                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).plus(1))
+                player.fome.fome.quantum.points = player.fome.fome.quantum.points.minus(temp.fome.buyables[this.id].cost)
+                if (!player.inflaton.unlocked && !player.acceleron.unlocked) {
+                    player.inflaton.unlocked = true
+                    player.acceleron.unlocked = true
+                }
+                else player.fome.fome.quantum.expansion = player.fome.fome.quantum.expansion.plus(1)
+                setBuyableAmount('fome', this.id, getBuyableAmount('fome', this.id).plus(1))
             }
+        }
+    },
+
+    milestones: {
+        0: {
+            requirementDescription: "Re-form your Protoversal Foam",
+            effectDescription: "Automatically enlarge your Protoversal Foam",
+            unlocked() { return player.fome.fome.protoversal.expansion.gte(1) },
+            done() { return player.fome.fome.protoversal.expansion.gt(1) },
+            toggles: [['fome', 'autoProtoversal']]
+        },
+        1: {
+            requirementDescription: "Re-form your Infitesimal Foam",
+            effectDescription: "Automatically enlarge your Infitesimal Foam",
+            unlocked() { return player.fome.fome.infitesimal.expansion.gte(1) },
+            done() { return player.fome.fome.infitesimal.expansion.gt(1) },
+            toggles: [['fome', 'autoInfitesimal']]
+        },
+        2: {
+            requirementDescription: "Re-form your Subspatial Foam",
+            effectDescription: "Automatically enlarge your Subspatial Foam",
+            unlocked() { return player.fome.fome.subspatial.expansion.gte(1) },
+            done() { return player.fome.fome.subspatial.expansion.gt(1) },
+            toggles: [['fome', 'autoSubspatial']]
+        },
+        3: {
+            requirementDescription: "Re-form your Subplanck Foam",
+            effectDescription: "Automatically enlarge your Subplanck Foam",
+            unlocked() { return player.fome.fome.subplanck.expansion.gte(1) },
+            done() { return player.fome.fome.subplanck.expansion.gt(1) },
+            toggles: [['fome', 'autoSubplanck']]
+        },
+        4: {
+            requirementDescription: "Re-form your Quantum Foam",
+            effectDescription: "Automatically enlarge your Quantum Foam",
+            unlocked() { return player.fome.fome.quantum.expansion.gte(1) },
+            done() { return player.fome.fome.quantum.expansion.gt(1) },
+            toggles: [['fome', 'autoQuantum']]
+        },
+        5: {
+            requirementDescription: "Obtain Quantum Foam<sup>3</sup>",
+            effectDescription: "Automatically re-form your Foam",
+            unlocked() { return hasMilestone('fome', 4) },
+            done() { return player.fome.fome.quantum.expansion.gte(3) },
+            toggles: [['fome', 'autoReform']]
         }
     },
 
     microtabs: {
         stuff: {
             "Foam": {
+                shouldNotify() {
+                    if (player.tab == "fome" && player.subtabs.fome.stuff == "Foam")
+                        return false
+                    for(let fome = 10; fome <= 50; fome += 10)
+                        for(let dim = 1; dim <= 4; dim++) {
+                            let buyable = temp.fome.buyables[fome+dim]
+                            if (buyable.unlocked && buyable.canAfford)
+                                return true
+                        }
+                    return false
+                },
                 content: [
                     "blank",
-                    ["row", [
-                        ["display-text", () => player[this.layer].fome.quantum.expansion.gte(1) ? "Quantum Fome" + (player[this.layer].fome.quantum.expansion.gt(1) ? "<sup>" + formatWhole(player[this.layer].fome.quantum.expansion) + "</sup>" : "") + ": " + format(player[this.layer].fome.quantum.points) : ""],
-                        ["display-text", () => player[this.layer].fome.quantum.expansion.gte(1) ? "&nbsp;&nbsp;&nbsp;&nbsp;You are gaining " + format(temp[this.layer].effect.gain.total.quantum) + " Quantum Foam/s" : ""]
-                    ]],
-                    ["row", [
-                        ["display-text", () => player[this.layer].fome.subplanck.expansion.gte(1) ? "Subplanck Fome" + (player[this.layer].fome.subplanck.expansion.gt(1) ? "<sup>" + formatWhole(player[this.layer].fome.subplanck.expansion) + "</sup>" : "") + ": " + format(player[this.layer].fome.subplanck.points) : ""],
-                        ["display-text", () => player[this.layer].fome.subplanck.expansion.gte(1) ? "&nbsp;&nbsp;&nbsp;&nbsp;You are gaining " + format(temp[this.layer].effect.gain.total.subplanck) + " Subplanck Foam/s" : ""]
-                    ]],
-                    ["row", [
-                        ["display-text", () => player[this.layer].fome.subspatial.expansion.gte(1) ? "Subspatial Fome" + (player[this.layer].fome.subspatial.expansion.gt(1) ? "<sup>" + formatWhole(player[this.layer].fome.subspatial.expansion) + "</sup>" : "") + ": " + format(player[this.layer].fome.subspatial.points) : ""],
-                        ["display-text", () => player[this.layer].fome.subspatial.expansion.gte(1) ? "&nbsp;&nbsp;&nbsp;&nbsp;You are gaining " + format(temp[this.layer].effect.gain.total.subspatial) + " Subspatial Foam/s" : ""]
-                    ]],
-                    ["row", [
-                        ["display-text", () => player[this.layer].fome.infitesimal.expansion.gte(1) ? "Infitesimal Fome" + (player[this.layer].fome.infitesimal.expansion.gt(1) ? "<sup>" + formatWhole(player[this.layer].fome.infitesimal.expansion) + "</sup>" : "") + ": " + format(player[this.layer].fome.infitesimal.points) : ""],
-                        ["display-text", () => player[this.layer].fome.infitesimal.expansion.gte(1) ? "&nbsp;&nbsp;&nbsp;&nbsp;You are gaining " + format(temp[this.layer].effect.gain.total.infitesimal) + " Infitesimal Foam/s" : ""]
-                    ]],
-                    ["row", [
-                        ["display-text", () => player[this.layer].fome.protoversal.expansion.gte(1) ? "Protoversal Fome" + (player[this.layer].fome.protoversal.expansion.gt(1) ? "<sup>" + formatWhole(player[this.layer].fome.protoversal.expansion) + "</sup>" : "") + ": " + format(player[this.layer].fome.protoversal.points) : ""],
-                        ["display-text", () => player[this.layer].fome.protoversal.expansion.gte(1) ? "&nbsp;&nbsp;&nbsp;&nbsp;You are gaining " + format(temp[this.layer].effect.gain.total.protoversal) + " Protoversal Foam/s" : ""]
-                    ]],
-                    "blank",
-                    "buyables",
+                    () => player.fome.fome.quantum.expansion.gte(1) ? ["row", [ ["column", [
+                                ["display-text", `You have ${format(player.fome.fome.quantum.points)} Quantum Foam${player.fome.fome.quantum.expansion.gt(1) ? `<sup>${formatWhole(player.fome.fome.quantum.expansion)}</sup>` : ``}`],
+                                ["display-text", `(${format(temp.fome.effect.gain.total.quantum)}/sec)`]
+                        ]], "blank", "blank", ["buyable", 51], ["buyable", 52], ["buyable", 53], ["buyable", 54]
+                    ]] : ``,
+                    () => player.fome.fome.subplanck.expansion.gte(1) ? ["row", [ ["column", [
+                            ["display-text", `You have ${format(player.fome.fome.subplanck.points)} Subplanck Foam${player.fome.fome.subplanck.expansion.gt(1) ? `<sup>${formatWhole(player.fome.fome.subplanck.expansion)}</sup>` : ``}`],
+                            ["display-text", `(${format(temp.fome.effect.gain.total.subplanck)}/sec)`]
+                        ]], "blank", "blank", ["buyable", 41], ["buyable", 42], ["buyable", 43], ["buyable", 44]
+                    ]] : ``,
+                    () => player.fome.fome.subspatial.expansion.gte(1) ? ["row", [ ["column", [
+                            ["display-text", `You have ${format(player.fome.fome.subspatial.points)} Subspatial Foam${player.fome.fome.subspatial.expansion.gt(1) ? `<sup>${formatWhole(player.fome.fome.subspatial.expansion)}</sup>` : ``}`],
+                            ["display-text", `(${format(temp.fome.effect.gain.total.subspatial)}/sec)`]
+                        ]], "blank", "blank", ["buyable", 31], ["buyable", 32], ["buyable", 33], ["buyable", 34]
+                    ]] : ``,
+                    () => player.fome.fome.infitesimal.expansion.gte(1) ? ["row", [ ["column", [
+                            ["display-text", `You have ${format(player.fome.fome.infitesimal.points)} Infitesimal Foam${player.fome.fome.infitesimal.expansion.gt(1) ? `<sup>${formatWhole(player.fome.fome.infitesimal.expansion)}</sup>` : ``}`],
+                            ["display-text", `(${format(temp.fome.effect.gain.total.infitesimal)}/sec)`]
+                        ]], "blank", "blank", ["buyable", 21], ["buyable", 22], ["buyable", 23], ["buyable", 24]
+                    ]] : ``,
+                    () => player.fome.fome.protoversal.expansion.gte(1) ? ["row", [ ["column", [
+                            ["display-text", `You have ${format(player.fome.fome.protoversal.points)} Protoversal Foam${player.fome.fome.protoversal.expansion.gt(1) ? `<sup>${formatWhole(player.fome.fome.protoversal.expansion)}</sup>` : ``}`],
+                            ["display-text", `(${format(temp.fome.effect.gain.total.protoversal)}/sec)`]
+                        ]], "blank", "blank",["buyable", 11], ["buyable", 12], ["buyable", 13], ["buyable", 14]
+                    ]] : ``
                 ]
             },
             "Boosts": {
                 unlocked() { return player.fome.boosts.protoversal.boosts[0].gte(1) },
                 content: [
                     "blank",
-                    ["display-text", () => layers[this.layer].utils.displayBoost('protoversal', 'Protoversal', 0, `Multiply the generation of Protoversal Foam by ${format(temp[this.layer].effect.gain.boost.protoversal)}x`)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('protoversal', 'Protoversal', 1, `Gain ${format(layers[this.layer].utils.getTotalBoost('protoversal', 1))} bonus Pion and Spinor Upgrade α levels`)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('protoversal', 'Protoversal', 2, `Gain ${format(layers[this.layer].utils.getTotalBoost('protoversal', 2))} bonus Pion and Spinor Upgrade β levels`)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('protoversal', 'Protoversal', 3, `Gain ${format(layers[this.layer].utils.getTotalBoost('protoversal', 3))} bonus Pion and Spinor Upgrade γ levels`)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('protoversal', 'Protoversal', 4, `Add ${format(layers[this.layer].utils.getTotalBoost('protoversal', 4).times(0.1))} levels to all above boosts`)],
+                    ["display-text", () => displayFomeBoost(0, 0, `Multiply the generation of Protoversal Foam by ${format(temp.fome.effect.gain.boost.protoversal)}x`)],
+                    ["display-text", () => displayFomeBoost(0, 1, `Gain ${format(temp.fome.effect.boosts.total.protoversal[1])} bonus Pion and Spinor Upgrade α levels`)],
+                    ["display-text", () => displayFomeBoost(0, 2, `Gain ${format(temp.fome.effect.boosts.total.protoversal[2])} bonus Pion and Spinor Upgrade β levels`)],
+                    ["display-text", () => displayFomeBoost(0, 3, `Gain ${format(temp.fome.effect.boosts.total.protoversal[3])} bonus Pion and Spinor Upgrade γ levels`)],
+                    ["display-text", () => displayFomeBoost(0, 4, `Add ${format(temp.fome.effect.boosts.total.protoversal[4].times(0.1))} levels to all above boosts`)],
                     "blank",
-                    ["display-text", () => layers[this.layer].utils.displayBoost('infitesimal', 'Infitesimal', 0, `Multiply the generation of Infitesimal Foam by ${format(layers[this.layer].utils.getTotalBoost('infitesimal', 0).plus(1))}x`)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('infitesimal', 'Infitesimal', 1, ``)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('infitesimal', 'Infitesimal', 2, ``)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('infitesimal', 'Infitesimal', 3, ``)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('infitesimal', 'Infitesimal', 4, ``)],
+                    () => {  },
+                    ["display-text", () => displayFomeBoost(1, 0, `Multiply the generation of Infitesimal Foam by ${format(temp.fome.effect.gain.boost.infitesimal)}x`)],
+                    ["display-text", () => displayFomeBoost(1, 1, `Increase Pion and Spinor gain by ${format(temp.fome.effect.boosts.total.infitesimal[1].times(0.5).times(100))}%`)],
+                    ["display-text", () => displayFomeBoost(1, 2, `Reduce Pion and Spinor Upgrade α costs by ${format(Decimal.sub(1, Decimal.pow(0.8, temp.fome.effect.boosts.total.infitesimal[2])).times(100))}%`)],
+                    ["display-text", () => displayFomeBoost(1, 3, `Increase Skyrmion gain by ${format(temp.fome.effect.boosts.total.infitesimal[3].times(0.5).times(100))}%`)],
+                    ["display-text", () => displayFomeBoost(1, 4, `Reduce Pion and Spinor Upgrade γ costs by ${format(Decimal.sub(1, Decimal.pow(0.8, temp.fome.effect.boosts.total.infitesimal[4])).times(100))}%`)],
                     "blank",
-                    ["display-text", () => layers[this.layer].utils.displayBoost('subspatial', 'Subspatial', 0, `Multiply the generation of Subspatial Foam by ${format(layers[this.layer].utils.getTotalBoost('subspatial', 0).plus(1))}x`)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('subspatial', 'Subspatial', 1, ``)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('subspatial', 'Subspatial', 2, `Add ${format(layers[this.layer].utils.getTotalBoost('subspatial', 3).times(0.1))} levels to all above boosts`)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('subspatial', 'Subspatial', 3, ``)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('subspatial', 'Subspatial', 4, ``)],
+                    ["display-text", () => displayFomeBoost(2, 0, `Multiply the generation of Subspatial Foam by ${format(temp.fome.effect.gain.boost.subspatial)}x`)],
+                    ["display-text", () => displayFomeBoost(2, 1, `Decrease effective Pion and Spinor upgrade counts by ${format(temp.fome.effect.boosts.total.subspatial[1])}`)],
+                    ["display-text", () => displayFomeBoost(2, 2, `Add ${format(getTotalFomeBoost('subspatial', 2).times(0.1))} levels to all above boosts`)],
+                    ["display-text", () => displayFomeBoost(2, 3, `Increase effective Skyrmion count by ${format(temp.fome.effect.boosts.total.subspatial[3])}`)],
+                    ["display-text", () => displayFomeBoost(2, 4, `Pion and Spinor upgrades cost as if you had ${format(temp.fome.effect.boosts.total.subspatial[4].times(0.25))} fewer`)],
                     "blank",
-                    ["display-text", () => layers[this.layer].utils.displayBoost('subplanck', 'Subplanck', 0, `Multiply the generation of Subplanck Foam by ${format(layers[this.layer].utils.getTotalBoost('subplanck', 0).plus(1))}x`)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('subplanck', 'Subplanck', 1, ``)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('subplanck', 'Subplanck', 2, ``)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('subplanck', 'Subplanck', 3, ``)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('subplanck', 'Subplanck', 4, ``)],
+                    ["display-text", () => displayFomeBoost(3, 0, `Multiply the generation of Subplanck Foam by ${format(temp.fome.effect.gain.boost.subplanck)}x`)],
+                    ["display-text", () => displayFomeBoost(3, 1, `Gain ${format(temp.fome.effect.boosts.total.subplanck[1].times(0.5))} bonus Pion and Spinor Upgrade δ levels`)],
+                    ["display-text", () => displayFomeBoost(3, 2, `Gain ${format(temp.fome.effect.boosts.total.subplanck[2].times(0.5))} bonus Pion and Spinor Upgrade ε levels`)],
+                    ["display-text", () => displayFomeBoost(3, 3, `Gain ${format(temp.fome.effect.boosts.total.subplanck[3].times(0.5))} bonus Pion and Spinor Upgrade ζ levels`)],
+                    ["display-text", () => displayFomeBoost(3, 4, `Gain ${format(temp.fome.effect.boosts.total.subplanck[4].times(0.5))} bonus Pion and Spinor Upgrade η levels`)],
                     "blank",
-                    ["display-text", () => layers[this.layer].utils.displayBoost('quantum', 'Quantum', 0, `Multiply the generation of all Foam types by ${format(layers[this.layer].utils.getTotalBoost('quantum', 0).plus(1))}x`)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('quantum', 'Quantum', 1, ``)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('quantum', 'Quantum', 2, ``)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('quantum', 'Quantum', 3, ``)],
-                    ["display-text", () => layers[this.layer].utils.displayBoost('quantum', 'Quantum', 4, `Add ${format(layers[this.layer].utils.getTotalBoost('quantum', 4).times(0.1))} levels to all above boosts`)]
+                    ["display-text", () => displayFomeBoost(4, 0, `Multiply the generation of all Foam types by ${format(temp.fome.effect.gain.boost.quantum)}x`)],
+                    ["display-text", () => displayFomeBoost(4, 1, `Gain ${format(temp.fome.effect.boosts.total.quantum[1].times(0.25))} bonus Pion and Spinor Upgrade θ levels`)],
+                    ["display-text", () => displayFomeBoost(4, 2, `Gain ${format(temp.fome.effect.boosts.total.quantum[2].times(0.25))} bonus Pion and Spinor Upgrade ι levels`)],
+                    ["display-text", () => displayFomeBoost(4, 3, `Gain ${format(temp.fome.effect.boosts.total.quantum[3].times(0.25))} bonus Pion and Spinor Upgrade κ levels`)],
+                    ["display-text", () => displayFomeBoost(4, 4, `Add ${format(getTotalFomeBoost('quantum', 4).times(0.1))} levels to all above boosts`)]
+                ]
+            },
+            "Milestones": {
+                content: [
+                    "milestones"
                 ]
             }
         }
@@ -526,7 +600,7 @@ addLayer("fome", {
     ],
 
     componentStyles: {
-        "buyable"() { return { "height": "100px" } },
+        "buyable"() { return { "height": "100px", "width": "150px" } },
         "microtabs"() { return { "border-style": "none" } }
     }
 })

@@ -403,3 +403,61 @@ function run(func, target, args = null) {
 	else
 		return func;
 }
+
+// Mod-specific functions
+function createSkyrmionBuyable(symbol, id, costFunc, text, effectTextFunc, effectFunc, bonusAmountFunc = () => new Decimal(0), unlockedFunc = () => true, isFree = () => false) {
+	let type = id >= 200 ? 'spinor' : 'pion'
+	let upperType = id >= 200 ? 'Spinor' : 'Pion'
+	return {
+		unlocked() { return unlockedFunc() },
+		cost() {
+			let amount = getBuyableAmount('skyrmion', id).minus(Decimal.times(getTotalFomeBoost('subspatial', 4), 0.25))
+			return costFunc(amount).times(temp.skyrmion.effect[type].costNerf)
+		},
+		title: `${upperType} Upgrade ${symbol}`,
+		display() {
+			let amount = getBuyableAmount('skyrmion', id)
+			let bonusAmount = bonusAmountFunc()
+			return `<br/>${text}<br/><br/><b>Amount:</b> ${formatWhole(amount)}${Decimal.gt(bonusAmount, 0) ? ` + ${formatWhole(bonusAmount)}` : ``}<br/><br/><b>Current Effect:</b> ${effectTextFunc(temp.skyrmion.buyables[id].effect)}<br/><br/><b>Cost:</b> ${format(temp.skyrmion.buyables[id].cost)} ${upperType}s`
+		},
+		effect() { return effectFunc(getBuyableAmount('skyrmion', id).plus(bonusAmountFunc())) },
+		canAfford() { return player.skyrmion[type].points.gte(temp.skyrmion.buyables[id].cost) },
+		buy() {
+			if (isFree()) player.skyrmion[type].points = player.skyrmion[type].points.minus(temp.skyrmion.buyables[id].cost)
+			player.skyrmion[type].upgrades = player.skyrmion[type].upgrades.plus(1)
+			setBuyableAmount('skyrmion', id, getBuyableAmount('skyrmion', id).plus(1))
+		}
+	}
+}
+
+const fomeTypes = ['protoversal', 'infitesimal', 'subspatial', 'subplanck', 'quantum']
+const fomeNames = ['Protoversal', 'Infitesimal', 'Subspatial', 'Subplanck', 'Quantum']
+const fomeDims = ['height', 'width', 'depth']
+const fomeDimNames = ['Height', 'Width', 'Depth']
+
+function displayFomeBuyable(id) {
+	let fomeName = fomeNames[~~(id/10)-1]
+	let dimName = fomeDimNames[~~(id%10)-1]
+	return `<h3>Enlarge ${fomeName} Foam ${dimName} by 1m</h3><br/><br/><b>Current ${dimName}:</b> ${formatWhole(getBuyableAmount('fome', id))}m<br/><br/><b>Cost:</b> ${format(temp.fome.buyables[id].cost)}`
+}
+
+function displayFomeBoost(fomeTypeIndex, boostIndex, effect) {
+	let fomeType = fomeTypes[fomeTypeIndex]
+	let fomeName = fomeNames[fomeTypeIndex]
+	let boost = player.fome.boosts[fomeType].boosts[boostIndex]
+	let bonus = temp.fome.effect.boosts.bonus[fomeType][boostIndex]
+	return (boost > 0 || bonus > 0) ? `${fomeName} Boost ${boostIndex+1} [${(boost > 0 ? formatWhole(boost) : `0`) + (bonus > 0 ? ` + ${formatWhole(bonus)}` : ``)}]: ${effect}` : ``
+}
+
+function buyFomeBuyable(id) {
+	let fome = fomeTypes[~~(id/10)-1]
+	player.fome.fome[fome].points = player.fome.fome[fome].points.minus(temp.fome.buyables[id].cost)
+	setBuyableAmount('fome', id, getBuyableAmount('fome', id).plus(1))
+	player.fome.boosts[fome].boosts[player.fome.boosts[fome].index] = player.fome.boosts[fome].boosts[player.fome.boosts[fome].index++].plus(1)
+	if (player.fome.boosts[fome].index >= 5)
+		player.fome.boosts[fome].index %= 5
+}
+
+function getTotalFomeBoost(fome, index) { return temp.fome.effect.boosts ? temp.fome.effect.boosts.total[fome][index] : decimalZero }
+
+function getCurrentFomeBoost(fome, index) { return player.fome.boosts[fome].boosts[index].plus(layers.fome.bonusBoosts[fome][index]()) }
