@@ -22,13 +22,7 @@ addLayer("fome", {
     },
     color: "#ffffff",
     doReset(layer) {
-        if (layer != 'fome') {
-            let keep = []
-            layerDataReset('fome', keep)
-            player.fome = startData()
-        }
-        else {
-        }
+        
     },
 
     effect() {

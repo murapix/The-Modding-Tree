@@ -1,3 +1,12 @@
+Bugfixes and TODO:
+
+- Skyrmion/Skyrmions doesn't notify when an upgrade is available
+- Hotkeys for navigating between tabs and layers
+- Make some actually interesting Quantum boosts
+- Shift power around a bit so Quantum Condense happens *after* Subspatial 2
+
+-----
+
 Row 3 - Pick one at first
 
 Inflatons

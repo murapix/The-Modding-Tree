@@ -20,11 +20,9 @@ addLayer("skyrmion", {
     },
     doReset(layer) {
         if (layer != 'skyrmion') {
-            let keep = []
-            layerDataReset('skyrmion', keep)
-            player.skyrmion = startData()
+            
         }
-        else {
+        else if (!hasUpgrade('skyrmion', 1)) {
             player.skyrmion.pion.points = player.skyrmion.pion.points.minus(temp.skyrmion.nextAt)
             player.skyrmion.spinor.points = player.skyrmion.spinor.points.minus(temp.skyrmion.nextAt)
         }
