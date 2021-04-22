@@ -6,6 +6,7 @@ addLayer("skyrmion", {
 
     layerShown() { return true },
     resource() { return player.skyrmion.points.equals(1) ? "Skyrmion" : "Skyrmions" },
+    resetDescription: 'Condense ',
     color: "#37d7ff",
     type: "static",
     baseResource: "Pions and Spinors",
@@ -131,6 +132,7 @@ addLayer("skyrmion", {
             description: 'Begin Foam generation',
             cost: new Decimal(10),
             onPurchase() { player.fome.unlocked = true },
+            canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
         },
         1: {
@@ -138,6 +140,7 @@ addLayer("skyrmion", {
             title: 'Reformation',
             description: `Automatically gain Skyrmions; they don't cost Pions or Spinors`,
             cost: new Decimal(16),
+            canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
         },
         2: {
@@ -145,6 +148,7 @@ addLayer("skyrmion", {
             title: 'Alteration',
             description: `Unlock the Pion and Spinor Upgrade autobuyers and let them autobuy <b>α</b> upgrades. <b>α</b> upgrades no longer cost Pions or Spinors`,
             cost: new Decimal(24),
+            canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
         },
         3: {
@@ -152,6 +156,7 @@ addLayer("skyrmion", {
             title: 'Benediction',
             description: `Allow the autobuyers to buy <b>β</b> upgrades. <b>β</b> upgrades no longer cost Pions or Spinors`,
             cost: new Decimal(28),
+            canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
         },
         4: {
@@ -159,6 +164,7 @@ addLayer("skyrmion", {
             title: 'Consolidation',
             description: `Allow the autobuyers to buy <b>γ</b> upgrades. <b>γ</b> upgrades no longer cost Pions or Spinors`,
             cost: new Decimal(32),
+            canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
         },
         5: {
@@ -166,6 +172,7 @@ addLayer("skyrmion", {
             title: 'Diversification',
             description: `Allow the autobuyers to buy <b>δ</b> upgrades. <b>δ</b> ugprades no longer cost Pions or Spinors`,
             cost: new Decimal(36),
+            canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
         },
         6: {
@@ -173,6 +180,7 @@ addLayer("skyrmion", {
             title: 'Encapsulation',
             description: `Allow the autobuyers to buy <b>ε</b> upgrades. <b>ε</b> ugprades no longer cost Pions or Spinors`,
             cost: new Decimal(42),
+            canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
         },
         7: {
@@ -180,6 +188,7 @@ addLayer("skyrmion", {
             title: 'Fabrication',
             description: `Allow the autobuyers to buy <b>ζ</b> upgrades. <b>ζ</b> ugprades no longer cost Pions or Spinors`,
             cost: new Decimal(48),
+            canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
         },
         8: {
@@ -187,6 +196,7 @@ addLayer("skyrmion", {
             title: 'Germination',
             description: `Allow the autobuyers to buy <b>η</b> upgrades. <b>η</b> ugprades no longer cost Pions or Spinors`,
             cost: new Decimal(52),
+            canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
         },
         9: {
@@ -194,6 +204,7 @@ addLayer("skyrmion", {
             title: 'Hesitation',
             description: `Allow the autobuyers to buy <b>θ</b> upgrades. <b>θ</b> ugprades no longer cost Pions or Spinors`,
             cost: new Decimal(56),
+            canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
         },
         10: {
@@ -201,6 +212,7 @@ addLayer("skyrmion", {
             title: 'Immitation',
             description: `Allow the autobuyers to buy <b>ι</b> upgrades. <b>ι</b> ugprades no longer cost Pions or Spinors`,
             cost: new Decimal(64),
+            canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
         },
         11: {
@@ -208,6 +220,7 @@ addLayer("skyrmion", {
             title: 'Juxtaposition',
             description: `Allow the autobuyers to buy <b>κ</b> upgrades. <b>κ</b> ugprades no longer cost Pions or Spinors`,
             cost: new Decimal(69),
+            canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
         },
         12: {
@@ -215,6 +228,7 @@ addLayer("skyrmion", {
             title: 'Lateralization',
             description: `Allow the autobuyers to buy <b>λ</b> upgrades. <b>λ</b> upgrades no longer cost Pions or Spinors`,
             cost: new Decimal(72),
+            canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
         }
     },
@@ -572,6 +586,42 @@ addLayer("skyrmion", {
         }
     },
 
+    clickables: {
+        0: {
+            title: "Buy All",
+            unlocked() { return hasMilestone('fome', 0) },
+            canClick: true,
+            onClick() {
+                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[111].cost)) buyBuyable('skyrmion', 111)
+                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[112].cost)) buyBuyable('skyrmion', 112)
+                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[113].cost)) buyBuyable('skyrmion', 113)
+                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[121].cost)) buyBuyable('skyrmion', 121)
+                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[122].cost)) buyBuyable('skyrmion', 122)
+                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[123].cost)) buyBuyable('skyrmion', 123)
+                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[124].cost)) buyBuyable('skyrmion', 124)
+                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[131].cost)) buyBuyable('skyrmion', 131)
+                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[132].cost)) buyBuyable('skyrmion', 132)
+                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[133].cost)) buyBuyable('skyrmion', 133)
+                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[134].cost)) buyBuyable('skyrmion', 134)
+                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[211].cost)) buyBuyable('skyrmion', 211)
+                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[212].cost)) buyBuyable('skyrmion', 212)
+                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[213].cost)) buyBuyable('skyrmion', 213)
+                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[221].cost)) buyBuyable('skyrmion', 221)
+                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[222].cost)) buyBuyable('skyrmion', 222)
+                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[223].cost)) buyBuyable('skyrmion', 223)
+                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[224].cost)) buyBuyable('skyrmion', 224)
+                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[231].cost)) buyBuyable('skyrmion', 231)
+                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[232].cost)) buyBuyable('skyrmion', 232)
+                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[233].cost)) buyBuyable('skyrmion', 233)
+                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[234].cost)) buyBuyable('skyrmion', 234)
+            },
+            style: {
+                height: "30px",
+                width: "100px"
+            }
+        }
+    },
+
     microtabs: {
         stuff: {
             "Skyrmions": {
@@ -579,7 +629,7 @@ addLayer("skyrmion", {
                     if (player.tab == "skyrmion" && player.subtabs.skyrmion.stuff == "Skyrmions")
                         return false
                     for(let index = 0; index <= 11; index++) {
-                        if (temp.skyrmion.upgrades[index].unlocked && temp.skyrmion.upgrades[index].canAfford)
+                        if (temp.skyrmion.upgrades[index].unlocked && temp.skyrmion.upgrades[index].canAfford && !hasUpgrade('skyrmion', index))
                             return true
                     }
                     return false
@@ -588,6 +638,8 @@ addLayer("skyrmion", {
                     "blank",
                     () => hasMilestone('skyrmion', 0) ? ["row", [["milestone", 0], ["milestone", 1]]] : ``,
                     () => hasMilestone('skyrmion', 0) ? "blank" : ``,
+                    ["clickable", 0],
+                    () => hasMilestone('fome', 0) ? "blank" : "",
                     ["row", [
                         ["upgrade", 0], ["upgrade", 1]
                     ]],
@@ -623,6 +675,8 @@ addLayer("skyrmion", {
                     "blank",
                     ["display-text", () => `Your Spinor upgrades are increasing Pion upgrade cost by ${format(temp.skyrmion.effect.pion.costNerf.minus(1).times(100))}%`],
                     "blank",
+                    ["clickable", 0],
+                    () => hasMilestone('fome', 0) ? "blank" : "",
                     ["row", [["buyable", 111], ["buyable", 112], ["buyable", 113], ["buyable", 114], ["buyable", 115]]],
                     ["row", [["buyable", 121], ["buyable", 122], ["buyable", 123], ["buyable", 124], ["buyable", 125]]],
                     ["row", [["buyable", 131], ["buyable", 132], ["buyable", 133], ["buyable", 134], ["buyable", 135]]],
@@ -649,6 +703,8 @@ addLayer("skyrmion", {
                     "blank",
                     ["display-text", () => `Your Pion upgrades are increasing Spinor upgrade cost by ${format(temp.skyrmion.effect.spinor.costNerf.minus(1).times(100))}%`],
                     "blank",
+                    ["clickable", 0],
+                    () => hasMilestone('fome', 0) ? "blank" : "",
                     ["row", [["buyable", 211], ["buyable", 212], ["buyable", 213], ["buyable", 214], ["buyable", 215]]],
                     ["row", [["buyable", 221], ["buyable", 222], ["buyable", 223], ["buyable", 224], ["buyable", 225]]],
                     ["row", [["buyable", 231], ["buyable", 232], ["buyable", 233], ["buyable", 234], ["buyable", 235]]],
@@ -676,6 +732,11 @@ addLayer("skyrmion", {
     },
 
     hotkeys: [
+        {
+            key: "S",
+            description: "Shift+[Layer Symbol]: Click the given layer's Buy All button, if it is unlocked.",
+            onPress() { if (temp.skyrmion.clickables[0].unlocked) clickClickable('skyrmion', 0) }
+        },
         {
             key: "s",
             description: "S: Condense some Pions and Spinors for another Skyrmion",

@@ -1,5 +1,9 @@
 # Universal Reconstruction changelog:
 
+## v0.3.2
+- Fixed Skyrmion and Acceleron upgrades being buyable without enough points
+- Added Buy All buttons and hotkeys for Skyrmion and Foam layers, and shifted around milestones to unlock them
+
 ## v0.3.1
 - Fixed Skyrmions and Foam not generating without Entropic Loop 2
 

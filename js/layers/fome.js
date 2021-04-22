@@ -267,21 +267,21 @@ addLayer("fome", {
             display() { return displayFomeBuyable(this.id) },
             canAfford() { return player.fome.fome.protoversal.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 0)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 1)) }
         },
         12: {
             cost() { return new Decimal(5).times(Decimal.pow(6, getBuyableAmount('fome', this.id).pow(1.15))) },
             display() { return displayFomeBuyable(this.id) },
             canAfford() { return player.fome.fome.protoversal.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 0)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 1)) }
         },
         13: {
             cost() { return new Decimal(20).times(Decimal.pow(8, getBuyableAmount('fome', this.id).pow(1.15))) },
             display() { return displayFomeBuyable(this.id) },
             canAfford() { return player.fome.fome.protoversal.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 0)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 1)) }
         },
         14: {
             cost() { return Decimal.pow(10, getBuyableAmount('fome', this.id).sqr().plus(1).times(4)) },
@@ -300,7 +300,7 @@ addLayer("fome", {
             unlocked() { return player.fome.fome.infinitesimal.expansion.gte(1) },
             canAfford() { return player.fome.fome.infinitesimal.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 1)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 2)) }
         },
         22: {
             cost() { return new Decimal(10).times(Decimal.pow(7, getBuyableAmount('fome', this.id).pow(1.15))) },
@@ -308,7 +308,7 @@ addLayer("fome", {
             unlocked() { return player.fome.fome.infinitesimal.expansion.gte(1) },
             canAfford() { return player.fome.fome.infinitesimal.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 1)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 2)) }
         },
         23: {
             cost() { return new Decimal(25).times(Decimal.pow(9, getBuyableAmount('fome', this.id).pow(1.15))) },
@@ -316,7 +316,7 @@ addLayer("fome", {
             unlocked() { return player.fome.fome.infinitesimal.expansion.gte(1) },
             canAfford() { return player.fome.fome.infinitesimal.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 1)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 2)) }
         },
         24: {
             cost() { return Decimal.pow(10, getBuyableAmount('fome', this.id).sqr().plus(1).times(5)).dividedBy(5) },
@@ -339,7 +339,7 @@ addLayer("fome", {
             unlocked() { return player.fome.fome.subspatial.expansion.gte(1) },
             canAfford() { return player.fome.fome.subspatial.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 2)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 3)) }
         },
         32: {
             cost() { return new Decimal(18).times(Decimal.pow(8, getBuyableAmount('fome', this.id).pow(1.15))) },
@@ -347,7 +347,7 @@ addLayer("fome", {
             unlocked() { return player.fome.fome.subspatial.expansion.gte(1) },
             canAfford() { return player.fome.fome.subspatial.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 2)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 3)) }
         },
         33: {
             cost() { return new Decimal(60).times(Decimal.pow(10, getBuyableAmount('fome', this.id).pow(1.15))) },
@@ -355,7 +355,7 @@ addLayer("fome", {
             unlocked() { return player.fome.fome.subspatial.expansion.gte(1) },
             canAfford() { return player.fome.fome.subspatial.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 2)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 3)) }
         },
         34: {
             cost() { return Decimal.pow(10, getBuyableAmount('fome', this.id).sqr().plus(1).times(6)).dividedBy(2.5) },
@@ -378,7 +378,7 @@ addLayer("fome", {
             unlocked() { return player.fome.fome.subplanck.expansion.gte(1) },
             canAfford() { return player.fome.fome.subplanck.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 3)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 4)) }
         },
         42: {
             cost() { return new Decimal(25).times(Decimal.pow(9, getBuyableAmount('fome', this.id).pow(1.15))) },
@@ -386,7 +386,7 @@ addLayer("fome", {
             unlocked() { return player.fome.fome.subplanck.expansion.gte(1) },
             canAfford() { return player.fome.fome.subplanck.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 3)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 4)) }
         },
         43: {
             cost() { return new Decimal(90).times(Decimal.pow(11, getBuyableAmount('fome', this.id).pow(1.15))) },
@@ -394,7 +394,7 @@ addLayer("fome", {
             unlocked() { return player.fome.fome.subplanck.expansion.gte(1) },
             canAfford() { return player.fome.fome.subplanck.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 3)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 4)) }
         },
         44: {
             cost() { return Decimal.pow(10, getBuyableAmount('fome', this.id).sqr().plus(1).times(7)).dividedBy(1) },
@@ -417,7 +417,7 @@ addLayer("fome", {
             unlocked() { return player.fome.fome.quantum.expansion.gte(1) },
             canAfford() { return player.fome.fome.quantum.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 4)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 5)) }
         },
         52: {
             cost() { return new Decimal(30).times(Decimal.pow(10, getBuyableAmount('fome', this.id).pow(1.15))) },
@@ -425,7 +425,7 @@ addLayer("fome", {
             unlocked() { return player.fome.fome.quantum.expansion.gte(1) },
             canAfford() { return player.fome.fome.quantum.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 4)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 5)) }
         },
         53: {
             cost() { return new Decimal(100).times(Decimal.pow(12, getBuyableAmount('fome', this.id).pow(1.15))) },
@@ -433,7 +433,7 @@ addLayer("fome", {
             unlocked() { return player.fome.fome.quantum.expansion.gte(1) },
             canAfford() { return player.fome.fome.quantum.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 4)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 5)) }
         },
         54: {
             cost() { return Decimal.pow(10, getBuyableAmount('fome', this.id).sqr().plus(1).times(7)).times(1e2) },
@@ -459,46 +459,68 @@ addLayer("fome", {
 
     milestones: {
         0: {
+            requirementDescription: "Condense your Infinitesimal Foam",
+            effectDescription: "Unlock the Pion and Spinor Buy All button",
+            done() { return player.fome.fome.subspatial.expansion.gte(1) }
+        },
+        1: {
             requirementDescription: "Re-form your Protoversal Foam",
             effectDescription: "Automatically enlarge your Protoversal Foam",
             unlocked() { return player.fome.fome.protoversal.expansion.gte(1) },
             done() { return player.fome.fome.protoversal.expansion.gt(1) },
             toggles: [['fome', 'autoProtoversal']]
         },
-        1: {
+        2: {
             requirementDescription: "Re-form your Infinitesimal Foam",
             effectDescription: "Automatically enlarge your Infinitesimal Foam",
             unlocked() { return player.fome.fome.infinitesimal.expansion.gte(1) },
             done() { return player.fome.fome.infinitesimal.expansion.gt(1) },
             toggles: [['fome', 'autoInfinitesimal']]
         },
-        2: {
+        3: {
             requirementDescription: "Re-form your Subspatial Foam",
             effectDescription: "Automatically enlarge your Subspatial Foam",
             unlocked() { return player.fome.fome.subspatial.expansion.gte(1) },
             done() { return player.fome.fome.subspatial.expansion.gt(1) },
             toggles: [['fome', 'autoSubspatial']]
         },
-        3: {
+        4: {
             requirementDescription: "Re-form your Subplanck Foam",
             effectDescription: "Automatically enlarge your Subplanck Foam",
             unlocked() { return player.fome.fome.subplanck.expansion.gte(1) },
             done() { return player.fome.fome.subplanck.expansion.gt(1) },
             toggles: [['fome', 'autoSubplanck']]
         },
-        4: {
+        5: {
             requirementDescription: "Re-form your Quantum Foam",
             effectDescription: "Automatically enlarge your Quantum Foam",
             unlocked() { return player.fome.fome.quantum.expansion.gte(1) },
             done() { return player.fome.fome.quantum.expansion.gt(1) },
             toggles: [['fome', 'autoQuantum']]
         },
-        5: {
+        6: {
             requirementDescription: "Obtain Quantum Foam<sup>3</sup>",
             effectDescription: "Automatically re-form your Foam",
             unlocked() { return hasMilestone('fome', 4) },
             done() { return player.fome.fome.quantum.expansion.gte(3) },
             toggles: [['fome', 'autoReform']]
+        }
+    },
+
+    clickables: {
+        0: {
+            title: "Buy All",
+            unlocked() { return hasMilestone('acceleron', 0) },
+            canClick: true,
+            onClick() {
+                for (let row = 10; row <= 50; row += 10)
+                    for (let col = 1; col <= 4; col++)
+                        if (temp.fome.buyables[row+col].canAfford) buyBuyable('fome', row+col)
+            },
+            style: {
+                height: "30px",
+                width: "100px"
+            }
         }
     },
 
@@ -518,6 +540,8 @@ addLayer("fome", {
                 },
                 content: [
                     "blank",
+                    ["clickable", 0],
+                    () => hasMilestone('acceleron', 0) ? "blank" : "",
                     () => player.fome.fome.quantum.expansion.gte(1) ? ["row", [ ["column", [
                                 ["display-text", `You have ${format(player.fome.fome.quantum.points)} Quantum Foam${player.fome.fome.quantum.expansion.gt(1) ? `<sup>${formatWhole(player.fome.fome.quantum.expansion)}</sup>` : ``}`],
                                 ["display-text", `(${format(temp.fome.effect.gain.total.quantum)}/sec)`]
@@ -583,6 +607,7 @@ addLayer("fome", {
             },
             "Milestones": {
                 content: [
+                    "blank",
                     "milestones"
                 ]
             }
@@ -606,7 +631,14 @@ addLayer("fome", {
     componentStyles: {
         "buyable"() { return { "height": "100px", "width": "150px" } },
         "microtabs"() { return { "border-style": "none" } }
-    }
+    },
+
+    hotkeys: [
+        {
+            key: "F",
+            onPress() { if (temp.fome.clickables[0].unlocked) clickClickable('fome', 0) }
+        }
+    ]
 })
 
 const fomeTypes = ['protoversal', 'infinitesimal', 'subspatial', 'subplanck', 'quantum']

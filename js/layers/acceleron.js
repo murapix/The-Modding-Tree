@@ -173,29 +173,34 @@ addLayer("acceleron", {
 
     milestones: {
         0: {
-            requirementDescription: "1 Acceleron",
-            effectDescription: "Enlarging Protoversal Foam no longer consumes Foam",
-            done() { return player.acceleron.best.gte(1) }
+            requirementDescription: "1 Total Acceleron",
+            effectDescription: "Unlock the Foam Buy All button",
+            done() { return player.acceleron.total.gte(1) }
         },
         1: {
-            requirementDescription: "4 Accelerons",
-            effectDescription: "Enlarging Infinitesimal Foam no longer consumes Foam",
-            done() { return player.acceleron.best.gte(4) }
+            requirementDescription: "4 Total Accelerons",
+            effectDescription: "Enlarging Protoversal Foam no longer consumes Foam",
+            done() { return player.acceleron.total.gte(4) }
         },
         2: {
-            requirementDescription: "16 Accelerons",
-            effectDescription: "Enlarging Subspatial Foam no longer consumes Foam",
-            done() { return player.acceleron.best.gte(16) }
+            requirementDescription: "16 Total Accelerons",
+            effectDescription: "Enlarging Infinitesimal Foam no longer consumes Foam",
+            done() { return player.acceleron.total.gte(16) }
         },
         3: {
-            requirementDescription: "64 Accelerons",
-            effectDescription: "Enlarging Subplanck Foam no longer consumes Foam",
-            done() { return player.acceleron.best.gte(64) }
+            requirementDescription: "64 Total Accelerons",
+            effectDescription: "Enlarging Subspatial Foam no longer consumes Foam",
+            done() { return player.acceleron.total.gte(64) }
         },
         4: {
-            requirementDescription: "256 Accelerons",
+            requirementDescription: "256 Total Accelerons",
+            effectDescription: "Enlarging Subplanck Foam no longer consumes Foam",
+            done() { return player.acceleron.total.gte(256) }
+        },
+        5: {
+            requirementDescription: "1024 Total Accelerons",
             effectDescription: "Enlarging Quantum Foam no longer consumes Foam",
-            done() { return player.acceleron.best.gte(256) }
+            done() { return player.acceleron.total.gte(1024) }
         }
     },
 
@@ -207,14 +212,12 @@ addLayer("acceleron", {
             description: 'Time speed massively multiplies Infinitesimal Foam generation',
             cost: new Decimal(1),
             effect() { return temp.acceleron.effect.time.times(100) },
-            effectDisplay() { return `${format(upgradeEffect('acceleron', 11))}x` },
-            pay() { player.acceleron.points = player.acceleron.points.minus(this.cost) }
+            effectDisplay() { return `${format(upgradeEffect('acceleron', 11))}x` }
         },
         12: {
             title: 'Temporal Fluctuation',
             description: 'Minute Acceleration now also applies to Protoversal and Subspatial Foam',
             cost: new Decimal(10),
-            pay() { player.acceleron.points = player.acceleron.points.minus(this.cost) },
             unlocked() { return hasUpgrade('acceleron', 11) }
         },
         13: {
@@ -223,28 +226,24 @@ addLayer("acceleron", {
             cost: new Decimal(15),
             effect() { return fomeTypes.map(type => player.fome.fome[type].expansion).reduce((a,b) => Decimal.plus(a,b)).minus(5) },
             effectDisplay() { return `${format(upgradeEffect('acceleron', 13))}x` },
-            pay() { player.acceleron.points = player.acceleron.points.minus(this.cost) },
             unlocked() { return hasUpgrade('acceleron', 12) }
         },
         14: {
             title: 'Superpositional Acceleration',
             description: 'Gain a new Pion and Spinor Upgrade',
             cost: new Decimal(150),
-            pay() { player.acceleron.points = player.acceleron.points.minus(this.cost) },
             unlocked() { return hasUpgrade('acceleron', 13) }
         },
         15: {
             title: 'Quasi-temporal Superstructures',
             description: 'Consume the past to build the future',
             cost: new Decimal(250),
-            pay() { player.acceleron.points = player.acceleron.points.minus(this.cost) },
             unlocked() { return hasUpgrade('acceleron', 14) }
         },
         21: {
             title: 'Unstable Expansion',
             description: 'Unlock Entropic Enhancements',
             cost: new Decimal(3000),
-            pay() { player.acceleron.points = player.acceleron.points.minus(this.cost) },
             unlocked() { return isLoopFinished(1) }
         },
         22: {
@@ -252,7 +251,6 @@ addLayer("acceleron", {
             description: 'Double maximum Entropy',
             cost: new Decimal(150000),
             effect: new Decimal(2),
-            pay() { player.acceleron.points = player.acceleron.points.minus(this.cost) },
             unlocked() { return isLoopFinished(2) }
         },
         23: {
@@ -260,21 +258,18 @@ addLayer("acceleron", {
             description: `Increase Subspatial Foam gain by ${format(1e4)}x`,
             cost: new Decimal(2e6),
             effect: new Decimal(1e4),
-            pay() { player.acceleron.points = player.acceleron.points.minus(this.cost) },
             unlocked() { return hasUpgrade('acceleron', 22) }
         },
         24: {
             title: 'Cubic Tetration',
             description: 'Gain access to an additional two Entropic Loops (not yet implemented)',
             cost: new Decimal(1e8),
-            pay() { player.acceleron.points = player.acceleron.points.minus(this.cost) },
             unlocked() { return hasUpgrade('acceleron', 23) }
         },
         25: {
             title: 'Temporal Mastery',
             description: 'Unlock Inflatons (not yet implemented)',
             cost: new Decimal(1e30),
-            pay() { player.acceleron.points = player.acceleron.points.minus(this.cost) },
             unlocked() { return hasUpgrade('acceleron', 24) }
         }
     },

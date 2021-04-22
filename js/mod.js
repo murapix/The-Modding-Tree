@@ -12,12 +12,16 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.1",
+	num: "0.3.2",
 	name: "Acceleration",
 }
 
 let changelog = `
 	<h1>Changelog:</h1>
+	<br><br>
+	<h3>v0.3.2</h3>
+	<br>- Fixed Skyrmion and Acceleron upgrades being buyable without enough points
+	<br>- Added Buy All buttons and hotkeys for Skyrmion and Foam layers, and shifted around milestones to unlock them
 	<br><br>
 	<h3>v0.3.1</h3>
 	<br>- Fixed Skyrmions and Foam not generating without Entropic Loop 2
