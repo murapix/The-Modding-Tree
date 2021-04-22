@@ -414,6 +414,99 @@ function loadVue() {
 	`
 	})
 
+	// Custom Components
+
+	Vue.component('loops', {
+		props: ['layer', 'data'],
+		methods: {
+			numBars(layer) {
+				let count = 0
+				for (let id in tmp[layer].loops)
+					if (tmp[layer].loops[id].unlocked)
+						count++
+				return count
+			},
+			totalWidth(layer) {
+				let width = 0
+				for (let id in tmp[layer].loops)
+					if (tmp[layer].loops[id].unlocked)
+						width += tmp[layer].loops[id].width
+			},
+			size(layer) {
+				let size = tmp[layer].loops.maxRadius*2
+				for (let id in tmp[layer].loops)
+					if (tmp[layer].loops[id].unlocked)
+						size = tmp[layer].loops.maxRadius*2 + tmp[layer].loops[id].width
+				return size
+			},
+			radius(layer, id) {
+				if (!tmp[layer].loops[id].unlocked) return 0
+
+				let radius = tmp[layer].loops.maxRadius
+				let found = false
+				let lastWidth = 0
+				for (let bar in tmp[layer].loops) {
+					if (tmp[layer].loops[bar].unlocked) {
+						if (bar == id) {
+							found = true
+							lastWidth = tmp[layer].loops[bar].width
+						}
+						else if (found) {
+							radius -= lastWidth/2
+							radius -= tmp[layer].loops[bar].width/2
+							lastWidth = tmp[layer].loops[bar].width
+						}
+					}
+				}
+				return radius
+			},
+			center(layer) { return this.size(layer)/2 },
+			start(id, bar) { return bar.offset != undefined ? bar.offset : player.acceleron.time.dividedBy(bar.duration).toNumber() % 360 },
+			angle(id, bar) { return bar.angle != undefined ? bar.angle : 
+				(isLoopFinished(id) ? player.acceleron.loops[id].interval.dividedBy(bar.duration).times(360).toNumber()
+									: getLoopProgress(id).dividedBy(bar.max).toNumber() * 360)
+			},
+			end(id, bar) { return this.start(id, bar) + this.angle(id, bar) },
+			arc(layer, data, bar) { return describeArc(this.center(layer), this.center(layer), this.radius(layer, data), this.start(data, bar), this.end(data, bar)) },
+			log(message) { console.log(message) }
+		},
+		template: `
+			<svg v-if="tmp[layer].loops" :height="size(layer)" :width="size(layer)" >
+				<g fill="none">
+					<template v-for="(bar, id) in tmp[layer].loops">
+						<template v-if="typeof bar === 'object' && bar.unlocked">
+							<circle stroke="#242526" :stroke-width="bar.width/2" :cx="center(layer)" :cy="center(layer)" :r="radius(layer, id)" />
+							<template v-if="getLoopProgress(id).gt(0)">
+								<path v-if="angle(id, bar) < 360" style="transition-duration: 0s" stroke-linecap="round" :stroke="bar.stroke" :stroke-width="bar.width" :d="arc(layer, id, bar)" />
+								<circle v-else :stroke="bar.stroke" :stroke-width="bar.width" :cx="center(layer)" :cy="center(layer)" :r="radius(layer, id)" />
+							</template>
+						</template>
+					</template>
+				</g>
+			</svg>
+		`
+	})
+
+	// data = id
+	Vue.component('circleBar', {
+		props: ['layer', 'data'],
+		methods: {
+			bar(layer, data) { return tmp[layer].loops[data] },
+			size(layer, data) { return this.bar(layer, data).radius*2 + this.bar(layer, data).width },
+			center(layer, data) { return this.size(layer, data)/2 },
+			start(layer, data) { return this.bar(layer, data).offset },
+			end(layer, data) { return this.start(layer, data) + this.bar(layer, data).angle },
+			arc(layer, data) { return describeArc(this.center(layer, data), this.center(layer, data), this.bar(layer, data).radius, this.start(layer, data), this.end(layer, data)) }
+		},
+		template: `
+			<svg v-if="tmp[layer].loops && bar(layer, data).unlocked" :height="size(layer, data)" :width="size(layer, data)" >
+				<circle fill="none" stroke="#242526" :stroke-width="bar(layer, data).width/2" :cx="center(layer, data)" :cy="center(layer, data)" :r="bar(layer, data).radius" />
+				<path v-if="bar(layer, data).angle < 360" style="transition-duration: 0s" fill="none" stroke-linecap="round" :stroke="bar(layer, data).stroke" :stroke-width="bar(layer, data).width" :d="arc(layer, data)" />
+				<circle v-else fill="none" :stroke="bar(layer, data).stroke" :stroke-width="bar(layer, data).width" :cx="center(layer, data)" :cy="center(layer, data)" :r="bar(layer, data).radius" />
+			</svg>
+	`
+	})
+
 	// SYSTEM COMPONENTS
 
 	Vue.component('tab-buttons', systemComponents['tab-buttons'])

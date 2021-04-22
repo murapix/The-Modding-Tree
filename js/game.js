@@ -123,6 +123,8 @@ function rowReset(row, layer) {
 	for (lr in ROW_LAYERS[row]){
 		if(layers[lr].doReset) {
 
+			if (player[lr].activeChallenge != null && layers[lr].challenges[player[lr].activeChallenge].onExit)
+				layers[lr].challenges[player[lr].activeChallenge].onExit()
 			player[lr].activeChallenge = null // Exit challenges on any row reset on an equal or higher row
 			run(layers[lr].doReset, layers[lr], layer)
 		}
@@ -254,9 +256,13 @@ function startChallenge(layer, x) {
 		player[layer].activeChallenge = null
 	} else {
 		enter = true
-	}	
+	}
+	
 	doReset(layer, true)
-	if(enter) player[layer].activeChallenge = x
+	if(enter) {
+		player[layer].activeChallenge = x
+		if (layers[layer].challenges[x].onEnter) run(layers[layer].challenges[x].onEnter, layers[layer].challenges[x])
+	}
 
 	updateChallengeTemp(layer)
 }
@@ -292,6 +298,7 @@ function completeChallenge(layer, x) {
 	
 	let completions = canCompleteChallenge(layer, x)
 	if (!completions){
+		 if (layers[layer].challenges[x].onExit) run(layers[layer].challenges[x].onExit, layers[layer].challenges[x])
 		 player[layer].activeChallenge = null
 		return
 	}

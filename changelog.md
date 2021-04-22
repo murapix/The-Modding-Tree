@@ -1,7 +1,13 @@
 # Universal Reconstruction changelog:
 
-## v0.0.2 - Formation
-- Added Infitesimal through Quantum Foam boosts and buyables
+## v0.3.0 - Acceleration
+- Started work on Inflatons
+- Implemented first half of Accelerons
+- Deflated higher Skyrmion and Foam amounts
+- Minor rebalance to shift end-of-Foam to intended route
+
+## v0.2.0 - Formation
+- Added Infinitesimal through Quantum Foam boosts and buyables
 - Added Foam milestones
 - Rebalanced Foam formation levels
 - Rebalanced Pion and Spinor α and γ buyables
@@ -9,8 +15,8 @@
 - Added Pion and Spinor autobuyer upgrades
 - Barebones third row added - no content yet
 
-## v0.0.1 - Creation
+## v0.1.0 - Creation
 - Added two layers, Skyrmion and Foam
 - Pre-foam Skyrmion complete
 - Protoversal Foam sub-layer and Skyrmion buyables complete
-- Added framework for Infitesimal through Quantum Foam sub-layers
+- Added framework for Infinitesimal through Quantum Foam sub-layers

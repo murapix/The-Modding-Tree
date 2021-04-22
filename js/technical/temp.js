@@ -7,7 +7,7 @@ var NaNalert = false;
 var activeFunctions = [
 	"startData", "onPrestige", "doReset", "update", "automate",
 	"buy", "buyMax", "respec", "onComplete", "onPurchase", "onPress", "onClick", "masterButtonPress",
-	"sellOne", "sellAll", "pay",
+	"sellOne", "sellAll", "pay", "onEnter", "onExit",
 ]
 
 var noCall = doNotCallTheseFunctionsEveryTick

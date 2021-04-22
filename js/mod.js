@@ -12,15 +12,21 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0.2",
-	name: "Formation",
+	num: "0.3.0",
+	name: "Acceleration",
 }
 
 let changelog = `
 	<h1>Changelog:</h1>
 	<br><br>
-	<h3>v0.0.2 - Formation</h3>
-	<br>- Added Infitesimal through Quantum Foam boosts and buyables
+	<h3>v0.3.0 - Acceleration</h3>
+	<br>- Started work on Inflatons
+	<br>- Implemented first half of Accelerons
+	<br>- Deflated higher Skyrmion and Foam amounts
+	<br>- Minor rebalance to shift end-of-Foam to intended route
+	<br><br>
+	<h3>v0.2.0 - Formation</h3>
+	<br>- Added Infinitesimal through Quantum Foam boosts and buyables
 	<br>- Added Foam milestones
 	<br>- Rebalanced Foam formation levels
 	<br>- Rebalanced Pion and Spinor α and γ buyables
@@ -28,18 +34,18 @@ let changelog = `
 	<br>- Added Pion and Spinor autobuyer upgrades
 	<br>- Barebones third row added - no content yet
 	<br><br>
-	<h3>v0.0.1 - Creation</h3>
+	<h3>v0.1.0 - Creation</h3>
 	<br>- Added two layers, Skyrmion and Foam
 	<br>- Pre-foam Skyrmion complete
 	<br>- Protoversal Foam sub-layer and Skyrmion buyables complete
-	<br>- Added framework for Infitesimal through Quantum Foam sub-layers
+	<br>- Added framework for Infinitesimal through Quantum Foam sub-layers
 `
 
 let winText = `Congratulations! You have reached the end and beaten this game, for now...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
-var doNotCallTheseFunctionsEveryTick = ['displayBoost', 'buyBuyable', 'getTotalBoost', 'buyableAmount', 'createBuyable']
+var doNotCallTheseFunctionsEveryTick = ['displayBoost', 'buyBuyable', 'getTotalBoost', 'buyableAmount', 'createBuyable', 'progressEffect', 'intervalEffect', 'finishEffect']
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)
@@ -65,12 +71,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	"Current Endgame: 1 Acceleron or Inflaton"
+	"Current Endgame: 10,000,000 Accelerons"
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.acceleron.points.gte(1) || player.inflaton.points.gte(1)
+	return player.acceleron.points.gte(1e7)
 }
 
 // Less important things beyond this point!
