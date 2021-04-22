@@ -1,5 +1,8 @@
 # Universal Reconstruction changelog:
 
+## v0.3.1
+- Fixed Skyrmions and Foam not generating without Entropic Loop 2
+
 ## v0.3.0 - Acceleration
 - Started work on Inflatons
 - Implemented first half of Accelerons

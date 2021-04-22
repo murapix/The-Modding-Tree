@@ -174,7 +174,7 @@ addLayer("fome", {
     update(delta) {
         if (!temp.fome.layerShown) return
 
-        delta = Decimal.times(delta, temp.acceleron.effect)
+        delta = Decimal.times(delta, temp.acceleron.effect.time)
         
         let gain = temp.fome.effect.gain.total
 

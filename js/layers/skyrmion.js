@@ -91,7 +91,7 @@ addLayer("skyrmion", {
     }},
 
     update(delta) {
-        delta = Decimal.times(delta, temp.acceleron.effect)
+        delta = Decimal.times(delta, temp.acceleron.effect.time)
 
         let eff = temp.skyrmion.effect
         player.skyrmion.pion.points = player.skyrmion.pion.points.plus(eff.pion.gen.times(delta)).max(0)

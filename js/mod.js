@@ -12,12 +12,15 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.0",
+	num: "0.3.1",
 	name: "Acceleration",
 }
 
 let changelog = `
 	<h1>Changelog:</h1>
+	<br><br>
+	<h3>v0.3.1</h3>
+	<br>- Fixed Skyrmions and Foam not generating without Entropic Loop 2
 	<br><br>
 	<h3>v0.3.0 - Acceleration</h3>
 	<br>- Started work on Inflatons
