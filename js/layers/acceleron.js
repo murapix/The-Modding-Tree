@@ -174,33 +174,28 @@ addLayer("acceleron", {
     milestones: {
         0: {
             requirementDescription: "1 Total Acceleron",
-            effectDescription: "Unlock the Foam Buy All button",
+            effectDescription: "Unlock the Foam Buy All button, and enlarging Protoversal Foam no longer consumes Foam",
             done() { return player.acceleron.total.gte(1) }
         },
         1: {
             requirementDescription: "4 Total Accelerons",
-            effectDescription: "Enlarging Protoversal Foam no longer consumes Foam",
+            effectDescription: "Enlarging Infinitesimal Foam no longer consumes Foam",
             done() { return player.acceleron.total.gte(4) }
         },
         2: {
             requirementDescription: "16 Total Accelerons",
-            effectDescription: "Enlarging Infinitesimal Foam no longer consumes Foam",
+            effectDescription: "Enlarging Subspatial Foam no longer consumes Foam",
             done() { return player.acceleron.total.gte(16) }
         },
         3: {
             requirementDescription: "64 Total Accelerons",
-            effectDescription: "Enlarging Subspatial Foam no longer consumes Foam",
+            effectDescription: "Enlarging Subplanck Foam no longer consumes Foam",
             done() { return player.acceleron.total.gte(64) }
         },
         4: {
             requirementDescription: "256 Total Accelerons",
-            effectDescription: "Enlarging Subplanck Foam no longer consumes Foam",
-            done() { return player.acceleron.total.gte(256) }
-        },
-        5: {
-            requirementDescription: "1024 Total Accelerons",
             effectDescription: "Enlarging Quantum Foam no longer consumes Foam",
-            done() { return player.acceleron.total.gte(1024) }
+            done() { return player.acceleron.total.gte(256) }
         }
     },
 

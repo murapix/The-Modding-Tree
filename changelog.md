@@ -1,5 +1,8 @@
 # Universal Reconstruction changelog:
 
+## v0.3.3
+- Merge first two Acceleron milestones
+
 ## v0.3.2
 - Fixed Skyrmion and Acceleron upgrades being buyable without enough points
 - Added Buy All buttons and hotkeys for Skyrmion and Foam layers, and shifted around milestones to unlock them
