@@ -5,6 +5,10 @@ Bugfixes and TODO:
 - Make some actually interesting Quantum boosts
 - Shift power around a bit so Quantum Condense happens *after* Subspatial 2 - probably done?
 
+- Scrap current Entropic Enhancements
+- Replace with "pick an upgrade" rows, a la current WoW Talents
+    - Columns: flat prod/prod based on acceleron/time speed/build cost/build speed/prod based on time cubes (unlocked later)
+
 -----
 
 Row 3 - Pick one at first

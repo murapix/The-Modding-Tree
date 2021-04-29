@@ -18,6 +18,7 @@ function startPlayerBase() {
 		keepGoing: false,
 		hasNaN: false,
 		hideChallenges: false,
+		splitMode: "flexible",
 		showStory: true,
 		points: modInfo.initialStartPoints,
 		subtabs: {},

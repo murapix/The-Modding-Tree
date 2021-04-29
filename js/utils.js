@@ -406,3 +406,5 @@ function run(func, target, args = null) {
 
 // Mod-specific functions
 function defaultUpgradeEffect(layer, id, def = decimalOne) { return hasUpgrade(layer, id) ? upgradeEffect(layer, id) : def }
+
+function colored(layer, text) { return `<h2 style='color:${layers[layer].color};text-shadow:${layers[layer].color} 0px 0px 10px;'>${text}</h2>` }

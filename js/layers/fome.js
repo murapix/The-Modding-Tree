@@ -24,7 +24,64 @@ addLayer("fome", {
     doReset(layer) {
         switch (layer) {
             case "acceleron":
+                let indices = {}
+                let boosts = {}
+                let buyables = {}
+
+                if (hasMilestone('acceleron', 0)) {
+                    indices.protoversal = player.fome.boosts.protoversal.index
+                    boosts.protoversal = []
+                    for(let i = 0; i < 5; i++)
+                        boosts.protoversal[i] = player.fome.boosts.protoversal.boosts[i]
+                    for (let i = 11; i <= 13; i++)
+                        buyables[i] = getBuyableAmount('fome', i)
+                }
+                if (hasMilestone('acceleron', 1)) {
+                    indices.infinitesimal = player.fome.boosts.infinitesimal.index
+                    boosts.infinitesimal = []
+                    for(let i = 0; i < 5; i++)
+                        boosts.infinitesimal[i] = player.fome.boosts.infinitesimal.boosts[i]
+                    for (let i = 21; i <= 23; i++)
+                        buyables[i] = getBuyableAmount('fome', i)
+                }
+                if (hasMilestone('acceleron', 2)) {
+                    indices.subspatial = player.fome.boosts.subspatial.index
+                    boosts.subspatial = []
+                    for(let i = 0; i < 5; i++)
+                        boosts.subspatial[i] = player.fome.boosts.subspatial.boosts[i]
+                    for (let i = 31; i <= 33; i++)
+                        buyables[i] = getBuyableAmount('fome', i)
+                }
+                if (hasMilestone('acceleron', 4)) {
+                    indices.subplanck = player.fome.boosts.subplanck.index
+                    boosts.subplanck = []
+                    for(let i = 0; i < 5; i++)
+                        boosts.subplanck[i] = player.fome.boosts.subplanck.boosts[i]
+                    for (let i = 41; i <= 43; i++)
+                        buyables[i] = getBuyableAmount('fome', i)
+                }
+                if (hasMilestone('acceleron', 5)) {
+                    indices.quantum = player.fome.boosts.quantum.index
+                    boosts.quantum = []
+                    for(let i = 0; i < 5; i++)
+                        boosts.quantum[i] = player.fome.boosts.quantum.boosts[i]
+                    for (let i = 51; i <= 53; i++)
+                        buyables[i] = getBuyableAmount('fome', i)
+                }
+
                 layerDataReset('fome', ['milestones'])
+
+                // for (let fome of fomeTypes)
+                //     player.fome.fome[fome].expansion = decimalZero
+                // player.fome.fome.protoversal.expansion = decimalOne
+
+                for (let id in buyables)
+                    setBuyableAmount('fome', id, buyables[id])
+                for (let fome in indices)
+                    player.fome.boosts[fome].index = indices[fome]
+                for (let fome in boosts)
+                    for(let i = 0; i < 5; i++)
+                        player.fome.boosts[fome].boosts[i] = boosts[fome][i]
                 break
             default:
                 break
@@ -41,28 +98,20 @@ addLayer("fome", {
         expansionGain = {}
         totalGain = {}
 
-        for (let fome of fomeTypes) {
-            totalBoosts[fome] = {}
-            bonusBoosts[fome] = {}
-            for(let index = 0; index < 5; index++) {
-                totalBoosts[fome][index] = getCurrentFomeBoost(fome, index)
-                bonusBoosts[fome][index] = layers.fome.bonusBoosts[fome][index]()
-            }
-        }
+        let skyrmions = Decimal.plus(player.skyrmion.points, fomeEffect('subspatial', 3))
 
-        let skyrmions = Decimal.plus(player.skyrmion.points, totalBoosts.subspatial[3])
+        baseGain.protoversal = player.fome.fome.protoversal.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 121)).times(buyableEffect('skyrmion', 122)).times(buyableEffect('skyrmion', 224)).times(buyableEffect('skyrmion', 131)).times(defaultUpgradeEffect('acceleron', 11)).times(player.acceleron.fomeBoost) : decimalZero
+        baseGain.infinitesimal = player.fome.fome.infinitesimal.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 222)).times(buyableEffect('skyrmion', 224)).times(buyableEffect('skyrmion', 132)).times(buyableEffect('skyrmion', 232)).times(defaultUpgradeEffect('acceleron', 11)).times(player.acceleron.fomeBoost) : decimalZero,
+        baseGain.subspatial = player.fome.fome.subspatial.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 123)).times(buyableEffect('skyrmion', 224)).times(buyableEffect('skyrmion', 231)).times(defaultUpgradeEffect('acceleron', 11)).times(defaultUpgradeEffect('acceleron', 23)).times(player.acceleron.fomeBoost) : decimalZero,
+        baseGain.subplanck = player.fome.fome.subplanck.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 224)).times(player.acceleron.fomeBoost) : decimalZero,
+        baseGain.quantum = player.fome.fome.quantum.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 224)).times(player.acceleron.fomeBoost) : decimalZero
 
-        baseGain.protoversal = player.fome.fome.protoversal.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 121)).times(buyableEffect('skyrmion', 122)).times(buyableEffect('skyrmion', 224)).times(buyableEffect('skyrmion', 131)).times(hasUpgrade('acceleron', 12) ? defaultUpgradeEffect('acceleron', 11) : decimalOne) : new Decimal(0)
-        baseGain.infinitesimal = player.fome.fome.infinitesimal.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 222)).times(buyableEffect('skyrmion', 224)).times(buyableEffect('skyrmion', 132)).times(buyableEffect('skyrmion', 232)).times(defaultUpgradeEffect('acceleron', 11)) : new Decimal(0),
-        baseGain.subspatial = player.fome.fome.subspatial.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 123)).times(buyableEffect('skyrmion', 224)).times(buyableEffect('skyrmion', 231)).times(hasUpgrade('acceleron', 12) ? defaultUpgradeEffect('acceleron', 11) : decimalOne).times(defaultUpgradeEffect('acceleron', 23)) : new Decimal(0),
-        baseGain.subplanck = player.fome.fome.subplanck.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 224)) : new Decimal(0),
-        baseGain.quantum = player.fome.fome.quantum.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 224)) : new Decimal(0)
-
-        boostGain.protoversal = totalBoosts.protoversal[0].times(buyableEffect('skyrmion', 221)).plus(1)
-        boostGain.infinitesimal = totalBoosts.infinitesimal[0].times(buyableEffect('skyrmion', 133)).times(buyableEffect('skyrmion', 134)).plus(1)
-        boostGain.subspatial = totalBoosts.subspatial[0].times(buyableEffect('skyrmion', 133)).plus(1)
-        boostGain.subplanck = totalBoosts.subplanck[0].times(buyableEffect('skyrmion', 233)).times(buyableEffect('skyrmion', 133)).plus(1)
-        boostGain.quantum = totalBoosts.quantum[0].times(buyableEffect('skyrmion', 133)).plus(1)
+        boostGain.protoversal = fomeEffect('protoversal', 0)
+        boostGain.infinitesimal = fomeEffect('infinitesimal', 0)
+        boostGain.subspatial = fomeEffect('subspatial', 0)
+        boostGain.subplanck = fomeEffect('subplanck', 0)
+        boostGain.quantum = fomeEffect('quantum', 0)
+        boostGain.quantum2 = fomeEffect('quantum', 2)
 
         enlargeGain.protoversal = buyableEffect('fome', 11).times(buyableEffect('fome', 12)).times(buyableEffect('fome', 13))
         enlargeGain.infinitesimal = buyableEffect('fome', 21).times(buyableEffect('fome', 22)).times(buyableEffect('fome', 23))
@@ -73,11 +122,11 @@ addLayer("fome", {
         for (let fome of ['protoversal', 'infinitesimal', 'subspatial', 'subplanck', 'quantum'])
             expansionGain[fome] = player.fome.fome[fome].expansion.cbrt()
 
-        totalGain.protoversal = baseGain.protoversal.times(boostGain.protoversal).times(boostGain.quantum).times(enlargeGain.protoversal).pow(expansionGain.protoversal),
-        totalGain.infinitesimal = baseGain.infinitesimal.times(boostGain.infinitesimal).times(boostGain.quantum).times(enlargeGain.infinitesimal).pow(expansionGain.infinitesimal),
-        totalGain.subspatial = baseGain.subspatial.times(boostGain.subspatial).times(boostGain.quantum).times(enlargeGain.subspatial).pow(expansionGain.subspatial),
-        totalGain.subplanck = baseGain.subplanck.times(boostGain.subplanck).times(boostGain.quantum).times(enlargeGain.subplanck).pow(expansionGain.subplanck),
-        totalGain.quantum = baseGain.quantum.times(boostGain.quantum).times(enlargeGain.quantum).pow(expansionGain.quantum)
+        totalGain.protoversal = baseGain.protoversal.times(boostGain.protoversal).times(boostGain.quantum).times(boostGain.quantum2).times(enlargeGain.protoversal).pow(expansionGain.protoversal),
+        totalGain.infinitesimal = baseGain.infinitesimal.times(boostGain.infinitesimal).times(boostGain.quantum).times(boostGain.quantum2).times(enlargeGain.infinitesimal).pow(expansionGain.infinitesimal),
+        totalGain.subspatial = baseGain.subspatial.times(boostGain.subspatial).times(boostGain.quantum).times(boostGain.quantum2).times(enlargeGain.subspatial).pow(expansionGain.subspatial),
+        totalGain.subplanck = baseGain.subplanck.times(boostGain.subplanck).times(boostGain.quantum).times(boostGain.quantum2).times(enlargeGain.subplanck).pow(expansionGain.subplanck),
+        totalGain.quantum = baseGain.quantum.times(boostGain.quantum).times(enlargeGain.quantum).times(boostGain.quantum2).pow(expansionGain.quantum)
 
         return {
             boosts: {
@@ -94,78 +143,78 @@ addLayer("fome", {
     
     startData() { return {
         unlocked: false,
-		points: new Decimal(0),
+		points: decimalZero,
         fome: {
             protoversal: {
-                points: new Decimal(0),
-                expansion: new Decimal(1)
+                points: decimalZero,
+                expansion: decimalOne
             },
             infinitesimal: {
-                points: new Decimal(0),
-                expansion: new Decimal(0)
+                points: decimalZero,
+                expansion: decimalZero
             },
             subspatial: {
-                points: new Decimal(0),
-                expansion: new Decimal(0)
+                points: decimalZero,
+                expansion: decimalZero
             },
             subplanck: {
-                points: new Decimal(0),
-                expansion: new Decimal(0)
+                points: decimalZero,
+                expansion: decimalZero
             },
             quantum: {
-                points: new Decimal(0),
-                expansion: new Decimal(0)
+                points: decimalZero,
+                expansion: decimalZero
             }
         },
         boosts: {
             protoversal: {
                 index: 0,
                 boosts: [
-                    new Decimal(0),
-                    new Decimal(0),
-                    new Decimal(0),
-                    new Decimal(0),
-                    new Decimal(0)
+                    decimalZero,
+                    decimalZero,
+                    decimalZero,
+                    decimalZero,
+                    decimalZero
                 ]
             },
             infinitesimal: {
                 index: 0,
                 boosts: [
-                    new Decimal(0),
-                    new Decimal(0),
-                    new Decimal(0),
-                    new Decimal(0),
-                    new Decimal(0)
+                    decimalZero,
+                    decimalZero,
+                    decimalZero,
+                    decimalZero,
+                    decimalZero
                 ]
             },
             subspatial: {
                 index: 0,
                 boosts: [
-                    new Decimal(0),
-                    new Decimal(0),
-                    new Decimal(0),
-                    new Decimal(0),
-                    new Decimal(0)
+                    decimalZero,
+                    decimalZero,
+                    decimalZero,
+                    decimalZero,
+                    decimalZero
                 ]
             },
             subplanck: {
                 index: 0,
                 boosts: [
-                    new Decimal(0),
-                    new Decimal(0),
-                    new Decimal(0),
-                    new Decimal(0),
-                    new Decimal(0)
+                    decimalZero,
+                    decimalZero,
+                    decimalZero,
+                    decimalZero,
+                    decimalZero
                 ]
             },
             quantum: {
                 index: 0,
                 boosts: [
-                    new Decimal(0),
-                    new Decimal(0),
-                    new Decimal(0),
-                    new Decimal(0),
-                    new Decimal(0)
+                    decimalZero,
+                    decimalZero,
+                    decimalZero,
+                    decimalZero,
+                    decimalZero
                 ]
             }
         }
@@ -221,42 +270,142 @@ addLayer("fome", {
         }
     },
 
-    bonusBoosts: {
-        protoversal: [
-            () => getTotalFomeBoost('protoversal', 4).times(0.1).plus(getTotalFomeBoost('subspatial', 2).times(0.1)).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
-            () => getTotalFomeBoost('protoversal', 4).times(0.1).plus(getTotalFomeBoost('subspatial', 2).times(0.1)).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
-            () => getTotalFomeBoost('protoversal', 4).times(0.1).plus(getTotalFomeBoost('subspatial', 2).times(0.1)).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
-            () => getTotalFomeBoost('protoversal', 4).times(0.1).plus(getTotalFomeBoost('subspatial', 2).times(0.1)).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
-            () => getTotalFomeBoost('subspatial', 2).times(0.1).plus(getTotalFomeBoost('quantum', 4).times(0.1))
-        ],
-        infinitesimal: [
-            () => getTotalFomeBoost('subspatial', 2).times(0.1).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
-            () => getTotalFomeBoost('subspatial', 2).times(0.1).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
-            () => getTotalFomeBoost('subspatial', 2).times(0.1).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
-            () => getTotalFomeBoost('subspatial', 2).times(0.1).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
-            () => getTotalFomeBoost('subspatial', 2).times(0.1).plus(getTotalFomeBoost('quantum', 4).times(0.1))
-        ],
-        subspatial: [
-            () => getTotalFomeBoost('subspatial', 2).times(0.1).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
-            () => getTotalFomeBoost('subspatial', 2).times(0.1).plus(getTotalFomeBoost('quantum', 4).times(0.1)),
-            () => getTotalFomeBoost('quantum', 4).times(0.1),
-            () => getTotalFomeBoost('quantum', 4).times(0.1),
-            () => getTotalFomeBoost('quantum', 4).times(0.1)
-        ],
-        subplanck: [
-            () => getTotalFomeBoost('quantum', 4).times(0.1),
-            () => getTotalFomeBoost('quantum', 4).times(0.1),
-            () => getTotalFomeBoost('quantum', 4).times(0.1),
-            () => getTotalFomeBoost('quantum', 4).times(0.1),
-            () => getTotalFomeBoost('quantum', 4).times(0.1)
-        ],
-        quantum: [
-            () => getTotalFomeBoost('quantum', 4).times(0.1),
-            () => getTotalFomeBoost('quantum', 4).times(0.1),
-            () => getTotalFomeBoost('quantum', 4).times(0.1),
-            () => getTotalFomeBoost('quantum', 4).times(0.1),
-            () => new Decimal(0)
-        ]
+    boosts: {
+        protoversal: {
+            0: createFomeBoost('protoversal', 0,
+                (effect) => `Multiply the generation of Protoversal Foam by ${format(effect)}x`,
+                (total) => total.times(buyableEffect('skyrmion', 221)).plus(1),
+                () => fomeEffect('protoversal', 4).plus(fomeEffect('subspatial', 2)).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            1: createFomeBoost('protoversal', 1,
+                (effect) => `Gain ${format(effect)} bonus Pion and Spinor Upgrade α levels`,
+                (total) => total,
+                () => fomeEffect('protoversal', 4).plus(fomeEffect('subspatial', 2)).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            2: createFomeBoost('protoversal', 2,
+                (effect) => `Gain ${format(effect)} bonus Pion and Spinor Upgrade β levels`,
+                (total) => total.sqrt(),
+                () => fomeEffect('protoversal', 4).plus(fomeEffect('subspatial', 2)).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            3: createFomeBoost('protoversal', 3,
+                (effect) => `Gain ${format(effect)} bonus Pion and Spinor Upgrade γ levels`,
+                (total) => total,
+                () => fomeEffect('protoversal', 4).plus(fomeEffect('subspatial', 2)).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            4: createFomeBoost('protoversal', 4,
+                (effect) => `Add ${format(effect)} levels to all above boosts`,
+                (total) => total.times(0.1),
+                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+            )
+        },
+        infinitesimal: {
+            0: createFomeBoost('infinitesimal', 0,
+                (effect) => `Multiply the generation of Infinitesimal Foam by ${format(effect)}x`,
+                (total) => total.times(buyableEffect('skyrmion', 133)).times(buyableEffect('skyrmion', 134)).plus(1),
+                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            1: createFomeBoost('infinitesimal', 1,
+                (effect) => `Increase Pion and Spinor gain by ${format(effect.minus(1).times(100))}%`,
+                (total) => total.times(0.5).plus(1),
+                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            2: createFomeBoost('infinitesimal', 2,
+                (effect) => `Reduce Pion and Spinor Upgrade α costs by ${format(Decimal.sub(1, effect).times(100))}%`,
+                (total) => Decimal.pow(0.8, total),
+                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            3: createFomeBoost('infinitesimal', 3,
+                (effect) => `Increase Skyrmion gain by ${format(effect.minus(1).times(100))}%`,
+                (total) => total.times(0.5).plus(1),
+                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            4: createFomeBoost('infinitesimal', 4,
+                (effect) => `Reduce Pion and Spinor Upgrade γ costs by ${format(Decimal.sub(1, effect).times(100))}%`,
+                (total) => Decimal.pow(0.8, total),
+                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+            )
+        },
+        subspatial: {
+            0: createFomeBoost('subspatial', 0,
+                (effect) => `Multiply the generation of Subspatial Foam by ${format(effect)}x`,
+                (total) => total.times(buyableEffect('skyrmion', 133)).plus(1),
+                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            1: createFomeBoost('subspatial', 1,
+                (effect) => `Decrease effective Pion and Spinor upgrade counts by ${format(effect)}`,
+                (total) => total,
+                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            2: createFomeBoost('subspatial', 2,
+                (effect) => `Add ${format(effect)} levels to all above boosts`,
+                (total) => total.times(0.1),
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            3: createFomeBoost('subspatial', 3,
+                (effect) => `Increase effective Skyrmion count by ${format(effect)}`,
+                (total) => total,
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            4: createFomeBoost('subspatial', 4,
+                (effect) => `Pion and Spinor upgrades cost as if you had ${format(effect)} fewer`,
+                (total) => total.times(0.25),
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+            )
+        },
+        subplanck: {
+            0: createFomeBoost('subplanck', 0,
+                (effect) => `Multiply the generation of Subplanck Foam by ${format(effect)}x`,
+                (total) => total.times(buyableEffect('skyrmion', 233)).times(buyableEffect('skyrmion', 133)).plus(1),
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            1: createFomeBoost('subplanck', 1,
+                (effect) => `Gain ${format(effect)} bonus Pion and Spinor Upgrade δ levels`,
+                (total) => total.times(0.5),
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            2: createFomeBoost('subplanck', 2,
+                (effect) => `Gain ${format(effect)} bonus Pion and Spinor Upgrade ε levels`,
+                (total) => total.times(0.5),
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            3: createFomeBoost('subplanck', 3,
+                (effect) => `Gain ${format(effect)} bonus Pion and Spinor Upgrade ζ levels`,
+                (total) => total.times(0.5),
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            4: createFomeBoost('subplanck', 4,
+                (effect) => `Gain ${format(effect)} bonus Pion and Spinor Upgrade η levels`,
+                (total) => total.times(0.5),
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+        },
+        quantum: {
+            0: createFomeBoost('quantum', 0,
+                (effect) => `Multiply the generation of all Foam types by ${format(effect)}x`,
+                (total) => total.times(buyableEffect('skyrmion', 133)).plus(1),
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            1: createFomeBoost('quantum', 1,
+                (effect) => `Reduce the Pion and Spinor cost nerf exponent by ${format(Decimal.sub(1, effect).times(100))}%`,
+                (total) => Decimal.pow(0.975, total),
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            2: createFomeBoost('quantum', 2,
+                (effect) => `Multiply the generation of all Foam types again by ${format(effect)}x`,
+                (total) => total.times(boostGain.quantum.dividedBy(10)).plus(1),
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            3: createFomeBoost('quantum', 3,
+                (effect) => `Gain ${format(effect)} bonus Pion and Spinor Upgrade θ, ι, and κ levels`,
+                (total) => total.times(0.25),
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+            ),
+            4: createFomeBoost('quantum', 4,
+                (effect) => `Add ${format(effect)} levels to all above boosts`,
+                (total) => total.times(0.1),
+                () => defaultUpgradeEffect('timecube', 13, 0)
+            ),
+        }
     },
 
     buyables: {
@@ -378,7 +527,7 @@ addLayer("fome", {
             unlocked() { return player.fome.fome.subplanck.expansion.gte(1) },
             canAfford() { return player.fome.fome.subplanck.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 3)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 4)) }
         },
         42: {
             cost() { return new Decimal(25).times(Decimal.pow(9, getBuyableAmount('fome', this.id).pow(1.15))) },
@@ -386,7 +535,7 @@ addLayer("fome", {
             unlocked() { return player.fome.fome.subplanck.expansion.gte(1) },
             canAfford() { return player.fome.fome.subplanck.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 3)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 4)) }
         },
         43: {
             cost() { return new Decimal(90).times(Decimal.pow(11, getBuyableAmount('fome', this.id).pow(1.15))) },
@@ -394,7 +543,7 @@ addLayer("fome", {
             unlocked() { return player.fome.fome.subplanck.expansion.gte(1) },
             canAfford() { return player.fome.fome.subplanck.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 3)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 4)) }
         },
         44: {
             cost() { return Decimal.pow(10, getBuyableAmount('fome', this.id).sqr().plus(1).times(7)).dividedBy(1) },
@@ -417,7 +566,7 @@ addLayer("fome", {
             unlocked() { return player.fome.fome.quantum.expansion.gte(1) },
             canAfford() { return player.fome.fome.quantum.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 4)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 5)) }
         },
         52: {
             cost() { return new Decimal(30).times(Decimal.pow(10, getBuyableAmount('fome', this.id).pow(1.15))) },
@@ -425,7 +574,7 @@ addLayer("fome", {
             unlocked() { return player.fome.fome.quantum.expansion.gte(1) },
             canAfford() { return player.fome.fome.quantum.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 4)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 5)) }
         },
         53: {
             cost() { return new Decimal(100).times(Decimal.pow(12, getBuyableAmount('fome', this.id).pow(1.15))) },
@@ -433,7 +582,7 @@ addLayer("fome", {
             unlocked() { return player.fome.fome.quantum.expansion.gte(1) },
             canAfford() { return player.fome.fome.quantum.points.gte(temp.fome.buyables[this.id].cost) },
             effect() { return getBuyableAmount('fome', this.id).plus(1) },
-            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 4)) }
+            buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 5)) }
         },
         54: {
             cost() { return Decimal.pow(10, getBuyableAmount('fome', this.id).sqr().plus(1).times(7)).times(1e2) },
@@ -459,49 +608,38 @@ addLayer("fome", {
 
     milestones: {
         0: {
-            requirementDescription: "Condense your Infinitesimal Foam",
-            effectDescription: "Unlock the Pion and Spinor Buy All button",
-            done() { return player.fome.fome.subspatial.expansion.gte(1) }
-        },
-        1: {
-            requirementDescription: "Re-form your Protoversal Foam",
-            effectDescription: "Automatically enlarge your Protoversal Foam",
-            unlocked() { return player.fome.fome.protoversal.expansion.gte(1) },
-            done() { return player.fome.fome.protoversal.expansion.gt(1) },
+            requirementDescription: "Re-form your Protovesral Foam",
+            effectDescription: "Unlock the Pion and Spinor Buy All button<br>Automatically enlarge your Protoversal Foam",
+            done() { return player.fome.fome.protoversal.expansion.gte(2) },
             toggles: [['fome', 'autoProtoversal']]
         },
-        2: {
-            requirementDescription: "Re-form your Infinitesimal Foam",
+        1: {
+            requirementDescription: "Obtain Protoversal Foam<sup>3</sup>",
             effectDescription: "Automatically enlarge your Infinitesimal Foam",
-            unlocked() { return player.fome.fome.infinitesimal.expansion.gte(1) },
-            done() { return player.fome.fome.infinitesimal.expansion.gt(1) },
+            done() { return player.fome.fome.protoversal.expansion.gte(3) },
             toggles: [['fome', 'autoInfinitesimal']]
         },
-        3: {
-            requirementDescription: "Re-form your Subspatial Foam",
+        2: {
+            requirementDescription: "Obtain Protoversal Foam<sup>4</sup>",
             effectDescription: "Automatically enlarge your Subspatial Foam",
-            unlocked() { return player.fome.fome.subspatial.expansion.gte(1) },
-            done() { return player.fome.fome.subspatial.expansion.gt(1) },
+            done() { return player.fome.fome.protoversal.expansion.gte(4) },
             toggles: [['fome', 'autoSubspatial']]
         },
-        4: {
-            requirementDescription: "Re-form your Subplanck Foam",
+        3: {
+            requirementDescription: "Obtain Protoversal Foam<sup>5</sup>",
             effectDescription: "Automatically enlarge your Subplanck Foam",
-            unlocked() { return player.fome.fome.subplanck.expansion.gte(1) },
-            done() { return player.fome.fome.subplanck.expansion.gt(1) },
+            done() { return player.fome.fome.protoversal.expansion.gte(5) },
             toggles: [['fome', 'autoSubplanck']]
         },
-        5: {
-            requirementDescription: "Re-form your Quantum Foam",
+        4: {
+            requirementDescription: "Obtain Protoversal Foam<sup>6</sup>",
             effectDescription: "Automatically enlarge your Quantum Foam",
-            unlocked() { return player.fome.fome.quantum.expansion.gte(1) },
-            done() { return player.fome.fome.quantum.expansion.gt(1) },
+            done() { return player.fome.fome.protoversal.expansion.gte(6) },
             toggles: [['fome', 'autoQuantum']]
         },
-        6: {
-            requirementDescription: "Obtain Quantum Foam<sup>3</sup>",
+        5: {
+            requirementDescription: "Obtain Quantum Foam<sup>2</sup>",
             effectDescription: "Automatically re-form your Foam",
-            unlocked() { return hasMilestone('fome', 4) },
             done() { return player.fome.fome.quantum.expansion.gte(3) },
             toggles: [['fome', 'autoReform']]
         }
@@ -515,7 +653,7 @@ addLayer("fome", {
             onClick() {
                 for (let row = 10; row <= 50; row += 10)
                     for (let col = 1; col <= 4; col++)
-                        if (temp.fome.buyables[row+col].canAfford) buyBuyable('fome', row+col)
+                        while (temp.fome.buyables[row+col].canAfford) buyBuyable('fome', row+col)
             },
             style: {
                 height: "30px",
@@ -571,39 +709,38 @@ addLayer("fome", {
             },
             "Boosts": {
                 unlocked() { return player.fome.boosts.protoversal.boosts[0].gte(1) },
-                content: [
+                content() { return temp.fome ? [
                     "blank",
-                    ["display-text", () => displayFomeBoost(0, 0, `Multiply the generation of Protoversal Foam by ${format(temp.fome.effect.gain.boost.protoversal)}x`)],
-                    ["display-text", () => displayFomeBoost(0, 1, `Gain ${format(temp.fome.effect.boosts.total.protoversal[1])} bonus Pion and Spinor Upgrade α levels`)],
-                    ["display-text", () => displayFomeBoost(0, 2, `Gain ${format(temp.fome.effect.boosts.total.protoversal[2])} bonus Pion and Spinor Upgrade β levels`)],
-                    ["display-text", () => displayFomeBoost(0, 3, `Gain ${format(temp.fome.effect.boosts.total.protoversal[3])} bonus Pion and Spinor Upgrade γ levels`)],
-                    ["display-text", () => displayFomeBoost(0, 4, `Add ${format(temp.fome.effect.boosts.total.protoversal[4].times(0.1))} levels to all above boosts`)],
+                    ["display-text", temp.fome.boosts.protoversal[0].display],
+                    ["display-text", temp.fome.boosts.protoversal[1].display],
+                    ["display-text", temp.fome.boosts.protoversal[2].display],
+                    ["display-text", temp.fome.boosts.protoversal[3].display],
+                    ["display-text", temp.fome.boosts.protoversal[4].display],
                     "blank",
-                    () => {  },
-                    ["display-text", () => displayFomeBoost(1, 0, `Multiply the generation of Infinitesimal Foam by ${format(temp.fome.effect.gain.boost.infinitesimal)}x`)],
-                    ["display-text", () => displayFomeBoost(1, 1, `Increase Pion and Spinor gain by ${format(temp.fome.effect.boosts.total.infinitesimal[1].times(0.5).times(100))}%`)],
-                    ["display-text", () => displayFomeBoost(1, 2, `Reduce Pion and Spinor Upgrade α costs by ${format(Decimal.sub(1, Decimal.pow(0.8, temp.fome.effect.boosts.total.infinitesimal[2])).times(100))}%`)],
-                    ["display-text", () => displayFomeBoost(1, 3, `Increase Skyrmion gain by ${format(temp.fome.effect.boosts.total.infinitesimal[3].times(0.5).times(100))}%`)],
-                    ["display-text", () => displayFomeBoost(1, 4, `Reduce Pion and Spinor Upgrade γ costs by ${format(Decimal.sub(1, Decimal.pow(0.8, temp.fome.effect.boosts.total.infinitesimal[4])).times(100))}%`)],
+                    ["display-text", temp.fome.boosts.infinitesimal[0].display],
+                    ["display-text", temp.fome.boosts.infinitesimal[1].display],
+                    ["display-text", temp.fome.boosts.infinitesimal[2].display],
+                    ["display-text", temp.fome.boosts.infinitesimal[3].display],
+                    ["display-text", temp.fome.boosts.infinitesimal[4].display],
                     "blank",
-                    ["display-text", () => displayFomeBoost(2, 0, `Multiply the generation of Subspatial Foam by ${format(temp.fome.effect.gain.boost.subspatial)}x`)],
-                    ["display-text", () => displayFomeBoost(2, 1, `Decrease effective Pion and Spinor upgrade counts by ${format(temp.fome.effect.boosts.total.subspatial[1])}`)],
-                    ["display-text", () => displayFomeBoost(2, 2, `Add ${format(getTotalFomeBoost('subspatial', 2).times(0.1))} levels to all above boosts`)],
-                    ["display-text", () => displayFomeBoost(2, 3, `Increase effective Skyrmion count by ${format(temp.fome.effect.boosts.total.subspatial[3])}`)],
-                    ["display-text", () => displayFomeBoost(2, 4, `Pion and Spinor upgrades cost as if you had ${format(temp.fome.effect.boosts.total.subspatial[4].times(0.25))} fewer`)],
+                    ["display-text", temp.fome.boosts.subspatial[0].display],
+                    ["display-text", temp.fome.boosts.subspatial[1].display],
+                    ["display-text", temp.fome.boosts.subspatial[2].display],
+                    ["display-text", temp.fome.boosts.subspatial[3].display],
+                    ["display-text", temp.fome.boosts.subspatial[4].display],
                     "blank",
-                    ["display-text", () => displayFomeBoost(3, 0, `Multiply the generation of Subplanck Foam by ${format(temp.fome.effect.gain.boost.subplanck)}x`)],
-                    ["display-text", () => displayFomeBoost(3, 1, `Gain ${format(temp.fome.effect.boosts.total.subplanck[1].times(0.5))} bonus Pion and Spinor Upgrade δ levels`)],
-                    ["display-text", () => displayFomeBoost(3, 2, `Gain ${format(temp.fome.effect.boosts.total.subplanck[2].times(0.5))} bonus Pion and Spinor Upgrade ε levels`)],
-                    ["display-text", () => displayFomeBoost(3, 3, `Gain ${format(temp.fome.effect.boosts.total.subplanck[3].times(0.5))} bonus Pion and Spinor Upgrade ζ levels`)],
-                    ["display-text", () => displayFomeBoost(3, 4, `Gain ${format(temp.fome.effect.boosts.total.subplanck[4].times(0.5))} bonus Pion and Spinor Upgrade η levels`)],
+                    ["display-text", temp.fome.boosts.subplanck[0].display],
+                    ["display-text", temp.fome.boosts.subplanck[1].display],
+                    ["display-text", temp.fome.boosts.subplanck[2].display],
+                    ["display-text", temp.fome.boosts.subplanck[3].display],
+                    ["display-text", temp.fome.boosts.subplanck[4].display],
                     "blank",
-                    ["display-text", () => displayFomeBoost(4, 0, `Multiply the generation of all Foam types by ${format(temp.fome.effect.gain.boost.quantum)}x`)],
-                    ["display-text", () => displayFomeBoost(4, 1, `Gain ${format(temp.fome.effect.boosts.total.quantum[1].times(0.25))} bonus Pion and Spinor Upgrade θ levels`)],
-                    ["display-text", () => displayFomeBoost(4, 2, `Gain ${format(temp.fome.effect.boosts.total.quantum[2].times(0.25))} bonus Pion and Spinor Upgrade ι levels`)],
-                    ["display-text", () => displayFomeBoost(4, 3, `Gain ${format(temp.fome.effect.boosts.total.quantum[3].times(0.25))} bonus Pion and Spinor Upgrade κ levels`)],
-                    ["display-text", () => displayFomeBoost(4, 4, `Add ${format(getTotalFomeBoost('quantum', 4).times(0.1))} levels to all above boosts`)]
-                ]
+                    ["display-text", temp.fome.boosts.quantum[0].display],
+                    ["display-text", temp.fome.boosts.quantum[1].display],
+                    ["display-text", temp.fome.boosts.quantum[2].display],
+                    ["display-text", temp.fome.boosts.quantum[3].display],
+                    ["display-text", temp.fome.boosts.quantum[4].display]
+                ] : [] }
             },
             "Milestones": {
                 content: [
@@ -622,7 +759,7 @@ addLayer("fome", {
             else if (player.fome.fome.subspatial.expansion.gte(1)) points = player.fome.fome.subspatial.points
             else if (player.fome.fome.infinitesimal.expansion.gte(1)) points = player.fome.fome.infinitesimal.points
             else points = player.fome.fome.protoversal.points
-            return "You have <h2 style='color:#ffffff;text-shadow:#ffffff 0px 0px 10px;'>" + formatWhole(points) + "</h2> " + temp.fome.resource + temp.fome.effectDescription
+            return `You have ${colored('fome', formatWhole(points))} ${temp.fome.resource}${temp.fome.effectDescription}`
         }],
         "blank",
         ["microtabs", "stuff"]
@@ -637,6 +774,10 @@ addLayer("fome", {
         {
             key: "F",
             onPress() { if (temp.fome.clickables[0].unlocked) clickClickable('fome', 0) }
+        },
+        {
+            key: "ctrl+f",
+            onPress() { if (temp.fome.layerShown === true) player.tab = 'fome' }
         }
     ]
 })
@@ -656,7 +797,7 @@ function displayFomeBoost(fomeTypeIndex, boostIndex, effect) {
 	let fomeType = fomeTypes[fomeTypeIndex]
 	let fomeName = fomeNames[fomeTypeIndex]
 	let boost = player.fome.boosts[fomeType].boosts[boostIndex]
-	let bonus = temp.fome.effect.boosts.bonus[fomeType][boostIndex]
+	let bonus = temp.fome.boosts[fomeType][boostIndex].bonus
 	return (boost > 0 || bonus > 0) ? `${fomeName} Boost ${boostIndex+1} [${(boost > 0 ? formatWhole(boost) : `0`) + (bonus > 0 ? ` + ${formatWhole(bonus)}` : ``)}]: ${effect}` : ``
 }
 
@@ -669,6 +810,21 @@ function buyFomeBuyable(id, free=false) {
 		player.fome.boosts[fome].index %= 5
 }
 
-function getTotalFomeBoost(fome, index) { return temp.fome.effect.boosts ? temp.fome.effect.boosts.total[fome][index] : decimalZero }
+function createFomeBoost(fome, index, displayFunc, effectFunc, bonusFunc = () => decimalZero) {
+    let fomeIndex
+    switch (fome) {
+        case 'protoversal': fomeIndex = 0; break
+        case 'infinitesimal': fomeIndex = 1; break
+        case 'subspatial': fomeIndex = 2; break
+        case 'subplanck': fomeIndex = 3; break
+        case 'quantum': fomeIndex = 4; break
+    }
+    return {
+        display() { return displayFomeBoost(fomeIndex, index, displayFunc(temp.fome.boosts[fome][index].effect)) },
+        effect() { return effectFunc(temp.fome.boosts[fome][index].total) },
+        bonus: bonusFunc,
+        total() { return Decimal.plus(player.fome.boosts[fome].boosts[index], temp.fome.boosts[fome][index].bonus) }
+    }
+}
 
-function getCurrentFomeBoost(fome, index) { return player.fome.boosts[fome].boosts[index].plus(layers.fome.bonusBoosts[fome][index]()) }
+function fomeEffect(fome, index) { return temp.fome.boosts[fome][index].effect }

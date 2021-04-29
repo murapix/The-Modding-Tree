@@ -2,12 +2,12 @@ addLayer("inflaton", {
     name: "Inflaton",
     symbol: "I",
     row: 2,
-    position: 1,
+    position: 2,
     branches: ['fome'],
 
     effectDescription: '<br/><h2>DANGER</h2><br/><h3>CONSTRUCTION AREA</h3><br/>AUTHORIZED PERSONNEL ONLY',
     canReset: false,
-    layerShown() { return player.acceleron.points.gt(0) ? "ghost" : player[this.layer].unlocked },
+    layerShown() { return (player.acceleron.best.gt(0) && !hasUpgrade('acceleron', 25)) ? "ghost" : player[this.layer].unlocked },
     resource() { return player[this.layer].points.equals(1) ? "Inflaton" : "Inflatons" },
     color: "#ff5e13",
     type: "static",
@@ -32,9 +32,9 @@ addLayer("inflaton", {
 
     startData() { return {
         unlocked: false,
-        points: new Decimal(0),
-        best: new Decimal(0),
-        actual: new Decimal(0),
+        points: decimalZero,
+        best: decimalZero,
+        actual: decimalZero,
         inflating: false
     }},
 
@@ -106,5 +106,12 @@ addLayer("inflaton", {
                 this.onExit()
             }
         }
-    }
+    },
+
+    hotkeys: [
+        {
+            key: "ctrl+i",
+            onPress() { if (temp.inflaton.layerShown === true) player.tab = 'inflaton' }
+        }
+    ]
 })

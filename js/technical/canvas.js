@@ -7,7 +7,11 @@ function retrieveCanvasData() {
 	let treeCanv = document.getElementById("treeCanvas")
 	let treeTab = document.getElementById("treeTab")
 	if (treeCanv===undefined||treeCanv===null) return false;
-	if (treeTab===undefined||treeTab===null) return false;
+	if (treeTab===undefined||treeTab===null) {
+		if (canvas && ctx)
+			ctx.clearRect(0, 0, canvas.width, canvas.height)
+		return false;
+	}
 	canvas = treeCanv;
 	ctx = canvas.getContext("2d");
 	return true;
@@ -39,12 +43,11 @@ var colors_theme
 function drawTree() {
 	if (!retrieveCanvasData()) return;
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	for (layer in layers){
-		if (tmp[layer].layerShown == true && tmp[layer].branches){
-			for (branch in tmp[layer].branches)
-				{
-					drawTreeBranch(layer, tmp[layer].branches[branch])
-				}
+	for (layer in layers) {
+		if (tmp[layer].layerShown == true && tmp[layer].branches) {
+			for (branch in tmp[layer].branches) {
+				drawTreeBranch(layer, tmp[layer].branches[branch])
+			}
 		}
 	}
 }

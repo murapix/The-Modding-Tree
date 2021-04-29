@@ -131,7 +131,10 @@ var systemComponents = {
 		<br><br>
         Time Played: {{ formatTime(player.timePlayed) }}<br><br>
         <h3>Hotkeys</h3><br>
-        <span v-for="key in hotkeys" v-if="player[key.layer].unlocked && tmp[key.layer].hotkeys[key.id].unlocked"><br>{{key.description}}</span></div>
+        <span v-for="key in hotkeys" v-if="player[key.layer].unlocked && tmp[key.layer].hotkeys[key.id].unlocked"><br>
+			<span v-if="typeof key.description === 'string'" v-html="key.description"/>
+			<span v-else-if="typeof key.description === 'function'" v-html="key.description()"/>
+		</span></div>
     `
     },
 

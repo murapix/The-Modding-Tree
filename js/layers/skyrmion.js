@@ -11,17 +11,21 @@ addLayer("skyrmion", {
     type: "static",
     baseResource: "Pions and Spinors",
     baseAmount() { return Decimal.min(player.skyrmion.pion.points, player.skyrmion.spinor.points) },
-    requires: new Decimal(1),
+    requires: decimalOne,
     canBuyMax() { return true },
     base: 10,
     exponent: 1,
     gainMult() {
-        let fomeBoost = temp.fome.effect.boosts ? temp.fome.effect.boosts.total.infinitesimal[3].times(0.5).plus(1) : 1
-        return buyableEffect('skyrmion', 211).times(fomeBoost).recip()
+        return buyableEffect('skyrmion', 211).times(fomeEffect('infinitesimal', 3)).recip()
     },
     doReset(layer) {
         switch (layer) {
             case "acceleron":
+                player.skyrmion.pion.points = decimalZero
+                player.skyrmion.spinor.points = decimalZero
+                layerDataReset("skyrmion", ["upgrades"])
+                player.skyrmion.points = hasMilestone('acceleron', 3) ? new Decimal(10) : decimalOne
+                break;
             case "inflaton":
                 player.skyrmion.points = decimalZero
                 player.skyrmion.pion.points = decimalZero
@@ -41,9 +45,7 @@ addLayer("skyrmion", {
     autoPrestige() { return hasUpgrade('skyrmion', 1) },
 
     effect() {
-        let fomeBoosts = temp.fome.effect.boosts
-
-        let skyrmions = player.skyrmion.points.plus(fomeBoosts ? fomeBoosts.total.subspatial[3] : 0)
+        let skyrmions = player.skyrmion.points.plus(fomeEffect('subspatial', 3))
         let pion = {
             alpha: buyableEffect('skyrmion', 111),
             beta: buyableEffect('skyrmion', 112),
@@ -56,38 +58,41 @@ addLayer("skyrmion", {
             lambda: buyableEffect('skyrmion', 234)
         }
 
-        let fomeBoost = fomeBoosts ? fomeBoosts.total.infinitesimal[1].times(0.5).plus(1) : 1
-        let fomeCount = fomeBoosts ? fomeBoosts.total.subspatial[1] : 0
+        let fomeBoost = fomeEffect('infinitesimal', 1)
+        let fomeCount = fomeEffect('subspatial', 1)
+        
+        let nerfBase = new Decimal(0.2)
+        let nerfExp = Decimal.times(0.25, fomeEffect('quantum', 1))
 
         let universalBoost = pion.alpha.times(fomeBoost).times(spinor.zeta).times(spinor.lambda)
 
         let eff = {
             pion: {
                 gen: skyrmions.times(0.01).times(universalBoost).times(spinor.gamma),
-                costNerf: Decimal.pow(player.skyrmion.spinor.upgrades.minus(fomeCount).times(0.2).times(spinor.beta).plus(1), player.skyrmion.spinor.upgrades.minus(fomeCount).times(0.25))
+                costNerf: Decimal.pow(player.skyrmion.spinor.upgrades.minus(fomeCount).times(nerfBase).times(spinor.beta).plus(1), player.skyrmion.spinor.upgrades.minus(fomeCount).times(nerfExp))
             },
             spinor: {
                 gen: skyrmions.times(0.01).times(universalBoost).times(pion.gamma),
-                costNerf: Decimal.pow(player.skyrmion.pion.upgrades.minus(fomeCount).times(0.2).times(pion.beta).plus(1), player.skyrmion.pion.upgrades.minus(fomeCount).times(0.25))
+                costNerf: Decimal.pow(player.skyrmion.pion.upgrades.minus(fomeCount).times(nerfBase).times(pion.beta).plus(1), player.skyrmion.pion.upgrades.minus(fomeCount).times(nerfExp))
             }
         }
         return eff
     },
     effectDescription() {
         let eff = temp.skyrmion.effect
-        return `which ${player.skyrmion.points.equals(1) ? "is" : "are"} producing <h3 style='color:#37d7ff;text-shadow:#37d7ff 0px 0px 10px;'>${format(eff.pion.gen)}</h3> Pions/s and <h3 style='color:#37d7ff;text-shadow:#37d7ff 0px 0px 10px;'>${format(eff.spinor.gen)}</h3> Spinors/s`
+        return `which ${player.skyrmion.points.equals(1) ? "is" : "are"} producing <h3 style='color:${layers.skyrmion.color};text-shadow:${layers.skyrmion.color} 0px 0px 10px;'>${format(eff.pion.gen)}</h3> Pions/s and <h3 style='color:${layers.skyrmion.color};text-shadow:${layers.skyrmion.color} 0px 0px 10px;'>${format(eff.spinor.gen)}</h3> Spinors/s`
     },
     
     startData() { return {
         unlocked: true,
-		points: new Decimal(1),
+		points: decimalOne,
         pion: {
-            points: new Decimal(0),
-            upgrades: new Decimal(0)
+            points: decimalZero,
+            upgrades: decimalZero
         },
         spinor: {
-            points: new Decimal(0),
-            upgrades: new Decimal(0)
+            points: decimalZero,
+            upgrades: decimalZero
         }
     }},
 
@@ -256,112 +261,112 @@ addLayer("skyrmion", {
         cols: 4,
         111: createSkyrmionBuyable('α', 111,
                 [[0.1, 1.2],
-                 [9.5, 15, 25],
+                 [9.5, 7.5, 25],
                  [2.65e77, 187.5, 90]],
-                (cost) => cost.times(Decimal.pow(0.8, getTotalFomeBoost('infinitesimal', 2))),
+                (cost) => cost.times(fomeEffect('infinitesimal', 2)),
                 `Gain 50% more Pions and Spinors`,
                 (effect) => `${format(effect)}x`,
                 (amount) => Decimal.pow(1.5, amount),
-                () => getTotalFomeBoost('protoversal', 1),
+                () => fomeEffect('protoversal', 1),
                 undefined,
                 () => hasUpgrade('skyrmion', 2)),
         112: createSkyrmionBuyable('β', 112,
                 [[0.1, 1.3],
-                 [6, 19.5, 15],
+                 [6, 10, 15],
                  [3.01e39, 292.5, 45]],
                 (cost) => cost.plus(0.9),
                 `Reduce the nerf to Spinor upgrade cost by 10%`,
                 (effect) => `Spinor upgrade cost nerf reduced by ${format(Decimal.sub(1, effect).times(100))}%`,
                 (amount) => Decimal.pow(0.9, amount),
-                () => getTotalFomeBoost('protoversal', 2),
+                () => fomeEffect('protoversal', 2),
                 undefined,
                 () => hasUpgrade('skyrmion', 3)),
         113: createSkyrmionBuyable('γ', 113,
                 [[0.1, 1.7],
-                 [25, 25, 10],
+                 [25, 12.5, 10],
                  [1.97e71, 367.5, 60]],
-                (cost) => cost.times(Decimal.pow(0.8, getTotalFomeBoost('infinitesimal', 4))),
+                (cost) => cost.times(fomeEffect('infinitesimal', 4)),
                 `Gain 75% more Spinors`,
                 (effect) => `${format(effect)}x`,
                 (amount) => Decimal.pow(1.75, amount),
-                () => getTotalFomeBoost('protoversal', 3),
+                () => fomeEffect('protoversal', 3),
                 undefined,
                 () => hasUpgrade('skyrmion', 4)),
         121: createSkyrmionBuyable('δ', 121,
-                [[30, 15],
+                [[30, 6],
                  [1.1e72, 225, 60]],
                 undefined,
                 `Gain 70% more Protoversal Foam from Skyrmions`,
                 (effect) => `${format(effect)}x`,
                 (amount) => Decimal.pow(1.7, amount),
-                () => Decimal.times(getTotalFomeBoost('subplanck', 1), 0.5),
+                () => fomeEffect('subplanck', 1),
                 () => player.fome.boosts.protoversal.boosts[0].gte(1),
                 () => hasUpgrade('skyrmion', 5)),
         122: createSkyrmionBuyable('ε', 122,
-                [[50, 12],
+                [[50, 5],
                  [2.82e66, 144, 60]],
                 undefined,
                 `Increase Protoversal Foam gain by 50% per order of magnitude of Infinitesimal Foam`,
                 (effect) => `${format(effect)}x`,
                 (amount) => player.fome.fome.infinitesimal.points.plus(1).log10().times(amount).times(0.5).plus(1),
-                () => Decimal.times(getTotalFomeBoost('subplanck', 2), 0.5),
+                () => fomeEffect('subplanck', 2),
                 () => player.fome.fome.infinitesimal.expansion.gte(1),
                 () => hasUpgrade('skyrmion', 6)),
         123: createSkyrmionBuyable('ζ', 123,
-                [[2e4, 14],
+                [[5e3, 5.5],
                  [1.71e73, 196, 60]],
                 undefined,
                 `Increase Subspatial Foam gain by 5% per Skyrmion`,
                 (effect) => `${format(effect)}x`,
-                (amount) => player.skyrmion.points.plus(temp.fome.effect.boosts ? temp.fome.effect.boosts.total.subspatial[3] : 0).times(amount).times(0.05).plus(1),
-                () => Decimal.times(getTotalFomeBoost('subplanck', 3), 0.5),
+                (amount) => player.skyrmion.points.plus(fomeEffect('subspatial', 3)).times(amount).times(0.05).plus(1),
+                () => fomeEffect('subplanck', 3),
                 () => player.fome.fome.subspatial.expansion.gte(1),
                 () => hasUpgrade('skyrmion', 7)),
         124: createSkyrmionBuyable('η', 124,
-                [[3e6, 12],
+                [[3e5, 5],
                  [1.69e71, 144, 60]],
                 undefined,
                 `Gain a free level of <b>Spinor Upgrade ε</b>`,
                 (effect) => `${format(effect)} free levels`,
                 (amount) => amount,
-                () => Decimal.times(getTotalFomeBoost('subplanck', 4), 0.5),
+                () => fomeEffect('subplanck', 4),
                 () => player.fome.fome.protoversal.expansion.gte(2),
                 () => hasUpgrade('skyrmion', 8)),
         131: createSkyrmionBuyable('θ', 131,
-                [[1e7, 13],
+                [[7e5, 6.5],
                  [6.86e72, 169, 60]],
                 undefined,
                 `Increase Protoversal Foam gain by 100% per order of magnitude of Subspatial Foam`,
                 (effect) => `${format(effect)}x`,
                 (amount) => player.fome.fome.subspatial.points.plus(1).log10().times(amount).plus(1),
-                () => getTotalFomeBoost('quantum', 1).times(0.25),
+                () => fomeEffect('quantum', 3),
                 () => player.fome.fome.subplanck.expansion.gte(1),
                 () => hasUpgrade('skyrmion', 9)),
         132: createSkyrmionBuyable('ι', 132,
-                [[2e14, 15],
+                [[4e8, 7.5],
                  [1.68e67, 225, 45]],
                 undefined,
                 `Your Spinors increase Infinitesimal Foam generation by 2% per order of magnitude`,
                 (effect) => `${format(effect)}x`,
                 (amount) => player.skyrmion.spinor.points.plus(1).log10().times(amount).times(0.02).plus(1),
-                () => getTotalFomeBoost('quantum', 2).times(0.25),
+                () => fomeEffect('quantum', 3),
                 () => player.fome.fome.protoversal.expansion.gte(3),
                 () => hasUpgrade('skyrmion', 10)),
         133: createSkyrmionBuyable('κ', 133,
-                [[5e17, 13.5],
+                [[5e9, 7],
                  [3.66e68, 182, 45]],
                 undefined,
                 `Protoversal Boost 1 levels increase other Foam Boost 1 effects by 30%`,
                 (effect) => `${format(effect)}x`,
-                (amount) => amount.times(temp.fome.effect.boosts ? temp.fome.effect.boosts.total.protoversal[0] : 0).times(0.3).plus(1),
-                () => getTotalFomeBoost('quantum', 3).times(0.25),
+                (amount) => amount.times(temp.fome.boosts.protoversal[0].total).times(0.3).plus(1),
+                () => fomeEffect('quantum', 3),
                 () => player.fome.fome.infinitesimal.expansion.gte(2),
                 () => hasUpgrade('skyrmion', 11)),
         134: createSkyrmionBuyable('λ', 134,
-                [[7e10, 10, 0, 1.1],
+                [[7e2, 5, 0, 1.1],
                  [4.92e76, 100, 45, 1.1]],
                 undefined,
-                `Increase Infinitesimal Foam Boost 1 effect by 100%`,
+                `Double the Infinitesimal Foam Boost 1 effect`,
                 (effect) => `${format(effect)}x`,
                 (amount) => Decimal.pow(2, amount),
                 undefined,
@@ -421,109 +426,109 @@ addLayer("skyrmion", {
         },
         211: createSkyrmionBuyable('α', 211,
                 [[0.1, 1.2],
-                 [9.5, 15, 25],
+                 [9.5, 7.5, 25],
                  [2.65e77, 187.5, 90]],
-                (cost) => cost.times(Decimal.pow(0.8, getTotalFomeBoost('infinitesimal', 2))),
+                (cost) => cost.times(fomeEffect('infinitesimal', 2)),
                 `Gain 50% more Skyrmions`,
                 (effect) => `${format(effect)}x`,
                 (amount) => Decimal.pow(1.5, amount),
-                () => getTotalFomeBoost('protoversal', 1),
+                () => fomeEffect('protoversal', 1),
                 undefined,
                 () => hasUpgrade('skyrmion', 2)),
         212: createSkyrmionBuyable('β', 212,
                 [[0.1, 1.3],
-                 [6, 19.5, 15],
+                 [6, 10, 15],
                  [3.01e39, 292.5, 45]],
                 (cost) => cost.plus(0.9),
                 `Reduce the nerf to Pion upgrade cost by 10%`,
                 (effect) => `Pion upgrade cost nerf reduced by ${format(Decimal.sub(1, effect).times(100))}%`,
                 (amount) => Decimal.pow(0.9, amount),
-                () => getTotalFomeBoost('protoversal', 2),
+                () => fomeEffect('protoversal', 2),
                 undefined,
                 () => hasUpgrade('skyrmion', 3)),
         213: createSkyrmionBuyable('γ', 213,
                 [[0.1, 1.7],
-                 [25, 25, 10],
+                 [25, 12.5, 10],
                  [1.97e71, 367.5, 60]],
-                (cost) => cost.times(Decimal.pow(0.8, getTotalFomeBoost('infinitesimal', 4))),
+                (cost) => cost.times(fomeEffect('infinitesimal', 4)),
                 `Gain 75% more Pions`,
                 (effect) => `${format(effect)}x`,
                 (amount) => Decimal.pow(1.75, amount),
-                () => getTotalFomeBoost('protoversal', 3),
+                () => fomeEffect('protoversal', 3),
                 undefined,
                 () => hasUpgrade('skyrmion', 4)),
         221: createSkyrmionBuyable('δ', 221,
-                [[30, 15],
+                [[30, 6],
                  [1.1e72, 225, 60]],
                 undefined,
                 `Gain 70% more Protoversal Boost 1 effect`,
                 (effect) => `${format(effect)}x`,
                 (amount) => Decimal.pow(1.7, amount),
-                () => getTotalFomeBoost('subplanck', 1).times(0.5),
+                () => fomeEffect('subplanck', 1),
                 () => player.fome.boosts.protoversal.boosts[0].gte(1),
                 () => hasUpgrade('skyrmion', 5)),
         222: createSkyrmionBuyable('ε', 222,
-                [[50, 12],
+                [[50, 5],
                  [2.82e66, 144, 60]],
                 undefined,
                 `Increase Infinitesimal Foam gain by 50% per order of magnitude of Protoversal Foam`,
                 (effect) => `${format(effect)}x`,
                 (amount) => player.fome.fome.protoversal.points.plus(1).log10().times(amount).plus(1),
-                () => getTotalFomeBoost('subplanck', 2).times(0.5).plus(buyableEffect('skyrmion', 124)),
+                () => fomeEffect('subplanck', 2).plus(buyableEffect('skyrmion', 124)),
                 () => player.fome.fome.infinitesimal.expansion.gte(1),
                 () => hasUpgrade('skyrmion', 6)),
         223: createSkyrmionBuyable('ζ', 223,
-                [[2e4, 14],
+                [[5e3, 5.5],
                  [1.71e73, 196, 60]],
                 undefined,
                 `Increase Pion and Spinor gain by 30% per order of magnitude of Subspatial Foam`,
                 (effect) => `${format(effect)}x`,
                 (amount) => player.fome.fome.subspatial.points.plus(1).log10().times(amount).times(0.3).plus(1),
-                () => getTotalFomeBoost('subplanck', 3).times(0.5),
+                () => fomeEffect('subplanck', 3),
                 () => player.fome.fome.subspatial.expansion.gte(1),
                 () => hasUpgrade('skyrmion', 7)),
         224: createSkyrmionBuyable('η', 224,
-                [[3e6, 12],
+                [[3e5, 5],
                  [1.69e71, 144, 60]],
                 undefined,
                 `Gain 120% increased Foam generation`,
                 (effect) => `${format(effect)}x`,
                 (amount) => amount.times(1.2).plus(1),
-                () => getTotalFomeBoost('subplanck', 4).times(0.5),
+                () => fomeEffect('subplanck', 4),
                 () => player.fome.fome.protoversal.expansion.gte(2),
                 () => hasUpgrade('skyrmion', 8)),
         231: createSkyrmionBuyable('θ', 231,
-                [[1e7, 13],
+                [[7e5, 6.5],
                  [6.86e72, 169, 60]],
                 undefined,
                 `Increase Subspatial Foam gain by 30% per order of magnitude of Protoversal and Infinitesimal Foam`,
                 (effect) => `${format(effect)}x`,
                 (amount) => player.fome.fome.protoversal.points.plus(1).log10().plus(player.fome.fome.infinitesimal.points.plus(1).log10()).times(amount).times(0.3).plus(1),
-                () => getTotalFomeBoost('quantum', 1).times(0.25),
+                () => fomeEffect('quantum', 3),
                 () => player.fome.fome.subplanck.expansion.gte(1),
                 () => hasUpgrade('skyrmion', 9)),
         232: createSkyrmionBuyable('ι', 232,
-                [[2e14, 15],
+                [[4e8, 7.5],
                  [1.68e67, 225, 45]],
                 undefined,
                 `Your Pions increase Infinitesimal Foam generation by 2% per order of magnitude`,
                 (effect) => `${format(effect)}x`,
                 (amount) => player.skyrmion.pion.points.plus(1).log10().times(amount).times(0.02).plus(1),
-                () => getTotalFomeBoost('quantum', 2).times(0.25),
+                () => fomeEffect('quantum', 3),
                 () => player.fome.fome.protoversal.expansion.gte(3),
                 () => hasUpgrade('skyrmion', 10)),
         233: createSkyrmionBuyable('κ', 233,
-                [[5e17, 13.5],
+                [[5e9, 7],
                  [3.66e68, 182, 45]],
                 undefined,
                 `Increase Subplanck Boost 1 effect by 40% per order of magnitude of Subplanck Foam`,
                 (effect) => `${format(effect)}x`,
                 (amount) => player.fome.fome.subplanck.points.plus(1).log10().times(amount).times(0.4).plus(1),
-                () => getTotalFomeBoost('quantum', 3).times(0.25),
+                () => fomeEffect('quantum', 3),
                 () => player.fome.fome.infinitesimal.expansion.gte(2),
                 () => hasUpgrade('skyrmion', 11)),
         234: createSkyrmionBuyable('λ', 234,
-                [[7e20, 10],
+                [[7e10, 5],
                  [7e65, 100, 45]],
                 undefined,
                 `ln(Best Accelerons) increases Pion and Spinor gain`,
@@ -592,28 +597,10 @@ addLayer("skyrmion", {
             unlocked() { return hasMilestone('fome', 0) },
             canClick: true,
             onClick() {
-                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[111].cost)) buyBuyable('skyrmion', 111)
-                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[112].cost)) buyBuyable('skyrmion', 112)
-                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[113].cost)) buyBuyable('skyrmion', 113)
-                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[121].cost)) buyBuyable('skyrmion', 121)
-                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[122].cost)) buyBuyable('skyrmion', 122)
-                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[123].cost)) buyBuyable('skyrmion', 123)
-                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[124].cost)) buyBuyable('skyrmion', 124)
-                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[131].cost)) buyBuyable('skyrmion', 131)
-                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[132].cost)) buyBuyable('skyrmion', 132)
-                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[133].cost)) buyBuyable('skyrmion', 133)
-                if (player.skyrmion.pion.points.gte(temp.skyrmion.buyables[134].cost)) buyBuyable('skyrmion', 134)
-                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[211].cost)) buyBuyable('skyrmion', 211)
-                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[212].cost)) buyBuyable('skyrmion', 212)
-                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[213].cost)) buyBuyable('skyrmion', 213)
-                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[221].cost)) buyBuyable('skyrmion', 221)
-                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[222].cost)) buyBuyable('skyrmion', 222)
-                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[223].cost)) buyBuyable('skyrmion', 223)
-                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[224].cost)) buyBuyable('skyrmion', 224)
-                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[231].cost)) buyBuyable('skyrmion', 231)
-                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[232].cost)) buyBuyable('skyrmion', 232)
-                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[233].cost)) buyBuyable('skyrmion', 233)
-                if (player.skyrmion.spinor.points.gte(temp.skyrmion.buyables[234].cost)) buyBuyable('skyrmion', 234)
+                for (let type = 100; type <= 200; type += 100)
+                    for (let row = 10; row <= 50; row += 10)
+                        for (let col = 1; col <= 5; col++)
+                            if (temp.skyrmion.buyables[type+row+col] && temp.skyrmion.buyables[type+row+col].canAfford) buyBuyable('skyrmion', type+row+col)
             },
             style: {
                 height: "30px",
@@ -717,12 +704,12 @@ addLayer("skyrmion", {
 
     tabFormat: [
         "main-display",
-        () => temp.fome.effect.boosts && temp.fome.effect.boosts.total.subspatial[3].gte(1) ? ["display-text", `Your Subspatial Foam is granting an additional <h3 style='color:#37d7ff;text-shadow:#37d7ff 0px 0px 10px;'>${format(temp.fome.effect.boosts.total.subspatial[3])}</h2> Skyrmions`] : ``,
+        () => fomeEffect('subspatial', 3).gte(1) ? ["display-text", `Your Subspatial Foam is granting an additional ${colored('skyrmion', format(fomeEffect('subspatial', 3)))} Skyrmions`] : ``,
         "prestige-button",
         "blank",
-        ["display-text", () => `You have <h2 style='color:#37d7ff;text-shadow:#37d7ff 0px 0px 10px;'>${format(player.skyrmion.pion.points)}</h2> Pions`],
+        ["display-text", () => `You have ${colored('skyrmion', format(player.skyrmion.pion.points))} Pions`],
         "blank",
-        ["display-text", () => `You have <h2 style='color:#37d7ff;text-shadow:#37d7ff 0px 0px 10px;'>${format(player.skyrmion.spinor.points)}</h2> Spinors`],
+        ["display-text", () => `You have ${colored('skyrmion', format(player.skyrmion.spinor.points))} Spinors`],
         "blank",
         ["microtabs", "stuff"],
     ],
@@ -738,10 +725,33 @@ addLayer("skyrmion", {
             onPress() { if (temp.skyrmion.clickables[0].unlocked) clickClickable('skyrmion', 0) }
         },
         {
+            key: "ctrl+s",
+            description() {
+                let description = "Ctrl+[Layer Symbol]: Switch to the given layer"
+                let exceptions = []
+
+                if (temp.timecube.layerShown === true)
+                    exceptions.push("Time Cubes: ctrl+c")
+                
+                if (exceptions.length > 0) {
+                    description += "<br>Exceptions:"
+                    for (let exception of exceptions)
+                        description += `</br>${exception}`
+                }
+                description += "<br>"
+                return description
+            },
+            onPress() { if (temp.skyrmion.layerShown === true) player.tab = 'skyrmion' }
+        },
+        {
             key: "s",
             description: "S: Condense some Pions and Spinors for another Skyrmion",
             onPress() { if (canReset('skyrmion')) doReset('skyrmion') } 
         },
+        {
+            key: "p",
+            onPress() { if (player.devSpeed) { delete(player.devSpeed) } else { player.devSpeed = 1e-100 } }
+        }
     ]
 })
 
@@ -768,14 +778,14 @@ function floorSearch(costLists, x, low = 0, high = costLists.length-1) {
     return floorSearch(costLists, x, mid+1, high)
 }
 
-function createSkyrmionBuyable(symbol, id, costLists, costModifierFunc = (cost) => cost, text, effectTextFunc, effectFunc, bonusAmountFunc = () => new Decimal(0), unlockedFunc = () => true, isFree = () => false) {
+function createSkyrmionBuyable(symbol, id, costLists, costModifierFunc = (cost) => cost, text, effectTextFunc, effectFunc, bonusAmountFunc = () => decimalZero, unlockedFunc = () => true, isFree = () => false) {
 	let type = id >= 200 ? 'spinor' : 'pion'
 	let upperType = id >= 200 ? 'Spinor' : 'Pion'
     let costFunc = createCostFunc(costLists)
 	return {
 		unlocked() { return unlockedFunc() },
 		cost() {
-			let amount = getBuyableAmount('skyrmion', id).minus(Decimal.times(getTotalFomeBoost('subspatial', 4), 0.25))
+			let amount = getBuyableAmount('skyrmion', id).minus(fomeEffect('subspatial', 4))
 			return costModifierFunc(costFunc(amount)).times(temp.skyrmion.effect[type].costNerf)
 		},
 		title: `${upperType} Upgrade ${symbol}`,
