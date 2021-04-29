@@ -310,19 +310,29 @@ function addTime(diff, layer) {
 	else data.timePlayed = time
 }
 
+shiftDown = false
+ctrlDown = false
+
 document.onkeydown = function (e) {
 	if (player === undefined) return;
 	if (gameEnded && !player.keepGoing) return;
-	let shiftDown = e.shiftKey
-	let ctrlDown = e.ctrlKey
+	shiftDown = e.shiftKey
+	ctrlDown = e.ctrlKey
 	let key = e.key
 	if (ctrlDown) key = "ctrl+" + key
 	if (onFocused) return
 	if (ctrlDown && hotkeys[key]) e.preventDefault()
 	if (hotkeys[key]) {
-		if (player[hotkeys[key].layer].unlocked)
-			hotkeys[key].onPress()
+		let k = hotkeys[key]
+		console.log(tmp[k.layer].hotkeys)
+		if (player[k.layer].unlocked && tmp[k.layer].hotkeys[k.id].unlocked)
+			k.onPress()
 	}
+}
+
+document.onkeyup = function (e) {
+	shiftDown = e.shiftKey
+	ctrlDown = e.ctrlKey
 }
 
 var onFocused = false
@@ -354,7 +364,14 @@ function isPlainObject(obj) {
 
 document.title = modInfo.name
 
-
+// Converts a string value to whatever it's supposed to be
+function toValue(value, oldValue) {
+	if (oldValue instanceof Decimal)
+		return new Decimal (value)
+	else if (!isNaN(oldValue))
+		return value.toNumber()
+	else return value
+}
 
 // Variables that must be defined to display popups
 var activePopups = [];

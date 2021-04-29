@@ -1,6 +1,6 @@
 // ************ Save stuff ************
 function save() {
-	localStorage.setItem(modInfo.id, btoa(JSON.stringify(player)));
+	localStorage.setItem(modInfo.id, btoa(unescape(encodeURIComponent(JSON.stringify(player)))));
 }
 function startPlayerBase() {
 	return {
@@ -71,6 +71,8 @@ function getStartLayerData(layer) {
 		layerdata.best = new Decimal(0);
 	if (layerdata.resetTime === undefined)
 		layerdata.resetTime = 0;
+	if (layerdata.forceTooltip === undefined)
+		layerdata.forceTooltip = false;
 
 	layerdata.buyables = getStartBuyables(layer);
 	if (layerdata.clickables == undefined)
