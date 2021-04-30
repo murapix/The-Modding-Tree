@@ -82,7 +82,7 @@ addLayer("acceleron", {
             fomeBoost: decimalOne,
             entropy: decimalZero,
             enhancements: [0,0,0,0,0],
-            clickables: [0]
+            clickables: [1]
         }
 
         for (let loop in layers.acceleron.loops) {
