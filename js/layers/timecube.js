@@ -15,7 +15,7 @@ addLayer("timecube", {
     },
 
     update(delta) {
-        delta = Decimal.times(delta, temp.acceleron.effect.time)
+        delta = Decimal.times(delta, temp.acceleron.effect)
     },
 
     startData() {
