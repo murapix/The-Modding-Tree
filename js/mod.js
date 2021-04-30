@@ -12,12 +12,18 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.3",
-	name: "Acceleration",
+	num: "0.4.0",
+	name: "Crystallization",
 }
 
 let changelog = `
 	<h1>Changelog:</h1>
+	<br><br>
+	<h3>v0.4.0</h3>
+	<br>- Updated to TMT 2.4
+	<br>- Rebalanced everything from Foam unlock through Time Cubes
+	<br>- Replaced Entropic Enhancement selectors with more defined upgrade selections
+	<br>- Fixed some typos and clarity issues
 	<br><br>
 	<h3>v0.3.3</h3>
 	<br>- Merge first two Acceleron milestones

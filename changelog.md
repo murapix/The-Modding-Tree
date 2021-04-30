@@ -1,5 +1,11 @@
 # Universal Reconstruction changelog:
 
+## v0.4.0
+- Updated to TMT 2.4
+- Rebalanced everything from Foam unlock through Time Cubes
+- Replaced Entropic Enhancement selectors with more defined upgrade selections
+- Fixed some typos and clarity issues
+
 ## v0.3.3
 - Merge first two Acceleron milestones
 

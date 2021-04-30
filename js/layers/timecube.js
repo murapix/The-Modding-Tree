@@ -81,7 +81,7 @@ addLayer("timecube", {
 
     hotkeys: [
         {
-            key: "ctrl+t",
+            key: "ctrl+c",
             onPress() { if (temp.timecube.layerShown === true) player.tab = 'timecube' }
         }
     ]
