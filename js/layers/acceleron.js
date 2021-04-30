@@ -100,7 +100,7 @@ addLayer("acceleron", {
     loops: {
         maxRadius: 150,
         0: {
-            unlocked() { return hasUpgrade('acceleron', 15) },
+            unlocked() { return hasUpgrade('acceleron', 14) },
             max: new Decimal(60),
             entropy: decimalOne,
             duration: decimalOne,
@@ -397,7 +397,7 @@ addLayer("acceleron", {
                 ]
             },
             "Entropic Loops": {
-                unlocked() { return hasUpgrade('acceleron', 15) },
+                unlocked() { return hasUpgrade('acceleron', 14) },
                 content: [
                     "blank",
                     "loops",
