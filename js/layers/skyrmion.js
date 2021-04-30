@@ -747,11 +747,11 @@ addLayer("skyrmion", {
             key: "s",
             description: "S: Condense some Pions and Spinors for another Skyrmion",
             onPress() { if (canReset('skyrmion')) doReset('skyrmion') } 
-        },
-        {
-            key: "p",
-            onPress() { if (player.devSpeed) { delete(player.devSpeed) } else { player.devSpeed = 1e-100 } }
-        }
+        }//,
+        // {
+        //     key: "p",
+        //     onPress() { if (player.devSpeed) { delete(player.devSpeed) } else { player.devSpeed = 1e-100 } }
+        // }
     ]
 })
 
