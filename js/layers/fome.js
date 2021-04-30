@@ -100,11 +100,11 @@ addLayer("fome", {
 
         let skyrmions = Decimal.plus(player.skyrmion.points, fomeEffect('subspatial', 3))
 
-        baseGain.protoversal = player.fome.fome.protoversal.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 121)).times(buyableEffect('skyrmion', 122)).times(buyableEffect('skyrmion', 224)).times(buyableEffect('skyrmion', 131)).times(defaultUpgradeEffect('acceleron', 11)).times(player.acceleron.fomeBoost) : decimalZero
-        baseGain.infinitesimal = player.fome.fome.infinitesimal.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 222)).times(buyableEffect('skyrmion', 224)).times(buyableEffect('skyrmion', 132)).times(buyableEffect('skyrmion', 232)).times(defaultUpgradeEffect('acceleron', 11)).times(player.acceleron.fomeBoost) : decimalZero,
-        baseGain.subspatial = player.fome.fome.subspatial.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 123)).times(buyableEffect('skyrmion', 224)).times(buyableEffect('skyrmion', 231)).times(defaultUpgradeEffect('acceleron', 11)).times(defaultUpgradeEffect('acceleron', 23)).times(player.acceleron.fomeBoost) : decimalZero,
-        baseGain.subplanck = player.fome.fome.subplanck.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 224)).times(player.acceleron.fomeBoost) : decimalZero,
-        baseGain.quantum = player.fome.fome.quantum.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 224)).times(player.acceleron.fomeBoost) : decimalZero
+        baseGain.protoversal = player.fome.fome.protoversal.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 121)).times(buyableEffect('skyrmion', 122)).times(buyableEffect('skyrmion', 224)).times(buyableEffect('skyrmion', 131)).times(defaultUpgradeEffect('acceleron', 11)).times(defaultUpgradeEffect('acceleron', 121)).times(player.acceleron.fomeBoost) : decimalZero
+        baseGain.infinitesimal = player.fome.fome.infinitesimal.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 222)).times(buyableEffect('skyrmion', 224)).times(buyableEffect('skyrmion', 132)).times(buyableEffect('skyrmion', 232)).times(defaultUpgradeEffect('acceleron', 11)).times(defaultUpgradeEffect('acceleron', 121)).times(player.acceleron.fomeBoost).times(defaultUpgradeEffect('acceleron', 131)) : decimalZero,
+        baseGain.subspatial = player.fome.fome.subspatial.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 123)).times(buyableEffect('skyrmion', 224)).times(buyableEffect('skyrmion', 231)).times(defaultUpgradeEffect('acceleron', 11)).times(defaultUpgradeEffect('acceleron', 23)).times(defaultUpgradeEffect('acceleron', 121)).times(player.acceleron.fomeBoost).times(defaultUpgradeEffect('acceleron', 132)) : decimalZero,
+        baseGain.subplanck = player.fome.fome.subplanck.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 224)).times(defaultUpgradeEffect('acceleron', 121)).times(player.acceleron.fomeBoost).times(defaultUpgradeEffect('acceleron', 133)) : decimalZero,
+        baseGain.quantum = player.fome.fome.quantum.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 224)).times(defaultUpgradeEffect('acceleron', 121)).times(player.acceleron.fomeBoost) : decimalZero
 
         boostGain.protoversal = fomeEffect('protoversal', 0)
         boostGain.infinitesimal = fomeEffect('infinitesimal', 0)
@@ -656,7 +656,7 @@ addLayer("fome", {
                         while (temp.fome.buyables[row+col].canAfford) buyBuyable('fome', row+col)
             },
             style: {
-                height: "30px",
+                'min-height': "30px",
                 width: "100px"
             }
         }

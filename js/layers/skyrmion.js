@@ -16,7 +16,7 @@ addLayer("skyrmion", {
     base: 10,
     exponent: 1,
     gainMult() {
-        return buyableEffect('skyrmion', 211).times(fomeEffect('infinitesimal', 3)).recip()
+        return buyableEffect('skyrmion', 211).times(fomeEffect('infinitesimal', 3)).recip().times(defaultUpgradeEffect('acceleron', 142))
     },
     doReset(layer) {
         switch (layer) {
@@ -151,7 +151,7 @@ addLayer("skyrmion", {
         2: {
             unlocked() { return player.skyrmion.points.gte(20) || hasUpgrade('skyrmion', 2) },
             title: 'Alteration',
-            description: `Unlock the Pion and Spinor Upgrade autobuyers and let them autobuy <b>α</b> upgrades. <b>α</b> upgrades no longer cost Pions or Spinors`,
+            description: `Unlock the Pion and Spinor Upgrade autobuyers and let them autobuy <b>α</b> upgrades. <b>α</b> upgrades no longer consumes Pions or Spinors`,
             cost: new Decimal(24),
             canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
@@ -159,7 +159,7 @@ addLayer("skyrmion", {
         3: {
             unlocked() { return player.skyrmion.points.gte(25) || hasUpgrade('skyrmion', 3) },
             title: 'Benediction',
-            description: `Allow the autobuyers to buy <b>β</b> upgrades. <b>β</b> upgrades no longer cost Pions or Spinors`,
+            description: `Allow the autobuyers to buy <b>β</b> upgrades. <b>β</b> upgrades no longer consumes Pions or Spinors`,
             cost: new Decimal(28),
             canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
@@ -167,7 +167,7 @@ addLayer("skyrmion", {
         4: {
             unlocked() { return player.skyrmion.points.gte(30) || hasUpgrade('skyrmion', 4) },
             title: 'Consolidation',
-            description: `Allow the autobuyers to buy <b>γ</b> upgrades. <b>γ</b> upgrades no longer cost Pions or Spinors`,
+            description: `Allow the autobuyers to buy <b>γ</b> upgrades. <b>γ</b> upgrades no longer consumes Pions or Spinors`,
             cost: new Decimal(32),
             canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
@@ -175,7 +175,7 @@ addLayer("skyrmion", {
         5: {
             unlocked() { return player.skyrmion.points.gte(35) || hasUpgrade('skyrmion', 5) },
             title: 'Diversification',
-            description: `Allow the autobuyers to buy <b>δ</b> upgrades. <b>δ</b> ugprades no longer cost Pions or Spinors`,
+            description: `Allow the autobuyers to buy <b>δ</b> upgrades. <b>δ</b> ugprades no longer consumes Pions or Spinors`,
             cost: new Decimal(36),
             canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
@@ -183,7 +183,7 @@ addLayer("skyrmion", {
         6: {
             unlocked() { return player.skyrmion.points.gte(40) || hasUpgrade('skyrmion', 6) },
             title: 'Encapsulation',
-            description: `Allow the autobuyers to buy <b>ε</b> upgrades. <b>ε</b> ugprades no longer cost Pions or Spinors`,
+            description: `Allow the autobuyers to buy <b>ε</b> upgrades. <b>ε</b> ugprades no longer consumes Pions or Spinors`,
             cost: new Decimal(42),
             canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
@@ -191,7 +191,7 @@ addLayer("skyrmion", {
         7: {
             unlocked() { return player.skyrmion.points.gte(45) || hasUpgrade('skyrmion', 7) },
             title: 'Fabrication',
-            description: `Allow the autobuyers to buy <b>ζ</b> upgrades. <b>ζ</b> ugprades no longer cost Pions or Spinors`,
+            description: `Allow the autobuyers to buy <b>ζ</b> upgrades. <b>ζ</b> ugprades no longer consumes Pions or Spinors`,
             cost: new Decimal(48),
             canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
@@ -199,7 +199,7 @@ addLayer("skyrmion", {
         8: {
             unlocked() { return player.skyrmion.points.gte(50) || hasUpgrade('skyrmion', 8) },
             title: 'Germination',
-            description: `Allow the autobuyers to buy <b>η</b> upgrades. <b>η</b> ugprades no longer cost Pions or Spinors`,
+            description: `Allow the autobuyers to buy <b>η</b> upgrades. <b>η</b> ugprades no longer consumes Pions or Spinors`,
             cost: new Decimal(52),
             canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
@@ -207,7 +207,7 @@ addLayer("skyrmion", {
         9: {
             unlocked() { return player.skyrmion.points.gte(55) || hasUpgrade('skyrmion', 9) },
             title: 'Hesitation',
-            description: `Allow the autobuyers to buy <b>θ</b> upgrades. <b>θ</b> ugprades no longer cost Pions or Spinors`,
+            description: `Allow the autobuyers to buy <b>θ</b> upgrades. <b>θ</b> ugprades no longer consumes Pions or Spinors`,
             cost: new Decimal(56),
             canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
@@ -215,7 +215,7 @@ addLayer("skyrmion", {
         10: {
             unlocked() { return player.skyrmion.points.gte(60) || hasUpgrade('skyrmion', 10) },
             title: 'Immitation',
-            description: `Allow the autobuyers to buy <b>ι</b> upgrades. <b>ι</b> ugprades no longer cost Pions or Spinors`,
+            description: `Allow the autobuyers to buy <b>ι</b> upgrades. <b>ι</b> ugprades no longer consumes Pions or Spinors`,
             cost: new Decimal(64),
             canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
@@ -223,7 +223,7 @@ addLayer("skyrmion", {
         11: {
             unlocked() { return player.skyrmion.points.gte(65) || hasUpgrade('skyrmion', 11) },
             title: 'Juxtaposition',
-            description: `Allow the autobuyers to buy <b>κ</b> upgrades. <b>κ</b> ugprades no longer cost Pions or Spinors`,
+            description: `Allow the autobuyers to buy <b>κ</b> upgrades. <b>κ</b> ugprades no longer consumes Pions or Spinors`,
             cost: new Decimal(69),
             canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
@@ -231,7 +231,7 @@ addLayer("skyrmion", {
         12: {
             unlocked() { return (player.skyrmion.points.gte(70) || hasUpgrade('skyrmion', 12)) && hasUpgrade('acceleron', 14) },
             title: 'Lateralization',
-            description: `Allow the autobuyers to buy <b>λ</b> upgrades. <b>λ</b> upgrades no longer cost Pions or Spinors`,
+            description: `Allow the autobuyers to buy <b>λ</b> upgrades. <b>λ</b> upgrades no longer consumes Pions or Spinors`,
             cost: new Decimal(72),
             canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
             pay() {}
@@ -603,7 +603,7 @@ addLayer("skyrmion", {
                             if (temp.skyrmion.buyables[type+row+col] && temp.skyrmion.buyables[type+row+col].canAfford) buyBuyable('skyrmion', type+row+col)
             },
             style: {
-                height: "30px",
+                'min-height': "30px",
                 width: "100px"
             }
         }
