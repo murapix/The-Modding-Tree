@@ -640,7 +640,7 @@ addLayer("fome", {
         5: {
             requirementDescription: "Obtain Quantum Foam<sup>2</sup>",
             effectDescription: "Automatically re-form your Foam",
-            done() { return player.fome.fome.quantum.expansion.gte(3) },
+            done() { return player.fome.fome.quantum.expansion.gte(2) },
             toggles: [['fome', 'autoReform']]
         }
     },

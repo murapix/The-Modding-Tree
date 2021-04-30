@@ -429,7 +429,7 @@ addLayer("acceleron", {
                     "blank",
                     () => hasUpgrade('acceleron', 21) ? ["display-text", `You have ${formatWhole(player.acceleron.entropy)} Entropy`] : '',
                     () => hasUpgrade('acceleron', 21) ? ["display-text", `Select one upgrade from each row. Certain upgrades may allow you to select more`] : '',
-                    () => hasUpgrade('acceleron', 21) ? ["display-text", `Each purchased Enhancement increases the cost of another`] : '',
+                    () => hasUpgrade('acceleron', 21) ? ["display-text", `Each purchased Enhancement increases the cost of the others`] : '',
                     "blank",
                     () => hasUpgrade('acceleron', 21) ? ["column", [
                         ["row", [["upgrade", 111], ["upgrade", 112], ["upgrade", 113]]],
