@@ -20,7 +20,7 @@ addLayer("inflaton", {
     doReset(layer) {
         if (inChallenge('inflaton', 11)) {
             player.inflaton.inflating = true
-            
+
         }
         else if (player.inflaton.inflating) {
             
@@ -39,15 +39,16 @@ addLayer("inflaton", {
     }},
 
     effect() {
-        let gainFactor = decimalOne
-        let nerfFactor = new Decimal(100)
+        let inflatonLog = new Decimal(10)
+        let inflatonDiv = new Decimal(10)
+        let nerfFactor = new Decimal(2)
 
         let inflatonNerf = player.inflaton.points.gt(1) ? Decimal.pow(nerfFactor, player.inflaton.points.log10()) : decimalOne
-        let inflatonGain = player.inflaton.points.gt(1) ? player.inflaton.points.pow(gainFactor) : decimalZero
+        let inflatonGain = player.inflaton.points.gt(1) ? player.inflaton.points.times(Decimal.pow(2, player.inflaton.points.log(inflatonLog).plus(1).dividedBy(inflatonDiv))) : decimalZero
 
         return {
             gain: inflatonGain,
-            nerf: inflatonNerf
+            nerf: inflatonNerf,
         }
     },
 

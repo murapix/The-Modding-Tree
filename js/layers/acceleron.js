@@ -7,7 +7,7 @@ addLayer("acceleron", {
     position: 0,
     branches: ['fome'],
 
-    layerShown() { return player[this.layer].unlocked ? (player.inflaton.points.gt(0) ? "ghost" : true) : false },
+    layerShown() { return player[this.layer].unlocked ? (player.inflaton.points.gt(0) && !hasUpgrade('acceleron', 25) ? "ghost" : true) : false },
     resource() { return player[this.layer].points.equals(1) ? "Acceleron" : "Accelerons" },
     color: "#0f52ba",
     type: "normal",
@@ -36,7 +36,7 @@ addLayer("acceleron", {
         return player.acceleron.best.plus(1).sqrt().times(getClickableState('acceleron', 0)).times(defaultUpgradeEffect('timecube', 12))
     },
     effectDescription() {
-        return `which ${player.acceleron.points.eq(1) ? `is` : `are`} causing time to go ${format(temp.acceleron.effect)}x faster`
+        return `which ${player.acceleron.points.eq(1) ? `is` : `are`} causing time to go ${format(temp.acceleron.effect)}x faster<br>For every second in real time, ${formatTime(temp.acceleron.effect)} passes`
     },
 
     update(delta) {
