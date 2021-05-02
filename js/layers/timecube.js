@@ -64,6 +64,43 @@ addLayer("timecube", {
             description: 'Unlock another Entropic Loop',
             cost: new Decimal(25),
             unlocked() { return hasUpgrade('timecube', 14) || hasUpgrade('timecube', this.id) }
+        },
+        21: {
+            title: 'Twice',
+            description: 'Double maximum entropy',
+            cost: new Decimal(2500),
+            effect: new Decimal(2),
+            onPurchase() {
+                player.acceleron.entropy = player.acceleron.entropy.plus(temp.acceleron.entropy)
+            },
+            unlocked() { return hasUpgrade('timecube', 15) || hasUpgrade('timecube', this.id) }
+        },
+        22: {
+            title: 'Twist',
+            description: 'You may select an additional first row Entropic Enhancement',
+            effect: 1,
+            cost: new Decimal(4e8),
+            unlocked() { return hasUpgrade('timecube', 21) || hasUpgrade('timecube', this.id) }
+        },
+        23: {
+            title: 'Ten',
+            description: 'Increase Entropic Loop build speed by 10,000x',
+            effect: new Decimal(10000),
+            cost: new Decimal(5e8),
+            unlocked() { return hasUpgrade('timecube', 22) || hasUpgrade('timecube', this.id) }
+        },
+        24: {
+            title: 'Twirl',
+            description: 'You may select an additional fourth row Entropic Enhancement',
+            effect: 1,
+            cost: new Decimal(1.25e9),
+            unlocked() { return hasUpgrade('timecube', 23) || hasUpgrade('timecube', this.id) }
+        },
+        25: {
+            title: 'Tetrate',
+            description: 'Unlock the fourth column of Entropic Enhancements',
+            cost: new Decimal(5e9),
+            unlocked() { return hasUpgrade('timecube', 24) || hasUpgrade('timecube', this.id) }
         }
     },
 

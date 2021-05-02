@@ -12,14 +12,19 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.4.0",
-	name: "Crystallization",
+	num: "0.5.0",
+	name: "Dilation",
 }
 
 let changelog = `
 	<h1>Changelog:</h1>
 	<br><br>
-	<h3>v0.4.0</h3>
+	<h3>v0.5.0 - Dilation</h3>
+	<br>- Finished Acceleron layer up to Inflaton unlock
+	<br>- Nerfed higher resource Acceleron and Quantum Foam effects (while likely drop those nerfs by a lot later)
+	<br>- Re-enabled Inflaton layer, but with nothing in there yet
+	<br><br>
+	<h3>v0.4.0 - Crystallization</h3>
 	<br>- Updated to TMT 2.4
 	<br>- Rebalanced everything from Foam unlock through Time Cubes
 	<br>- Replaced Entropic Enhancement selectors with more defined upgrade selections
@@ -87,12 +92,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	"Current Endgame: 10,000,000 Accelerons"
+	"Current Endgame: Inflaton challenge attempted"
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.acceleron.points.gte(1e7)
+	return player.inflaton.best.gt(1) && player.fome.fome.quantum.points.lte(10)
 }
 
 // Less important things beyond this point!

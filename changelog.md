@@ -1,6 +1,11 @@
 # Universal Reconstruction changelog:
 
-## v0.4.0
+## v0.5.0 - Dilation
+- Finished Acceleron layer up to Inflaton unlock
+- Nerfed higher resource Acceleron and Quantum Foam effects (while likely drop those nerfs by a lot later)
+- Re-enabled Inflaton layer, but with nothing in there yet
+
+## v0.4.0 - Crystallization
 - Updated to TMT 2.4
 - Rebalanced everything from Foam unlock through Time Cubes
 - Replaced Entropic Enhancement selectors with more defined upgrade selections

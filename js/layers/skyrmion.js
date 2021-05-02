@@ -26,12 +26,6 @@ addLayer("skyrmion", {
                 layerDataReset("skyrmion", ["upgrades"])
                 player.skyrmion.points = hasMilestone('acceleron', 3) ? new Decimal(10) : decimalOne
                 break;
-            case "inflaton":
-                player.skyrmion.points = decimalZero
-                player.skyrmion.pion.points = decimalZero
-                player.skyrmion.spinor.points = decimalZero
-                layerDataReset("skyrmion", ["upgrades"])
-                break;
             case "skyrmion":
                 if (!hasUpgrade('skyrmion', 1)) {
                     player.skyrmion.pion.points = player.skyrmion.pion.points.minus(temp.skyrmion.nextAt)
@@ -64,7 +58,7 @@ addLayer("skyrmion", {
         let nerfBase = new Decimal(0.2)
         let nerfExp = Decimal.times(0.25, fomeEffect('quantum', 1))
 
-        let universalBoost = pion.alpha.times(fomeBoost).times(spinor.zeta).times(spinor.lambda)
+        let universalBoost = pion.alpha.times(fomeBoost).times(spinor.zeta).times(spinor.lambda).times(player.acceleron.skyrmionBoost)
 
         let eff = {
             pion: {
@@ -229,7 +223,7 @@ addLayer("skyrmion", {
             pay() {}
         },
         12: {
-            unlocked() { return (player.skyrmion.points.gte(70) || hasUpgrade('skyrmion', 12)) && hasUpgrade('acceleron', 14) },
+            unlocked() { return (player.skyrmion.points.gte(70) || hasUpgrade('skyrmion', 12)) && hasUpgrade('acceleron', 13) },
             title: 'Lateralization',
             description: `Allow the autobuyers to buy <b>λ</b> upgrades. <b>λ</b> upgrades no longer consumes Pions or Spinors`,
             cost: new Decimal(72),
@@ -370,7 +364,7 @@ addLayer("skyrmion", {
                 (effect) => `${format(effect)}x`,
                 (amount) => Decimal.pow(2, amount),
                 undefined,
-                () => hasUpgrade('acceleron', 14),
+                () => hasUpgrade('acceleron', 13),
                 () => hasUpgrade('skyrmion', 12)),
         141: {
             unlocked() { return false },
@@ -535,7 +529,7 @@ addLayer("skyrmion", {
                 (effect) => `${format(effect)}x`,
                 (amount) => amount.times(player.acceleron.best.plus(1).ln()).plus(1),
                 undefined,
-                () => hasUpgrade('acceleron', 14),
+                () => hasUpgrade('acceleron', 13),
                 () => hasUpgrade('skyrmion', 12)),
         241: {
             unlocked() { return false },

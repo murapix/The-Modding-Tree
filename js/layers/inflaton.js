@@ -5,15 +5,13 @@ addLayer("inflaton", {
     position: 2,
     branches: ['fome'],
 
-    effectDescription: '<br/><h2>DANGER</h2><br/><h3>CONSTRUCTION AREA</h3><br/>AUTHORIZED PERSONNEL ONLY',
-    canReset: false,
-    layerShown() { return (player.acceleron.best.gt(0) && !hasUpgrade('acceleron', 25)) ? "ghost" : player[this.layer].unlocked },
+    layerShown() { return (player.inflaton.unlockOrder > 0 && !hasUpgrade('acceleron', 25)) ? "ghost" : player.inflaton.unlocked },
     resource() { return player[this.layer].points.equals(1) ? "Inflaton" : "Inflatons" },
     color: "#ff5e13",
     type: "static",
     baseResource: "Quantum Foam",
     baseAmount() { return player.fome.fome.quantum.points },
-    requires: new Decimal(1e300),
+    requires() { return player.inflaton.unlockOrder > 0 ? new Decimal(1e50) : new Decimal(1e12) },
     canBuyMax() { return false },
     base: 1e308,
     exponent: 1e308,
@@ -26,7 +24,8 @@ addLayer("inflaton", {
             
         }
         else {
-
+            if (player.acceleron.unlockOrder === 0 && player.inflaton.unlockOrder === 0)
+                player.acceleron.unlockOrder = 1
         }
     },
 
@@ -34,6 +33,7 @@ addLayer("inflaton", {
         unlocked: false,
         points: decimalZero,
         best: decimalZero,
+        unlockOrder: 0,
         actual: decimalZero,
         inflating: false
     }},
@@ -51,6 +51,9 @@ addLayer("inflaton", {
             nerf: inflatonNerf,
         }
     },
+    effectDescription() {
+        return `<br>which ${player.inflaton.points.eq(1) ? `is` : `are`} dividing all other resources by <span style='color:${layers.inflaton.color};text-shadow:${layers.inflaton.color} 0px 0px 10px;'>${formatWhole(temp.inflaton.effect.nerf)}x</span>`
+    },
 
     update(delta) {
         let max = new Decimal('10^^1e308')
@@ -66,6 +69,10 @@ addLayer("inflaton", {
             player.fome.fome[fomeType].points = player.fome.fome[fomeType].points.dividedBy(effect.nerf)
         player.skyrmion.pion.points = player.skyrmion.pion.points.dividedBy(effect.nerf)
         player.skyrmion.spinor.points = player.skyrmion.spinor.points.dividedBy(effect.nerf)
+        if (player.inflaton.unlockOrder > 0) {
+            player.acceleron.points = player.acceleron.points.dividedBy(effect.nerf)
+            player.timecube.points = player.timecube.points.dividedBy(effect.nerf)
+        }
 
         if (inChallenge('inflaton', 11)) {
             for (fomeType of fomeTypes)

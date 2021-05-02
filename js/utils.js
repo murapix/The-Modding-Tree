@@ -337,7 +337,6 @@ document.onkeydown = function (e) {
 	if (ctrlDown && hotkeys[key]) e.preventDefault()
 	if (hotkeys[key]) {
 		let k = hotkeys[key]
-		console.log(tmp[k.layer].hotkeys)
 		if (player[k.layer].unlocked && tmp[k.layer].hotkeys[k.id].unlocked)
 			k.onPress()
 	}

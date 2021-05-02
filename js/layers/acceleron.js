@@ -1,4 +1,6 @@
 const fib = [decimalOne, decimalOne]
+const sqrt5 = Decimal.sqrt(5)
+const phi = sqrt5.plus(1).dividedBy(2)
 
 addLayer("acceleron", {
     name: "Acceleron",
@@ -7,33 +9,45 @@ addLayer("acceleron", {
     position: 0,
     branches: ['fome'],
 
-    layerShown() { return player[this.layer].unlocked ? (player.inflaton.points.gt(0) && !hasUpgrade('acceleron', 25) ? "ghost" : true) : false },
+    layerShown() { return (player.acceleron.unlockOrder > 0 /*&& !hasUpgrade('inflaton', ??)*/) ? "ghost" : player.acceleron.unlocked },
+    increaseUnlockOrder: ['inflaton'],
     resource() { return player[this.layer].points.equals(1) ? "Acceleron" : "Accelerons" },
     color: "#0f52ba",
     type: "normal",
     baseResource: "Quantum Foam",
     baseAmount() { return player.fome.fome.quantum.points },
-    requires: new Decimal(1e12),
+    requires() { return player.acceleron.unlockOrder > 0 ? new Decimal(1e50) : new Decimal(1e12) },
     exponent: 0.1,
-    canReset() { return getBuyableAmount('fome', 54).gte(1) && Decimal.gte(temp.acceleron.resetGain, 1) },
+    canReset() { return !hasUpgrade('acceleron', 24) && getBuyableAmount('fome', 54).gte(1) && Decimal.gte(temp.acceleron.resetGain, 1) },
     prestigeNotify() { return isLoopFinished(0) ? false : temp.acceleron.canReset },
+    onPrestige() {
+        if (player.acceleron.unlockOrder === 0 && player.inflaton.unlockOrder === 0)
+            player.inflaton.unlockOrder = 1
+    },
     gainMult() {
-        return defaultUpgradeEffect('acceleron', 12).times(defaultUpgradeEffect('acceleron', 15))
+        return defaultUpgradeEffect('acceleron', 12).times(defaultUpgradeEffect('acceleron', 15)).times(defaultUpgradeEffect('acceleron', 143)).times(defaultUpgradeEffect('acceleron', 134)).times(defaultUpgradeEffect('acceleron', 114)).times(player.acceleron.acceleronBoost)
     },
     entropy() {
-        let entropy = decimalZero
+        let entropy = 0
         for (let id in temp.acceleron.loops) {
             if (typeof temp.acceleron.loops[id] !== 'object') continue
 
             let loop = temp.acceleron.loops[id]
             if (!loop.unlocked) continue
             if (isLoopFinished(id))
-                entropy = entropy.plus(loop.entropy)
+                entropy++
         }
-        return entropy
+        return Decimal.times(entropy, temp.acceleron.entropyMult)
+    },
+    entropyMult() {
+        let mult = decimalOne
+        if (hasUpgrade('timecube', 21)) mult = mult.times(upgradeEffect('timecube', 21))
+        return mult
     },
     effect() {
-        return player.acceleron.best.plus(1).sqrt().times(getClickableState('acceleron', 0)).times(defaultUpgradeEffect('timecube', 12))
+        let effect = player.acceleron.best.plus(1)
+        effect = effect.gte(1e12) ? effect.log10().times(5e5/6) : effect.sqrt()
+        return effect.times(getClickableState('acceleron', 0)).times(defaultUpgradeEffect('timecube', 12)).times(defaultUpgradeEffect('acceleron', 113))
     },
     effectDescription() {
         return `which ${player.acceleron.points.eq(1) ? `is` : `are`} causing time to go ${format(temp.acceleron.effect)}x faster<br>For every second in real time, ${formatTime(temp.acceleron.effect)} passes`
@@ -48,12 +62,14 @@ addLayer("acceleron", {
             let finished = isLoopFinished(loop)
             if (delta.lt(0)) {
                 if (temp.acceleron.loops[loop].unlocked && !finished) {
-                    let buildSpeed = delta.times(defaultUpgradeEffect('acceleron', 112))
+                    let buildSpeed = delta.times(defaultUpgradeEffect('acceleron', 112)).times(defaultUpgradeEffect('timecube', 23))
                     if (player.acceleron.points.gte(buildSpeed.negate())) {
                         player.acceleron.loops[loop].progress = player.acceleron.loops[loop].progress.minus(buildSpeed).min(temp.acceleron.loops[loop].max)
                         player.acceleron.points = player.acceleron.points.plus(buildSpeed.times(defaultUpgradeEffect('acceleron', 122)))
-                        if (isLoopFinished(loop))
+                        if (isLoopFinished(loop)) {
+                            player.acceleron.entropy = player.acceleron.entropy.plus(temp.acceleron.entropyMult)
                             clickClickable('acceleron', 0)
+                        }
                     }
                     break
                 }
@@ -69,6 +85,10 @@ addLayer("acceleron", {
 
         if (player.acceleron.fomeBoost.lte(1e6) && player.acceleron.fomeBoost.gt(1))
             player.acceleron.fomeBoost = player.acceleron.fomeBoost.times(0.92).max(1)
+        if (player.acceleron.acceleronBoost.lte(1e3) && player.acceleron.acceleronBoost.gt(1))
+            player.acceleron.acceleronBoost = player.acceleron.acceleronBoost.times(0.92).max(1)
+        if (player.acceleron.skyrmionBoost.lte(1e9) && player.acceleron.skyrmionBoost.gt(1))
+            player.acceleron.skyrmionBoost = player.acceleron.skyrmionBoost.times(0.92).max(1)
     },
 
     startData() {
@@ -77,11 +97,14 @@ addLayer("acceleron", {
             points: decimalZero,
             best: decimalZero,
             total: decimalZero,
+            unlockOrder: 0,
             loops: {},
             time: decimalZero,
             fomeBoost: decimalOne,
+            acceleronBoost: decimalOne,
+            skyrmionBoost: decimalOne,
             entropy: decimalZero,
-            enhancements: [0,0,0,0,0],
+            enhancements: [0,0,0,0,0,0,0],
             clickables: [1]
         }
 
@@ -102,7 +125,6 @@ addLayer("acceleron", {
         0: {
             unlocked() { return hasUpgrade('acceleron', 14) },
             max: new Decimal(60),
-            entropy: decimalOne,
             duration: decimalOne,
             intervalEffect(intervals = decimalOne) { addPoints('acceleron', new Decimal(temp.acceleron.resetGain).times(Decimal.plus(0.001, defaultUpgradeEffect('acceleron', 123, 0))).times(intervals)) },
             intervalDisplay() { return `Every second, gain ${format(Decimal.plus(0.001, defaultUpgradeEffect('acceleron', 123, 0)).times(100), 1)}% of your Acceleron prestige gain` },
@@ -112,7 +134,6 @@ addLayer("acceleron", {
         1: {
             unlocked() { return isLoopFinished(0) },
             max: new Decimal(360),
-            entropy: decimalOne,
             duration: new Decimal(60),
             intervalEffect(intervals = decimalOne) {
                 let skyrmionEffect = temp.skyrmion.effect
@@ -132,9 +153,8 @@ addLayer("acceleron", {
         2: {
             unlocked() { return isLoopFinished(1) },
             max: new Decimal(600),
-            entropy: decimalOne,
             duration: new Decimal(3600),
-            intervalEffect(intervals = decimalOne) { addPoints('timecube', intervals.times(defaultUpgradeEffect('timecube', 11)).times(defaultUpgradeEffect('acceleron', 22))) },
+            intervalEffect(intervals = decimalOne) { addPoints('timecube', intervals.times(defaultUpgradeEffect('timecube', 11)).times(defaultUpgradeEffect('acceleron', 22)).times(defaultUpgradeEffect('acceleron', 141))) },
             intervalDisplay: 'Every hour, gain a Time Cube',
             stroke: '#0000FF',
             width: 10
@@ -142,13 +162,40 @@ addLayer("acceleron", {
         3: {
             unlocked() { return hasUpgrade('timecube', 15) },
             max: new Decimal(250000),
-            entropy: decimalOne,
             duration: new Decimal(86400),
             intervalEffect(intervals = decimalOne) { player.acceleron.fomeBoost = Decimal.times(1e6, intervals) },
             intervalDisplay() { return `Every day, gain a decaying boost to Foam production. Currently: ${format(player.acceleron.fomeBoost)}x` },
             stroke: '#008080',
             width: 10
+        },
+        4: {
+            unlocked() { return hasUpgrade('acceleron', 24) },
+            max: new Decimal(1e11),
+            duration: new Decimal(31536000),
+            intervalEffect(intervals = decimalOne) { player.acceleron.acceleronBoost = Decimal.times(1e3, intervals) },
+            intervalDisplay() { return `Every year, gain a decaying boost to Acceleron production. Currently: ${format(player.acceleron.acceleronBoost)}x` },
+            stroke: '#00FF00',
+            width: 10
+        },
+        5: {
+            unlocked() { return isLoopFinished(4) },
+            max: new Decimal(4e17),
+            duration: new Decimal(315360000),
+            intervalEffect(intervals = decimalOne) { player.acceleron.skyrmionBoost = Decimal.times(1e9, intervals) },
+            intervalDisplay() { return `Every decade, gain a decaying boost to Pion and Spinor production. Currently: ${format(player.acceleron.skyrmionBoost)}x` },
+            stroke: '#808000',
+            width: 10
         }
+    },
+
+    enhancements() {
+        return [
+            0,
+            1 + defaultUpgradeEffect('timecube', 22, 0),
+            1 + defaultUpgradeEffect('acceleron', 124, 0),
+            1,
+            1 + defaultUpgradeEffect('timecube', 24, 0)
+        ]
     },
 
     milestones: {
@@ -199,8 +246,8 @@ addLayer("acceleron", {
             title: 'Quantum Translation',
             description: 'Each Foam re-formation increases Acceleron gain by 100%',
             cost: new Decimal(5),
-            effect() { return fomeTypes.map(type => player.fome.fome[type].expansion).reduce((a,b) => Decimal.plus(a,b)).minus(5) },
-            effectDisplay() { return `${formatWhole(upgradeEffect('acceleron', 13))}x` },
+            effect() { return fomeTypes.map(type => player.fome.fome[type].expansion).reduce((a,b) => Decimal.plus(a,b)).minus(5).max(1) },
+            effectDisplay() { return `${formatWhole(upgradeEffect('acceleron', 12))}x` },
             unlocked() { return hasUpgrade('acceleron', 11) }
         },
         13: {
@@ -266,14 +313,14 @@ addLayer("acceleron", {
         },
         24: {
             title: 'Cubic Tetration',
-            description: 'Gain access to an additional two Entropic Loops (not yet implemented)',
+            description: 'Remove the ability to Acceleron reset and gain access to an additional two Entropic Loops',
             cost: new Decimal(1e8),
             unlocked() { return hasUpgrade('acceleron', 23) }
         },
         25: {
             title: 'Temporal Mastery',
-            description: 'Unlock Inflatons (not yet implemented)',
-            cost: new Decimal(1e30),
+            description: 'Unlock Inflatons',
+            cost: new Decimal(1e19),
             unlocked() { return hasUpgrade('acceleron', 24) }
         },
 
@@ -339,7 +386,7 @@ addLayer("acceleron", {
         141: createEnhancement(141, {
             title: 'Entropic Tesselation',
             description: 'Increase Time Cube gain based on best Accelerons',
-            effect() { return Decimal.pow(fibonacciNumber(player.acceleron.best.plus(1).log10().floor()), 1.5).plus(1) }
+            effect() { return player.acceleron.best.plus(1).log10().plus(1) }
         }),
         142: createEnhancement(142, {
             title: 'Entropic Amplification',
@@ -349,7 +396,30 @@ addLayer("acceleron", {
         143: createEnhancement(143, {
             title: 'Entropic Rotation',
             description: 'Increase Acceleron gain based on best Time Cubes',
-            effect() { return Decimal.pow(fibonacciNumber(player.timecube.best.plus(1).log10().floor()), 1.5).plus(1) }
+            effect() { return player.timecube.best.plus(1).log10().plus(1) }
+        }),
+
+        114: createEnhancement(114, {
+            title: 'Entropic Contraction',
+            description: 'Increase Acceleron gain based on purchased Entropic Enhancements',
+            effect() { return Decimal.pow(fibonacciNumber(player.acceleron.enhancements[0]), 0.9) }
+        }),
+        124: createEnhancement(124, {
+            title: 'Entropic Entrenchment',
+            description: 'You may select an additional second row Entropic Enhancement',
+            effect: 1
+        }),
+        134: createEnhancement(134, {
+            title: 'Entropic Inversion',
+            description: 'Increase Acceleron gain based on Quantum Foam',
+            effect() { return player.fome.fome.quantum.points.plus(1).log10().plus(1) },
+            
+        }),
+        144: createEnhancement(144, {
+            title: 'Entropic Entitlement',
+            description: 'Each purchased Entropic Enhancement gives 0.1 free levels to each Foam Boost',
+            effect() { return Decimal.times(0.1, player.acceleron.enhancements[0]) },
+            effectDisplay() { return `${format(upgradeEffect('acceleron', 144), 1)} free levels`}
         })
     },
 
@@ -408,7 +478,7 @@ addLayer("acceleron", {
                         for (let loop in temp.acceleron.loops) {
                             if (!temp.acceleron.loops[loop].unlocked) continue
                             if (isLoopFinished(loop)) continue
-                            return `Construction Progress: ${formatWhole(player.acceleron.loops[loop].progress)} / ${temp.acceleron.loops[loop].max}`
+                            return `Construction Progress: ${formatWhole(player.acceleron.loops[loop].progress)} / ${formatWhole(temp.acceleron.loops[loop].max)}`
                         }
                         return `Construction Complete`
                     }],
@@ -424,6 +494,8 @@ addLayer("acceleron", {
                     ["display-text", () => isLoopFinished(1) ? temp.acceleron.loops[1].intervalDisplay : ''],
                     ["display-text", () => isLoopFinished(2) ? temp.acceleron.loops[2].intervalDisplay : ''],
                     ["display-text", () => isLoopFinished(3) ? temp.acceleron.loops[3].intervalDisplay : ''],
+                    ["display-text", () => isLoopFinished(4) ? temp.acceleron.loops[4].intervalDisplay : ''],
+                    ["display-text", () => isLoopFinished(5) ? temp.acceleron.loops[5].intervalDisplay : ''],
                     "blank",
                     () => hasUpgrade('acceleron', 21) ? ["clickable", 1] : '',
                     "blank",
@@ -432,10 +504,10 @@ addLayer("acceleron", {
                     () => hasUpgrade('acceleron', 21) ? ["display-text", `Each purchased Enhancement increases the cost of the others`] : '',
                     "blank",
                     () => hasUpgrade('acceleron', 21) ? ["column", [
-                        ["row", [["upgrade", 111], ["upgrade", 112], ["upgrade", 113]]],
-                        ["row", [["upgrade", 121], ["upgrade", 122], ["upgrade", 123]]],
-                        ["row", [["upgrade", 131], ["upgrade", 132], ["upgrade", 133]]],
-                        ["row", [["upgrade", 141], ["upgrade", 142], ["upgrade", 143]]],
+                        ["row", [["upgrade", 111], ["upgrade", 112], ["upgrade", 113], ["upgrade", 114]]],
+                        ["row", [["upgrade", 121], ["upgrade", 122], ["upgrade", 123], ["upgrade", 124]]],
+                        ["row", [["upgrade", 131], ["upgrade", 132], ["upgrade", 133], ["upgrade", 134]]],
+                        ["row", [["upgrade", 141], ["upgrade", 142], ["upgrade", 143], ["upgrade", 144]]],
                     ]] : '',
                     "blank"
                 ]
@@ -451,7 +523,7 @@ addLayer("acceleron", {
 
     tabFormat: [
         "main-display",
-        "prestige-button",
+        () => hasUpgrade('acceleron', 24) ? '' : "prestige-button",
         "resource-display",
         "blank",
         ["microtabs", "stuff"]
@@ -464,7 +536,7 @@ addLayer("acceleron", {
     hotkeys: [
         {
             key: "a",
-            description: "A: Form your Quantum Foam into Accelerons",
+            description() { if (!hasUpgrade('acceleron', 24)) return "A: Form your Quantum Foam into Accelerons" },
             onPress() { if (canReset('acceleron')) doReset('acceleron') }
         },
         {
@@ -512,6 +584,7 @@ function describeArc(x, y, radius, startAngle, endAngle) {
 
 function fibonacciNumber(index) {
     if (index < 0) return 0
+    if (index > 100) return phi.pow(index+1).dividedBy(sqrt5)
     if (fib[index]) return fib[index]
 
     let num = fibonacciNumber(index-2).plus(fibonacciNumber(index-1))
@@ -533,8 +606,10 @@ function createEnhancement(id, data) {
     if (data.cost === undefined)
         data.cost = () => fibonacciNumber(player.acceleron.enhancements[0])
 
-    if (data.unlocked === undefined)
-        data.unlocked = () => hasUpgrade('acceleron', 21) && isLoopFinished(row-1) && (hasUpgrade('acceleron', id) || player.acceleron.enhancements[row] < 1)
+    if (data.unlocked === undefined) {
+        let upgrade = id%10 === 4 ? ['timecube', 25] : ['acceleron', 21]
+        data.unlocked = () => player.tab === 'acceleron' && hasUpgrade(upgrade[0], upgrade[1]) && isLoopFinished(row-1) && (hasUpgrade('acceleron', id) || player.acceleron.enhancements[row] < temp.acceleron.enhancements[row])
+    }
 
     if (data.effectDisplay === undefined)
         data.effectDisplay = () => `${format(temp.acceleron.upgrades[id].effect)}x`

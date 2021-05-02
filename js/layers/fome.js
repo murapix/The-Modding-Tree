@@ -1,3 +1,5 @@
+const q1Scale = Decimal.ln(2).recip().times(4)
+
 addLayer("fome", {
     name: "Quantum Fome",
     symbol: "F",
@@ -70,10 +72,6 @@ addLayer("fome", {
                 }
 
                 layerDataReset('fome', ['milestones'])
-
-                // for (let fome of fomeTypes)
-                //     player.fome.fome[fome].expansion = decimalZero
-                // player.fome.fome.protoversal.expansion = decimalOne
 
                 for (let id in buyables)
                     setBuyableAmount('fome', id, buyables[id])
@@ -275,135 +273,135 @@ addLayer("fome", {
             0: createFomeBoost('protoversal', 0,
                 (effect) => `Multiply the generation of Protoversal Foam by ${format(effect)}x`,
                 (total) => total.times(buyableEffect('skyrmion', 221)).plus(1),
-                () => fomeEffect('protoversal', 4).plus(fomeEffect('subspatial', 2)).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('protoversal', 4).plus(fomeEffect('subspatial', 2)).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             1: createFomeBoost('protoversal', 1,
                 (effect) => `Gain ${format(effect)} bonus Pion and Spinor Upgrade α levels`,
                 (total) => total,
-                () => fomeEffect('protoversal', 4).plus(fomeEffect('subspatial', 2)).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('protoversal', 4).plus(fomeEffect('subspatial', 2)).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             2: createFomeBoost('protoversal', 2,
                 (effect) => `Gain ${format(effect)} bonus Pion and Spinor Upgrade β levels`,
                 (total) => total.sqrt(),
-                () => fomeEffect('protoversal', 4).plus(fomeEffect('subspatial', 2)).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('protoversal', 4).plus(fomeEffect('subspatial', 2)).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             3: createFomeBoost('protoversal', 3,
                 (effect) => `Gain ${format(effect)} bonus Pion and Spinor Upgrade γ levels`,
                 (total) => total,
-                () => fomeEffect('protoversal', 4).plus(fomeEffect('subspatial', 2)).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('protoversal', 4).plus(fomeEffect('subspatial', 2)).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             4: createFomeBoost('protoversal', 4,
                 (effect) => `Add ${format(effect)} levels to all above boosts`,
                 (total) => total.times(0.1),
-                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             )
         },
         infinitesimal: {
             0: createFomeBoost('infinitesimal', 0,
                 (effect) => `Multiply the generation of Infinitesimal Foam by ${format(effect)}x`,
                 (total) => total.times(buyableEffect('skyrmion', 133)).times(buyableEffect('skyrmion', 134)).plus(1),
-                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             1: createFomeBoost('infinitesimal', 1,
                 (effect) => `Increase Pion and Spinor gain by ${format(effect.minus(1).times(100))}%`,
                 (total) => total.times(0.5).plus(1),
-                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             2: createFomeBoost('infinitesimal', 2,
                 (effect) => `Reduce Pion and Spinor Upgrade α costs by ${format(Decimal.sub(1, effect).times(100))}%`,
                 (total) => Decimal.pow(0.8, total),
-                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             3: createFomeBoost('infinitesimal', 3,
                 (effect) => `Increase Skyrmion gain by ${format(effect.minus(1).times(100))}%`,
                 (total) => total.times(0.5).plus(1),
-                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             4: createFomeBoost('infinitesimal', 4,
                 (effect) => `Reduce Pion and Spinor Upgrade γ costs by ${format(Decimal.sub(1, effect).times(100))}%`,
                 (total) => Decimal.pow(0.8, total),
-                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             )
         },
         subspatial: {
             0: createFomeBoost('subspatial', 0,
                 (effect) => `Multiply the generation of Subspatial Foam by ${format(effect)}x`,
                 (total) => total.times(buyableEffect('skyrmion', 133)).plus(1),
-                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             1: createFomeBoost('subspatial', 1,
-                (effect) => `Decrease effective Pion and Spinor upgrade counts by ${format(effect)}`,
+                (effect) => `The Pion and Spinor nerfs act as if you had ${format(effect)} fewer upgrades`,
                 (total) => total,
-                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('subspatial', 2).plus(fomeEffect('quantum', 4)).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             2: createFomeBoost('subspatial', 2,
                 (effect) => `Add ${format(effect)} levels to all above boosts`,
                 (total) => total.times(0.1),
-                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             3: createFomeBoost('subspatial', 3,
                 (effect) => `Increase effective Skyrmion count by ${format(effect)}`,
                 (total) => total,
-                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             4: createFomeBoost('subspatial', 4,
                 (effect) => `Pion and Spinor upgrades cost as if you had ${format(effect)} fewer`,
                 (total) => total.times(0.25),
-                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             )
         },
         subplanck: {
             0: createFomeBoost('subplanck', 0,
                 (effect) => `Multiply the generation of Subplanck Foam by ${format(effect)}x`,
                 (total) => total.times(buyableEffect('skyrmion', 233)).times(buyableEffect('skyrmion', 133)).plus(1),
-                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             1: createFomeBoost('subplanck', 1,
                 (effect) => `Gain ${format(effect)} bonus Pion and Spinor Upgrade δ levels`,
                 (total) => total.times(0.5),
-                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             2: createFomeBoost('subplanck', 2,
                 (effect) => `Gain ${format(effect)} bonus Pion and Spinor Upgrade ε levels`,
                 (total) => total.times(0.5),
-                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             3: createFomeBoost('subplanck', 3,
                 (effect) => `Gain ${format(effect)} bonus Pion and Spinor Upgrade ζ levels`,
                 (total) => total.times(0.5),
-                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             4: createFomeBoost('subplanck', 4,
                 (effect) => `Gain ${format(effect)} bonus Pion and Spinor Upgrade η levels`,
                 (total) => total.times(0.5),
-                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
         },
         quantum: {
             0: createFomeBoost('quantum', 0,
                 (effect) => `Multiply the generation of all Foam types by ${format(effect)}x`,
                 (total) => total.times(buyableEffect('skyrmion', 133)).plus(1),
-                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             1: createFomeBoost('quantum', 1,
                 (effect) => `Reduce the Pion and Spinor cost nerf exponent by ${format(Decimal.sub(1, effect).times(100))}%`,
-                (total) => Decimal.pow(0.975, total),
-                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+                (total) => Decimal.pow(0.975, total.gt(16) ? total.ln().times(q1Scale) : total),
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             2: createFomeBoost('quantum', 2,
                 (effect) => `Multiply the generation of all Foam types again by ${format(effect)}x`,
-                (total) => total.times(boostGain.quantum.dividedBy(10)).plus(1),
-                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+                (total) => (total.gt(16) ? total.sqrt().times(4) : total).times(boostGain.quantum.dividedBy(10)).plus(1),
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             3: createFomeBoost('quantum', 3,
                 (effect) => `Gain ${format(effect)} bonus Pion and Spinor Upgrade θ, ι, and κ levels`,
                 (total) => total.times(0.25),
-                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0))
+                () => fomeEffect('quantum', 4).plus(defaultUpgradeEffect('timecube', 13, 0)).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
             4: createFomeBoost('quantum', 4,
                 (effect) => `Add ${format(effect)} levels to all above boosts`,
                 (total) => total.times(0.1),
-                () => defaultUpgradeEffect('timecube', 13, 0)
+                () => defaultUpgradeEffect('timecube', 13, decimalZero).plus(defaultUpgradeEffect('acceleron', 144, 0))
             ),
         }
     },
@@ -433,7 +431,11 @@ addLayer("fome", {
             buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 0)) }
         },
         14: {
-            cost() { return Decimal.pow(10, getBuyableAmount('fome', this.id).sqr().plus(1).times(4)) },
+            cost() {
+                let amount = getBuyableAmount('fome', this.id)
+                amount = amount.lte(5) ? amount.sqr() : amount.sqr().sqr()
+                return Decimal.pow(10, amount.plus(1).times(4))
+            },
             display() { return `<h3>${player.fome.fome.infinitesimal.points.eq(0) ? `Condense` : `Re-form`} your Protoversal Foam</h3><br/><br/><b>Cost:</b> ${format(temp.fome.buyables[this.id].cost)} Protoversal Foam` },
             canAfford() { return player.fome.fome.protoversal.points.gte(temp.fome.buyables[this.id].cost) },
             buy() {
@@ -468,7 +470,11 @@ addLayer("fome", {
             buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 1)) }
         },
         24: {
-            cost() { return Decimal.pow(10, getBuyableAmount('fome', this.id).sqr().plus(1).times(5)).dividedBy(5) },
+            cost() {
+                let amount = getBuyableAmount('fome', this.id)
+                amount = amount.lte(4) ? amount.sqr() : amount.sqr().sqr()
+                return Decimal.pow(10, amount.plus(1).times(5)).dividedBy(5)
+            },
             display() {
                 let type = player.fome.fome.subspatial.expansion.eq(0)
                 return `<h3>${type ? `Condense` : `Re-form`} your Infinitesimal Foam</h3><br/><br/><b>Cost:</b> ${format(temp.fome.buyables[this.id].cost)} Infinitesimal Foam${type ? ``: `<br/><br/><b>Requires:</b> Protoversal Foam<sup>${getBuyableAmount('fome', this.id).plus(2)}</sup>`}`
@@ -507,7 +513,11 @@ addLayer("fome", {
             buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 2)) }
         },
         34: {
-            cost() { return Decimal.pow(10, getBuyableAmount('fome', this.id).sqr().plus(1).times(6)).dividedBy(2.5) },
+            cost() {
+                let amount = getBuyableAmount('fome', this.id)
+                amount = amount.lte(3) ? amount.sqr() : amount.sqr().sqr()
+                return Decimal.pow(10, amount.plus(1).times(6)).dividedBy(2.5)
+            },
             display() {
                 let type = player.fome.fome.subplanck.expansion.eq(0)
                 return `<h3>${type ? `Condense` : `Re-form`} your Subspatial Foam</h3><br/><br/><b>Cost:</b> ${format(temp.fome.buyables[this.id].cost)} Subspatial Foam${type ? ``: `<br/><br/><b>Requires:</b> Infinitesimal Foam<sup>${getBuyableAmount('fome', this.id).plus(2)}</sup>`}`
@@ -546,7 +556,11 @@ addLayer("fome", {
             buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 4)) }
         },
         44: {
-            cost() { return Decimal.pow(10, getBuyableAmount('fome', this.id).sqr().plus(1).times(7)).dividedBy(1) },
+            cost() {
+                let amount = getBuyableAmount('fome', this.id)
+                amount = amount.lte(2) ? amount.sqr() : amount.sqr().sqr()
+                return Decimal.pow(10, amount.plus(1).times(7)).dividedBy(1)
+            },
             display() {
                 let type = player.fome.fome.quantum.expansion.eq(0)
                 return `<h3>${type ? `Condense` : `Re-form`} your Subplanck Foam</h3><br/><br/><b>Cost:</b> ${format(temp.fome.buyables[this.id].cost)} Subplanck Foam${type ? `` : `<br/><br/><b>Requires:</b> Subspatial Foam<sup>${getBuyableAmount('fome', this.id).plus(2)}</sup>`}`
@@ -585,7 +599,11 @@ addLayer("fome", {
             buy() { buyFomeBuyable(this.id, hasMilestone('acceleron', 5)) }
         },
         54: {
-            cost() { return Decimal.pow(10, getBuyableAmount('fome', this.id).sqr().plus(1).times(7)).times(1e2) },
+            cost() {
+                let amount = getBuyableAmount('fome', this.id)
+                amount = amount.lte(1) ? amount.sqr() : amount.sqr().sqr()
+                return Decimal.pow(10, amount.plus(1).times(7)).times(1e2)
+            },
             display() {
                 let type = getBuyableAmount('fome', this.id).eq(0)
                 return `<h3>${type ? `Condense` : `Re-form`} your Quantum Foam</h3><br/><br/><b>Cost:</b> ${format(temp.fome.buyables[this.id].cost)} Quantum Foam${type ? `` : `<br/><br/><b>Requires:</b> Subplanck Foam<sup>${getBuyableAmount('fome', this.id).plus(2)}</sup>`}`
