@@ -5,8 +5,8 @@ var scrolled = false;
 
 // Don't change this
 const TMT_VERSION = {
-	tmtNum: "2.4",
-	tmtName: "Rationalized Edition"
+	tmtNum: "2.5",
+	tmtName: "Dreams Really Do Come True"
 }
 
 function getResetGain(layer, useType = null) {
@@ -77,7 +77,6 @@ function softcap(value, cap, power = 0.5) {
 
 // Return true if the layer should be highlighted. By default checks for upgrades only.
 function shouldNotify(layer){
-	if (player.tab == layer || player.navTab == layer) return false
 	for (id in tmp[layer].upgrades){
 		if (!isNaN(id)){
 			if (canAffordUpgrade(layer, id) && !hasUpgrade(layer, id) && tmp[layer].upgrades[id].unlocked){
@@ -134,7 +133,7 @@ function rowReset(row, layer) {
 }
 
 function layerDataReset(layer, keep = []) {
-	let storedData = {unlocked: player[layer].unlocked} // Always keep unlocked
+	let storedData = {unlocked: player[layer].unlocked, forceTooltip: player[layer].forceTooltip} // Always keep these
 
 	for (thing in keep) {
 		if (player[layer][keep[thing]] !== undefined)
@@ -417,6 +416,8 @@ var interval = setInterval(function() {
 	}
 	tmp.scrolled = document.getElementById('treeTab') && document.getElementById('treeTab').scrollTop > 30
 	updateTemp();
+	updateOomps(diff);
+	updateWidth()
 	gameLoop(diff)
 	fixNaNs()
 	adjustPopupTime(0.05) 

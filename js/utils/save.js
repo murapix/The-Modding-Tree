@@ -22,7 +22,7 @@ function startPlayerBase() {
 		showStory: true,
 		points: modInfo.initialStartPoints,
 		subtabs: {},
-		lastSafeTab: (layoutInfo.showTree ? "none" : layoutInfo.startTab)
+		lastSafeTab: (readData(layoutInfo.showTree) ? "none" : layoutInfo.startTab)
 	};
 }
 function getStartPlayer() {
@@ -81,6 +81,7 @@ function getStartLayerData(layer) {
 	layerdata.spentOnBuyables = new Decimal(0);
 	layerdata.upgrades = [];
 	layerdata.milestones = [];
+	layerdata.lastMilestone = null;
 	layerdata.achievements = [];
 	layerdata.challenges = getStartChallenges(layer);
 	return layerdata;
@@ -172,7 +173,7 @@ function load() {
 	if (get === null || get === undefined)
 		player = getStartPlayer();
 	else
-		player = Object.assign(getStartPlayer(), JSON.parse(atob(get)));
+		player = Object.assign(getStartPlayer(), JSON.parse(decodeURIComponent(escape(atob(get)))));
 	fixSave();
 
 	if (player.offlineProd) {
