@@ -39,20 +39,32 @@ addLayer("inflaton", {
     }},
 
     effect() {
-        let inflatonLog = new Decimal(10)
-        let inflatonDiv = new Decimal(10)
-        let nerfFactor = new Decimal(2)
+        if (player.inflaton.points.gt(1)) {
+            let inflatonLog = 10
+            let inflatonDiv = 10
+            let nerfFactor = decimalOne.times(buyableEffect('inflaton', 11)).plus(1)
 
-        let inflatonNerf = player.inflaton.points.gt(1) ? Decimal.pow(nerfFactor, player.inflaton.points.log10()) : decimalOne
-        let inflatonGain = player.inflaton.points.gt(1) ? player.inflaton.points.times(Decimal.pow(2, player.inflaton.points.log(inflatonLog).plus(1).dividedBy(inflatonDiv))) : decimalZero
+            let inflatonNerf = Decimal.pow(nerfFactor, player.inflaton.points.log10())
+            let inflatonGain = player.inflaton.points.times(Decimal.pow(2, player.inflaton.points.log(inflatonLog).plus(1).dividedBy(inflatonDiv)))
 
+            return {
+                gain: inflatonGain,
+                nerf: inflatonNerf,
+            }
+        }
         return {
-            gain: inflatonGain,
-            nerf: inflatonNerf,
+            gain: decimalZero,
+            nerf: decimalOne
         }
     },
     effectDescription() {
         return `<br>which ${player.inflaton.points.eq(1) ? `is` : `are`} dividing all other resources by <span style='color:${layers.inflaton.color};text-shadow:${layers.inflaton.color} 0px 0px 10px;'>${formatWhole(temp.inflaton.effect.nerf)}x</span>`
+    },
+    size() {
+        if (player.inflaton.best.gt(1)) {
+            return player.inflaton.best.log(2).log(2)
+        }
+        return decimalZero
     },
 
     update(delta) {
@@ -116,6 +128,69 @@ addLayer("inflaton", {
         }
     },
 
+    upgrades: {
+        11: {
+            title: 'Subspatial Field Stabilizers',
+            description: 'Allow the creation of Subspatial Structures',
+            cost: new Decimal(2e16),
+            currencyDisplayName: 'Quantum Foam',
+            currencyInternalName: 'points',
+            currencyLocation() { return player.fome.fome.quantum },
+            unlocked() { return hasUpgrade('inflaton', 11) || (!player.inflaton.inflating && player.inflaton.best.gt(1)) }
+        }
+    },
+
+    buyables: {
+        respecBuyables() {
+            player.inflaton.buyables = {}
+        },
+        11: createInflatonBuilding(11, {
+            title: 'Spin-field Condenser',
+            description: 'Slightly reduce the loss of resources to Inflation',
+            effect(amount) { return Decimal.pow(0.975, amount) },
+            effectDisplay(effect) { return `${formatSmall(effect)}x` },
+            unlocked() { return hasUpgrade('inflaton', 11) }
+        })
+    },
+
+    microtabs: {
+        stuff: {
+            "Upgrades": {
+                unlocked() { return hasUpgrade('inflaton', 11) },
+                content: [
+                    "blank",
+                    "challenges",
+                    "blank",
+                    "upgrades"
+                ]
+            },
+            "Subspace": {
+                unlocked() { return hasUpgrade('inflaton', 11) },
+                content: [
+                    "blank",
+                    "buyables"
+                ]
+            }
+        }
+    },
+
+    tabFormat: [
+        "main-display",
+        "prestige-button",
+        "resource-display",
+        "blank",
+        ["display-text", () => `Current Universal Size: ${formatLength(temp.inflaton.size)}`],
+        "blank",
+        () => !hasUpgrade('inflaton', 11) ? "challenges" : '',
+        () => !hasUpgrade('inflaton', 11) ? "blank" : '',
+        () => !hasUpgrade('inflaton', 11) ? "upgrades" : '',
+        () => hasUpgrade('inflaton', 11) ? ["microtabs", "stuff"] : ''
+    ],
+
+    componentStyles: {
+        "microtabs"() { return { "border-style": "none" } }
+    },
+
     hotkeys: [
         {
             key: "ctrl+i",
@@ -123,3 +198,7 @@ addLayer("inflaton", {
         }
     ]
 })
+
+function createInflatonBuilding(id, data) {
+    return id
+}

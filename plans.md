@@ -14,6 +14,15 @@ Inflatons
     - Important: inflaton effect takes place outside challenges, but requires at least 2. Player will not be allowed to gain 2 until base completion
         - This will happen when foam/spinors/pions and inflatons both effectively hardcap (read: extreme softcap) each other
 
+- Inflation challenge -> universe size
+- universe size + subspatial foam? -> subspace buildings
+- subspace buildings -> ??? energy
+- ??? energy -> upgrades -> reduce inflaton effect (slightly)
+                         -> unlock more building types -> some buildings divide one resource but give inflaton layer resources
+                                                       -> some increase resource gain during inflation
+                                                       -> some upgrade other buildings
+                                                       -> etc.
+
 -----
 
 Row 4 - Space and time are laid down, and so begin strings and forces

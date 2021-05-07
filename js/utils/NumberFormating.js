@@ -63,11 +63,11 @@ function formatWhole(decimal) {
 }
 
 function formatTime(s) {
-    if (s < 60) return format(s) + "s"
-    else if (s < 3600) return formatWhole(Math.floor(s / 60)) + "m " + format(s % 60) + "s"
-    else if (s < 86400) return formatWhole(Math.floor(s / 3600)) + "h " + formatWhole(Math.floor(s / 60) % 60) + "m " + format(s % 60) + "s"
-    else if (s < 31536000) return formatWhole(Math.floor(s / 86400) % 365) + "d " + formatWhole(Math.floor(s / 3600) % 24) + "h " + formatWhole(Math.floor(s / 60) % 60) + "m " + format(s % 60) + "s"
-    else return formatWhole(Math.floor(s / 31536000)) + "y " + formatWhole(Math.floor(s / 86400) % 365) + "d " + formatWhole(Math.floor(s / 3600) % 24) + "h " + formatWhole(Math.floor(s / 60) % 60) + "m " + format(s % 60) + "s"
+    if (s < 60) return `${format(s)}s`
+    else if (s < 3600) return `${format(s/60)}m`
+    else if (s < 86400) return `${format(s/3600)}h`
+    else if (s < 31536000) return `${format(s/86400)}d`
+    else return `${format(s/31536000)}y`
 }
 
 function toPlaces(x, precision, maxAccepted) {
@@ -77,4 +77,30 @@ function toPlaces(x, precision, maxAccepted) {
         result = new Decimal(maxAccepted - Math.pow(0.1, precision)).toStringWithDecimalPlaces(precision)
     }
     return result
+}
+
+function formatLength(l) {
+    l = new Decimal(l)
+    if (l.lt(6.187e10)) return `${format(l)}ℓ<sub>P</sub>`
+    
+    l = l.dividedBy(6.187e10)
+    if (l.lt(1e3)) return `${format(l)}ym`
+    else if (l.lt(1e6)) return `${format(l.dividedBy(1e3))}zm`
+    else if (l.lt(1e9)) return `${format(l.dividedBy(1e6))}am`
+    else if (l.lt(1e12)) return `${format(l.dividedBy(1e9))}fm`
+    else if (l.lt(1e15)) return `${format(l.dividedBy(1e12))}pm`
+    else if (l.lt(1e18)) return `${format(l.dividedBy(1e15))}nm`
+    else if (l.lt(1e21)) return `${format(l.dividedBy(1e18))}μm`
+    else if (l.lt(1e24)) return `${format(l.dividedBy(1e21))}mm`
+    else if (l.lt(1e27)) return `${format(l.dividedBy(1e24))}m`
+    else if (l.lt(1e30)) return `${format(l.dividedBy(1e27))}km`
+    else if (l.lt(1e33)) return `${format(l.dividedBy(1e30))}Mm`
+    else if (l.lt(1e36)) return `${format(l.dividedBy(1e33))}Gm`
+    else if (l.lt(1e39)) return `${format(l.dividedBy(1e36))}Tm`
+    else if (l.lt(1e42)) return `${format(l.dividedBy(1e39))}Pm`
+    else if (l.lt(9.461e42)) return `${format(l.dividedBy(1e42))}ly`
+    else if (l.lt(3.086e43)) return `${format(l.dividedBy(9.461e42))}pc`
+    else if (l.lt(3.086e46)) return `${format(l.dividedBy(3.086e43))}kpc`
+    else if (l.lt(3.086e49)) return `${format(l.dividedBy(3.086e46))}Mpc`
+    return `${format(l.dividedBy(3.086e49))}Gpc`
 }

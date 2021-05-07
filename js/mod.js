@@ -110,8 +110,5 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
-	if (player.acceleron.best.gt(0) && player.inflaton.unlockOrder === 0)
-		player.inflaton.unlockOrder++
-	else if (player.inflaton.best.gt(0) && player.acceleron.unlockOrder === 0)
-		player.acceleron.unlockOrder++
+	
 }
