@@ -257,8 +257,8 @@ function loadVue() {
 	Vue.component('buyable', {
 		props: ['layer', 'data', 'size'],
 		template: `
-		<div v-if="tmp[layer].buyables && tmp[layer].buyables[data]!== undefined && tmp[layer].buyables[data].unlocked" style="display: grid">
-			<button v-bind:class="{ buyable: true, can: tmp[layer].buyables[data].canBuy, locked: !tmp[layer].buyables[data].canAfford, bought: player[layer].buyables[data].gte(tmp[layer].buyables[data].purchaseLimit)}"
+		<div v-if="tmp[layer].buyables && tmp[layer].buyables[data] !== undefined && tmp[layer].buyables[data].unlocked" style="display: grid">
+			<button v-bind:class="{ buyable: true, can: tmp[layer].buyables[data].canBuy, locked: !tmp[layer].buyables[data].canAfford, bought: new Decimal(player[layer].buyables[data]).gte(tmp[layer].buyables[data].purchaseLimit)}"
 			v-bind:style="[tmp[layer].buyables[data].canBuy ? {'background-color': tmp[layer].color} : {}, size ? {'height': size, 'width': size} : {}, tmp[layer].componentStyles.buyable, tmp[layer].buyables[data].style]"
 			v-on:click="buyBuyable(layer, data)">
 				<span v-if= "tmp[layer].buyables[data].title"><h2 v-html="tmp[layer].buyables[data].title"></h2><br></span>

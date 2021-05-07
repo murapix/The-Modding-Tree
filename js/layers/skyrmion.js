@@ -617,7 +617,7 @@ addLayer("skyrmion", {
                 },
                 content: [
                     "blank",
-                    () => hasMilestone('skyrmion', 0) ? ["row", [["milestone", 0], ["milestone", 1]]] : ``,
+                    ["row", [["milestone", 0], ["milestone", 1]]],
                     () => hasMilestone('skyrmion', 0) ? "blank" : ``,
                     ["clickable", 0],
                     () => hasMilestone('fome', 0) ? "blank" : "",

@@ -49,7 +49,7 @@ addLayer("inflaton", {
 
             return {
                 gain: inflatonGain,
-                nerf: inflatonNerf,
+                nerf: inflatonNerf
             }
         }
         return {
@@ -149,6 +149,7 @@ addLayer("inflaton", {
             description: 'Slightly reduce the loss of resources to Inflation',
             effect(amount) { return Decimal.pow(0.975, amount) },
             effectDisplay(effect) { return `${formatSmall(effect)}x` },
+            cost: decimalOne,
             unlocked() { return hasUpgrade('inflaton', 11) }
         })
     },
@@ -200,5 +201,12 @@ addLayer("inflaton", {
 })
 
 function createInflatonBuilding(id, data) {
-    return id
+    return {
+        title: data.title,
+        cost: data.cost,
+        effect() { return data.effect(getBuyableAmount('inflaton', id)) },
+        display() { return `<br><br>${data.description}<br><br><b>Amount:</b> ${getBuyableAmount('inflaton', id)}<br><br><b>Current Effect: </b>${data.effectDisplay(temp.inflaton.buyables[id].effect)}<br><br><b>Cost:</b> ${format(temp.inflaton.buyables[id].cost)}` },
+        canAfford() { return player.inflaton.best.gte(temp.inflaton.buyables[id].cost) },
+        buy() { setBuyableAmount('inflaton', id, getBuyableAmount('inflaton', id).plus(1)) }
+    }
 }
