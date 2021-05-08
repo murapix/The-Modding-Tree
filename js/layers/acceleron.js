@@ -50,7 +50,7 @@ addLayer("acceleron", {
         return effect.times(getClickableState('acceleron', 0)).times(defaultUpgradeEffect('timecube', 12)).times(defaultUpgradeEffect('acceleron', 113))
     },
     effectDescription() {
-        return `which ${player.acceleron.points.eq(1) ? `is` : `are`} causing time to go ${format(temp.acceleron.effect)}x faster<br>For every second in real time, ${formatTime(temp.acceleron.effect)} passes`
+        return `which ${player.acceleron.points.eq(1) ? `is` : `are`} causing time to go ${format(temp.acceleron.effect)}x faster<br>For every second in real time, ${formatSingleTime(temp.acceleron.effect)} passes`
     },
 
     update(delta) {
@@ -62,10 +62,10 @@ addLayer("acceleron", {
             let finished = isLoopFinished(loop)
             if (delta.lt(0)) {
                 if (temp.acceleron.loops[loop].unlocked && !finished) {
-                    let buildSpeed = delta.times(defaultUpgradeEffect('acceleron', 112)).times(defaultUpgradeEffect('timecube', 23))
-                    if (player.acceleron.points.gte(buildSpeed.negate())) {
-                        player.acceleron.loops[loop].progress = player.acceleron.loops[loop].progress.minus(buildSpeed).min(temp.acceleron.loops[loop].max)
-                        player.acceleron.points = player.acceleron.points.plus(buildSpeed.times(defaultUpgradeEffect('acceleron', 122)))
+                    let buildSpeed = delta.times(defaultUpgradeEffect('acceleron', 112)).times(defaultUpgradeEffect('timecube', 23)).negate()
+                    if (player.acceleron.points.gte(buildSpeed)) {
+                        player.acceleron.loops[loop].progress = player.acceleron.loops[loop].progress.plus(buildSpeed).min(temp.acceleron.loops[loop].max)
+                        player.acceleron.points = player.acceleron.points.minus(buildSpeed.times(defaultUpgradeEffect('acceleron', 122)))
                         if (isLoopFinished(loop)) {
                             player.acceleron.entropy = player.acceleron.entropy.plus(temp.acceleron.entropyMult)
                             clickClickable('acceleron', 0)

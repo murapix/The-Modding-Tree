@@ -35,7 +35,7 @@ addLayer("inflaton", {
         best: decimalZero,
         unlockOrder: 0,
         actual: decimalZero,
-        inflating: false
+        inflating: false,
     }},
 
     effect() {
@@ -141,9 +141,12 @@ addLayer("inflaton", {
     },
 
     buyables: {
-        respecBuyables() {
-            player.inflaton.buyables = {}
+        respec() {
+            console.log("respecced")
+            for (let id in player.inflaton.buyables)
+                player.inflaton.buyables[id] = decimalZero
         },
+        respecConfirm: false,
         11: createInflatonBuilding(11, {
             title: 'Spin-field Condenser',
             description: 'Slightly reduce the loss of resources to Inflation',

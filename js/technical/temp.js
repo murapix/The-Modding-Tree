@@ -110,19 +110,6 @@ function updateTemp() {
 		if (isFunction(text)) text = text()
 		tmp.displayThings.push(text) 
 	}
-
-	var screenWidth = window.innerWidth
-	var splitScreen
-	switch (player.splitMode) {
-		case "disabled": splitScreen = false; break
-		case "enabled": splitScreen = true; break
-		default: splitScreen = screenWidth >= 1024
-	}
-	
-	tmp.other = {
-		screenWidth: screenWidth,
-		splitScreen: splitScreen
-	}
 }
 
 function updateTempData(layerData, tmpData, funcsData) {
