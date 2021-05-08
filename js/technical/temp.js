@@ -37,6 +37,7 @@ function setupTemp() {
 		tmp[layer].computedNodeStyle = []
 		setupBarStyles(layer)
 		setupBuyables(layer)
+		tmp[layer].trueGlowColor = []
 	}
 
 	tmp.other = {
@@ -98,6 +99,7 @@ function updateTemp() {
 		tmp[layer].nextAt = getNextAt(layer)
 		tmp[layer].nextAtDisp = getNextAt(layer, true)
 		tmp[layer].canReset = canReset(layer)
+		tmp[layer].trueGlowColor = tmp[layer].glowColor
 		tmp[layer].notify = shouldNotify(layer)
 		tmp[layer].prestigeNotify = prestigeNotify(layer)
 		constructBarStyles(layer)
@@ -134,7 +136,6 @@ function updateTempData(layerData, tmpData, funcsData) {
 					NaNalert = true;
 				}
 			}
-
 			Vue.set(tmpData, item, value)
 		}
 	}	

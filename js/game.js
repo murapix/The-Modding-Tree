@@ -5,7 +5,7 @@ var scrolled = false;
 
 // Don't change this
 const TMT_VERSION = {
-	tmtNum: "2.5",
+	tmtNum: "2.5.1",
 	tmtName: "Dreams Really Do Come True"
 }
 
@@ -88,21 +88,27 @@ function shouldNotify(layer){
 		return true
 	}
 
+	if (tmp[layer].shouldNotify)
+		return true
+
 	if (isPlainObject(tmp[layer].tabFormat)) {
 		for (subtab in tmp[layer].tabFormat){
-			if (subtabShouldNotify(layer, 'mainTabs', subtab))
+			if (subtabShouldNotify(layer, 'mainTabs', subtab)) {
+				tmp[layer].trueGlowColor = tmp[layer].tabFormat[subtab].glowColor
 				return true
+			}
 		}
 	}
 
 	for (family in tmp[layer].microtabs) {
 		for (subtab in tmp[layer].microtabs[family]){
 			if (subtabShouldNotify(layer, family, subtab))
+				tmp[layer].trueGlowColor = tmp[layer].microtabs[family][subtab].glowColor
 				return true
 		}
 	}
 	 
-	return tmp[layer].shouldNotify
+	return false
 	
 }
 
@@ -340,7 +346,7 @@ function gameLoop(diff) {
 	addTime(diff)
 	player.points = player.points.add(tmp.pointGen.times(diff)).max(0)
 
-	for (x = 0; x <= maxRow; x++){
+	for (let x = 0; x <= maxRow; x++){
 		for (item in TREE_LAYERS[x]) {
 			let layer = TREE_LAYERS[x][item]
 			player[layer].resetTime += diff
@@ -358,7 +364,7 @@ function gameLoop(diff) {
 		}
 	}	
 
-	for (x = maxRow; x >= 0; x--){
+	for (let x = maxRow; x >= 0; x--){
 		for (item in TREE_LAYERS[x]) {
 			let layer = TREE_LAYERS[x][item]
 			if (tmp[layer].autoPrestige && tmp[layer].canReset) doReset(layer);
