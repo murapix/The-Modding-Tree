@@ -521,13 +521,21 @@ function loadVue() {
 				return radius
 			},
 			center(layer) { return this.size(layer)/2 },
-			start(id, bar) { return bar.offset != undefined ? bar.offset : player.acceleron.time.dividedBy(bar.duration).toNumber() % 360 },
-			angle(id, bar) { return bar.angle != undefined ? bar.angle : 
-				(isLoopFinished(id) ? player.acceleron.loops[id].interval.dividedBy(bar.duration).times(360).toNumber()
-									: getLoopProgress(id).dividedBy(bar.max).toNumber() * 360)
+			doubleCenter(layer) { let c = this.center(layer); return `${c} ${c}` },
+			offset(bar) { return `rotate(${bar.offset != undefined ? bar.offset : player.acceleron.time.dividedBy(bar.duration).toNumber() % 360})` },
+			angle(id, bar) {
+				if (bar.angle !== undefined) return bar.angle
+				return (isLoopFinished(id) ? player.acceleron.loops[id].interval.dividedBy(bar.duration).times(360).toNumber()
+									: getLoopProgress(id).dividedBy(bar.max).times(360).toNumber())
 			},
-			end(id, bar) { return this.start(id, bar) + this.angle(id, bar) },
-			arc(layer, data, bar) { return describeArc(this.center(layer), this.center(layer), this.radius(layer, data), this.start(data, bar), this.end(data, bar)) },
+			arc(layer, id, bar) {
+				let a = this.angle(id, bar)
+				if (a >= 360) return ''
+
+				let r = this.radius(layer, id)
+				let fullArc = 2 * Math.PI * r
+				return `${fullArc * a / 360}, ${fullArc}`
+			},
 			log(message) { console.log(message) }
 		},
 		template: `
@@ -537,8 +545,16 @@ function loadVue() {
 						<template v-if="typeof bar === 'object' && bar.unlocked">
 							<circle stroke="#242526" :stroke-width="bar.width/2" :cx="center(layer)" :cy="center(layer)" :r="radius(layer, id)" />
 							<template v-if="getLoopProgress(id).gt(0)">
-								<path v-if="angle(id, bar) < 360" style="transition-duration: 0s" stroke-linecap="round" :stroke="bar.stroke" :stroke-width="bar.width" :d="arc(layer, id, bar)" />
-								<circle v-else :stroke="bar.stroke" :stroke-width="bar.width" :cx="center(layer)" :cy="center(layer)" :r="radius(layer, id)" />
+								<circle :stroke="bar.stroke" :stroke-width="bar.width"
+										:stroke-dasharray="arc(layer, id, bar)"
+										:cx="center(layer)"
+										:cy="center(layer)"
+										:r="radius(layer, id)"
+										:transform="offset(bar)"
+										:transform-origin="doubleCenter(layer)"
+										stroke-linecap="round"
+										style="transition-duration: 0s"
+								/>
 							</template>
 						</template>
 					</template>

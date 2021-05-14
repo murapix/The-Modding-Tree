@@ -22,6 +22,13 @@ addLayer("fome", {
         if (player.fome.fome.infinitesimal.expansion.gte(1)) return (player.fome.fome.infinitesimal.expansion.gt(1) ? "<sup>" + formatWhole(player.fome.fome.infinitesimal.expansion) + "</sup>" : "")
         return (player.fome.fome.protoversal.expansion.gt(1) ? "<sup>" + formatWhole(player.fome.fome.protoversal.expansion) + "</sup>" : "")
     },
+    tooltip() {
+        let lines = []
+        for (let fome in fomeTypes) {
+            if (player.fome.fome[fomeTypes[fome]].expansion.gte(1)) lines.unshift(`${format(player.fome.fome[fomeTypes[fome]].points)}${player.fome.fome[fomeTypes[fome]].expansion.gt(1) ? `<sup>${formatWhole(player.fome.fome[fomeTypes[fome]].expansion)}</sup>`: ``} ${fomeNames[fome]} Foam`)
+        }
+        return lines.join('<br>')
+    },
     color: "#ffffff",
     doReset(layer) {
         switch (layer) {
@@ -97,18 +104,19 @@ addLayer("fome", {
         totalGain = {}
 
         let skyrmions = Decimal.plus(player.skyrmion.points, fomeEffect('subspatial', 3))
+        let inflatonBonus = player.inflaton.inflating ? decimalOne : (
+            hasResearch('inflaton', 4) ? researchEffect('inflaton', 4) : decimalOne
+        ).min(temp.inflaton.nerf)
 
-        baseGain.protoversal = player.fome.fome.protoversal.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 121)).times(buyableEffect('skyrmion', 122)).times(buyableEffect('skyrmion', 224)).times(buyableEffect('skyrmion', 131)).times(defaultUpgradeEffect('acceleron', 11)).times(defaultUpgradeEffect('acceleron', 121)).times(player.acceleron.fomeBoost) : decimalZero
-        baseGain.infinitesimal = player.fome.fome.infinitesimal.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 222)).times(buyableEffect('skyrmion', 224)).times(buyableEffect('skyrmion', 132)).times(buyableEffect('skyrmion', 232)).times(defaultUpgradeEffect('acceleron', 11)).times(defaultUpgradeEffect('acceleron', 121)).times(player.acceleron.fomeBoost).times(defaultUpgradeEffect('acceleron', 131)) : decimalZero,
-        baseGain.subspatial = player.fome.fome.subspatial.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 123)).times(buyableEffect('skyrmion', 224)).times(buyableEffect('skyrmion', 231)).times(defaultUpgradeEffect('acceleron', 11)).times(defaultUpgradeEffect('acceleron', 23)).times(defaultUpgradeEffect('acceleron', 121)).times(player.acceleron.fomeBoost).times(defaultUpgradeEffect('acceleron', 132)) : decimalZero,
-        baseGain.subplanck = player.fome.fome.subplanck.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 224)).times(defaultUpgradeEffect('acceleron', 121)).times(player.acceleron.fomeBoost).times(defaultUpgradeEffect('acceleron', 133)) : decimalZero,
-        baseGain.quantum = player.fome.fome.quantum.expansion.gte(1) ? skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 224)).times(defaultUpgradeEffect('acceleron', 121)).times(player.acceleron.fomeBoost) : decimalZero
+        let universalBoost = skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 224)).times(player.acceleron.fomeBoost).times(defaultUpgradeEffect('acceleron', 121)).times(inflatonBonus)
 
-        boostGain.protoversal = fomeEffect('protoversal', 0)
-        boostGain.infinitesimal = fomeEffect('infinitesimal', 0)
-        boostGain.subspatial = fomeEffect('subspatial', 0)
-        boostGain.subplanck = fomeEffect('subplanck', 0)
-        boostGain.quantum = fomeEffect('quantum', 0)
+        baseGain.protoversal = player.fome.fome.protoversal.expansion.gte(1) ? universalBoost.times(buyableEffect('skyrmion', 121)).times(buyableEffect('skyrmion', 122)).times(buyableEffect('skyrmion', 131)).times(defaultUpgradeEffect('acceleron', 11)) : decimalZero
+        baseGain.infinitesimal = player.fome.fome.infinitesimal.expansion.gte(1) ? universalBoost.times(buyableEffect('skyrmion', 222)).times(buyableEffect('skyrmion', 132)).times(buyableEffect('skyrmion', 232)).times(defaultUpgradeEffect('acceleron', 11)).times(defaultUpgradeEffect('acceleron', 131)) : decimalZero,
+        baseGain.subspatial = player.fome.fome.subspatial.expansion.gte(1) ? universalBoost.times(buyableEffect('skyrmion', 123)).times(buyableEffect('skyrmion', 231)).times(defaultUpgradeEffect('acceleron', 11)).times(defaultUpgradeEffect('acceleron', 23)).times(defaultUpgradeEffect('acceleron', 132)) : decimalZero,
+        baseGain.subplanck = player.fome.fome.subplanck.expansion.gte(1) ? universalBoost.times(defaultUpgradeEffect('acceleron', 133)) : decimalZero,
+        baseGain.quantum = player.fome.fome.quantum.expansion.gte(1) ? universalBoost : decimalZero
+
+        fomeTypes.forEach(fome => boostGain[fome] = fomeEffect(fome, 0))
         boostGain.quantum2 = fomeEffect('quantum', 2)
 
         enlargeGain.protoversal = buyableEffect('fome', 11).times(buyableEffect('fome', 12)).times(buyableEffect('fome', 13))
@@ -117,14 +125,8 @@ addLayer("fome", {
         enlargeGain.subplanck = buyableEffect('fome', 41).times(buyableEffect('fome', 42)).times(buyableEffect('fome', 43))
         enlargeGain.quantum = buyableEffect('fome', 51).times(buyableEffect('fome', 52)).times(buyableEffect('fome', 53))
         
-        for (let fome of ['protoversal', 'infinitesimal', 'subspatial', 'subplanck', 'quantum'])
-            expansionGain[fome] = player.fome.fome[fome].expansion.cbrt()
-
-        totalGain.protoversal = baseGain.protoversal.times(boostGain.protoversal).times(boostGain.quantum).times(boostGain.quantum2).times(enlargeGain.protoversal).pow(expansionGain.protoversal),
-        totalGain.infinitesimal = baseGain.infinitesimal.times(boostGain.infinitesimal).times(boostGain.quantum).times(boostGain.quantum2).times(enlargeGain.infinitesimal).pow(expansionGain.infinitesimal),
-        totalGain.subspatial = baseGain.subspatial.times(boostGain.subspatial).times(boostGain.quantum).times(boostGain.quantum2).times(enlargeGain.subspatial).pow(expansionGain.subspatial),
-        totalGain.subplanck = baseGain.subplanck.times(boostGain.subplanck).times(boostGain.quantum).times(boostGain.quantum2).times(enlargeGain.subplanck).pow(expansionGain.subplanck),
-        totalGain.quantum = baseGain.quantum.times(boostGain.quantum).times(enlargeGain.quantum).times(boostGain.quantum2).pow(expansionGain.quantum)
+        fomeTypes.forEach(fome => expansionGain[fome] = player.fome.fome[fome].expansion.cbrt())
+        fomeTypes.forEach(fome => totalGain[fome] = baseGain[fome].times(boostGain[fome]).times(boostGain.quantum).times(boostGain.quantum2).times(enlargeGain[fome]).pow(expansionGain[fome]))
 
         return {
             boosts: {
@@ -139,84 +141,19 @@ addLayer("fome", {
         }
     },
     
-    startData() { return {
-        unlocked: false,
-		points: decimalZero,
-        fome: {
-            protoversal: {
-                points: decimalZero,
-                expansion: decimalOne
-            },
-            infinitesimal: {
-                points: decimalZero,
-                expansion: decimalZero
-            },
-            subspatial: {
-                points: decimalZero,
-                expansion: decimalZero
-            },
-            subplanck: {
-                points: decimalZero,
-                expansion: decimalZero
-            },
-            quantum: {
-                points: decimalZero,
-                expansion: decimalZero
-            }
-        },
-        boosts: {
-            protoversal: {
-                index: 0,
-                boosts: [
-                    decimalZero,
-                    decimalZero,
-                    decimalZero,
-                    decimalZero,
-                    decimalZero
-                ]
-            },
-            infinitesimal: {
-                index: 0,
-                boosts: [
-                    decimalZero,
-                    decimalZero,
-                    decimalZero,
-                    decimalZero,
-                    decimalZero
-                ]
-            },
-            subspatial: {
-                index: 0,
-                boosts: [
-                    decimalZero,
-                    decimalZero,
-                    decimalZero,
-                    decimalZero,
-                    decimalZero
-                ]
-            },
-            subplanck: {
-                index: 0,
-                boosts: [
-                    decimalZero,
-                    decimalZero,
-                    decimalZero,
-                    decimalZero,
-                    decimalZero
-                ]
-            },
-            quantum: {
-                index: 0,
-                boosts: [
-                    decimalZero,
-                    decimalZero,
-                    decimalZero,
-                    decimalZero,
-                    decimalZero
-                ]
-            }
+    startData() {
+        let data = {
+            unlocked: false,
+            points: decimalZero,
+            fome: {},
+            boosts: {}
         }
-    }},
+
+        fomeTypes.forEach(fome => data.fome[fome] = { points: decimalZero, expansion: decimalZero })
+        fomeTypes.forEach(fome => data.boosts[fome] = { index: 0, boosts: [decimalZero, decimalZero, decimalZero, decimalZero, decimalZero] })
+        data.fome.protoversal.expansion = decimalOne
+        return data
+    },
 
     update(delta) {
         if (!temp.fome.layerShown) return
@@ -233,7 +170,9 @@ addLayer("fome", {
         else if (player.fome.fome.subspatial.expansion.gte(1)) player.fome.points = player.fome.fome.subspatial.points
         else if (player.fome.fome.infinitesimal.expansion.gte(1)) player.fome.points = player.fome.fome.infinitesimal.points
         else player.fome.points = player.fome.fome.protoversal.points
+    },
 
+    automate() {
         if (player.fome.autoProtoversal) {
             buyBuyable('fome', 11)
             buyBuyable('fome', 12)
@@ -686,13 +625,7 @@ addLayer("fome", {
                 shouldNotify() {
                     if (player.tab == "fome" && player.subtabs.fome.stuff == "Foam")
                         return false
-                    for(let fome = 10; fome <= 50; fome += 10)
-                        for(let dim = 1; dim <= 4; dim++) {
-                            let buyable = temp.fome.buyables[fome+dim]
-                            if (buyable.unlocked && buyable.canAfford)
-                                return true
-                        }
-                    return false
+                    return Object.values(temp.fome.buyables).some(buyable => buyable.unlocked && buyable.canAfford)
                 },
                 content: [
                     "blank",
@@ -785,7 +718,7 @@ addLayer("fome", {
 
     componentStyles: {
         "buyable"() { return { "height": "100px", "width": "150px" } },
-        "microtabs"() { return { "border-style": "none" } }
+        "microtabs"() { return { "border-style": "none" } },
     },
 
     hotkeys: [

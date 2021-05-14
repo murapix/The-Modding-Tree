@@ -108,18 +108,27 @@ addLayer("acceleron", {
             clickables: [1]
         }
 
-        for (let loop in layers.acceleron.loops) {
-            if (typeof layers.acceleron.loops[loop] === 'object') {
-                data.loops[loop] = {
-                    progress: decimalZero,
-                    interval: decimalZero
-                }
-            }
-        }
+        Object.keys(layers.acceleron.loops)
+              .filter(id => typeof layers.acceleron.loops[id] === 'object')
+              .forEach(id => data.loops[id] = {
+                  progress: decimalZero,
+                  interval: decimalZero
+              })
 
         return data
     },
 
+    numFinishedLoops() {
+        let count = 1
+        for (let loop in layers.acceleron.loops) {
+            if (temp.acceleron.loops[loop].unlocked) {
+                if(isLoopFinished(loop)) count++
+                else break
+            }
+            else break
+        }
+        return new Decimal(count)
+    },
     loops: {
         maxRadius: 150,
         0: {
@@ -143,8 +152,7 @@ addLayer("acceleron", {
 
                 player.skyrmion.pion.points = player.skyrmion.pion.points.plus(skyrmionEffect.pion.gen.times(time))
                 player.skyrmion.spinor.points = player.skyrmion.spinor.points.plus(skyrmionEffect.spinor.gen.times(time))
-                for(let fome of fomeTypes)
-                    player.fome.fome[fome].points = player.fome.fome[fome].points.plus(fomeEffect.gain.total[fome].times(time))
+                fomeTypes.forEach(fome => player.fome.fome[fome].points = player.fome.fome[fome].points.plus(fomeEffect.gain.total[fome].times(time)))
             },
             intervalDisplay() { return `Every minute, gain ${format(Decimal.plus(1, defaultUpgradeEffect('acceleron', 111, 0)))} minutes of Foam and Skyrmion production` },
             stroke: '#800080',
@@ -265,17 +273,7 @@ addLayer("acceleron", {
         15: {
             title: 'Temporal Fluctuation',
             description: 'Each Entropic Loop multiplies Acceleron gain',
-            effect() {
-                let count = 1
-                for (let loop in layers.acceleron.loops) {
-                    if (temp.acceleron.loops[loop].unlocked) {
-                        if(isLoopFinished(loop)) count++
-                        else break
-                    }
-                    else break
-                }
-                return new Decimal(count)
-            },
+            effect() { return temp.acceleron.numFinishedLoops },
             effectDisplay() { return `${formatWhole(upgradeEffect('acceleron', 15))}x`},
             cost: new Decimal(100),
             unlocked() { return isLoopFinished(0) },
@@ -355,17 +353,7 @@ addLayer("acceleron", {
         123: createEnhancement(123, {
             title: 'Entropic Acceleration',
             description: 'Increase the first Entropic Loop effect based on completed Entropic Loops',
-            effect() {
-                let count = 1
-                for (let loop in layers.acceleron.loops) {
-                    if (temp.acceleron.loops[loop].unlocked) {
-                        if(isLoopFinished(loop)) count++
-                        else break
-                    }
-                    else break
-                }
-                return Decimal.times(count, 0.001)
-            },
+            effect() { return Decimal.times(temp.acceleron.numFinishedLoops, 0.001) },
             effectDisplay() { return `+${format(temp.acceleron.upgrades[123].effect.times(100), 1)}% of your Acceleron prestige gain` }
         }),
         131: createEnhancement(131, {
@@ -427,11 +415,9 @@ addLayer("acceleron", {
         0: {
             display() { return getClickableState('acceleron', 0) == -1 ? "Halt Construction" : "Begin Construction" },
             canClick() {
-                for (let loop in temp.acceleron.loops) {
-                    if (temp.acceleron.loops[loop].unlocked && getLoopProgress(loop).lt(temp.acceleron.loops[loop].max))
-                        return true
-                }
-                return getClickableState('acceleron', this.id) < 0
+                return Object.keys(temp.acceleron.loops).some(loop => temp.acceleron.loops[loop].unlocked && getLoopProgress(loop).lt(temp.acceleron.loops[loop].max))
+                    ? true
+                    : getClickableState('acceleron', this.id) < 0
             },
             onClick() {
                 if (getClickableState('acceleron', 0) == -1)
@@ -561,25 +547,6 @@ function updateLoopInterval(id, delta) {
 		    loop.intervalEffect(numIntervals)
         }
 	}
-}
-
-function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
-	var angleInRadians = angleInDegrees * Math.PI / 180
-
-	return {
-		x: centerX + (radius * Math.cos(angleInRadians)),
-		y: centerY + (radius * Math.sin(angleInRadians))
-	}
-}
-
-function describeArc(x, y, radius, startAngle, endAngle) {
-	let start = polarToCartesian(x, y, radius, startAngle)
-	let end = polarToCartesian(x, y, radius, endAngle)
-
-	return [
-		'M', start.x, start.y,
-		'A', radius, radius, 0, endAngle - startAngle > 180 ? '1' : '0', 1, end.x, end.y
-	].join(' ')
 }
 
 function fibonacciNumber(index) {

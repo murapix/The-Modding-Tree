@@ -124,6 +124,7 @@ function setupLayer(layer){
         }  
     }
 
+    if (layer === 'inflaton') layers[layer].clickables = createResearchClickables();
     if (layers[layer].clickables){
         layers[layer].clickables.layer = layer
         setRowCol(layers[layer].clickables)

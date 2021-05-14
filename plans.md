@@ -22,6 +22,8 @@ Inflatons
                                                        -> some increase resource gain during inflation
                                                        -> some upgrade other buildings
                                                        -> etc.
+- inflaton storage - keep some inflatons from a run started after storage was constructed
+                   - anti-inflation bonuses are active outside of inflation, based on stored inflaton amount
 
 -----
 

@@ -8,8 +8,10 @@ function retrieveCanvasData() {
 	let treeTab = document.getElementById("treeTab")
 	if (treeCanv===undefined||treeCanv===null) return false;
 	if (treeTab===undefined||treeTab===null) {
-		if (canvas && ctx)
+		if (canvas && ctx) {
 			ctx.clearRect(0, 0, canvas.width, canvas.height)
+			drawResearchBranches();
+		}
 		return false;
 	}
 	canvas = treeCanv;
@@ -23,7 +25,8 @@ function resizeCanvas() {
     canvas.height = 0;
 	canvas.width  = window.innerWidth;
 	canvas.height = window.innerHeight;
-		drawTree();
+	drawTree();
+	drawResearchBranches();
 }
 
 var colors = {
@@ -79,4 +82,39 @@ function drawTreeBranch(num1, data) { // taken from Antimatter Dimensions & adju
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.stroke();
+}
+
+function drawResearchBranches() {
+	if (canvas === undefined) return
+	if (player.tab !== 'inflaton') return
+	if (player.subtabs.inflaton.stuff !== 'Research') return
+
+	let clickableElements = document.getElementsByClassName('upg')
+	for (let id in temp.inflaton.clickables) {
+		let clickable = temp.inflaton.clickables[id]
+		if (typeof clickable !== 'object') continue
+		if (clickable.unlocked !== true) continue
+		
+		let research = temp.inflaton.research[clickable.research]
+		if (research.requires) {
+			for(req in research.requires) {
+				drawResearchBranch(clickableElements[clickable.research-1], clickableElements[research.requires[req]-1], hasResearch('inflaton', research.requires[req]))
+			}
+		}
+	}
+}
+
+function drawResearchBranch(child, parent, researched) {
+	let start = child.getBoundingClientRect();
+	let end = parent.getBoundingClientRect();
+	let x1 = start.left + (start.width / 2) + document.body.scrollLeft;
+	let y1 = start.top + (start.height / 2) + document.body.scrollTop;
+	let x2 = end.left + (end.width / 2) + document.body.scrollLeft;
+	let y2 = end.top + (end.height / 2) + document.body.scrollTop;
+	ctx.lineWidth = 10;
+	ctx.beginPath();
+	ctx.strokeStyle = colors_theme[researched ? 1 : 2];
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(x2, y2);
+	ctx.stroke();
 }

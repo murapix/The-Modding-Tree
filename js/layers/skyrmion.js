@@ -76,6 +76,13 @@ addLayer("skyrmion", {
         let eff = temp.skyrmion.effect
         return `which ${player.skyrmion.points.equals(1) ? "is" : "are"} producing <h3 style='color:${layers.skyrmion.color};text-shadow:${layers.skyrmion.color} 0px 0px 10px;'>${format(eff.pion.gen)}</h3> Pions/s and <h3 style='color:${layers.skyrmion.color};text-shadow:${layers.skyrmion.color} 0px 0px 10px;'>${format(eff.spinor.gen)}</h3> Spinors/s`
     },
+    tooltip() {
+        return [
+            `${formatWhole(player.skyrmion.points)} Skyrmions`,
+            `${format(player.skyrmion.pion.points)} Pions`,
+            `${format(player.skyrmion.spinor.points)} Spinors`
+        ].join('<br>')
+    },
     
     startData() { return {
         unlocked: true,
@@ -96,7 +103,9 @@ addLayer("skyrmion", {
         let eff = temp.skyrmion.effect
         player.skyrmion.pion.points = player.skyrmion.pion.points.plus(eff.pion.gen.times(delta)).max(0)
         player.skyrmion.spinor.points = player.skyrmion.spinor.points.plus(eff.spinor.gen.times(delta)).max(0)
+    },
 
+    automate() {
         if (player.skyrmion.autobuyPion) {
             if (hasUpgrade('skyrmion', 2)) buyBuyable('skyrmion', 111)
             if (hasUpgrade('skyrmion', 3)) buyBuyable('skyrmion', 112)
@@ -609,11 +618,8 @@ addLayer("skyrmion", {
                 shouldNotify() {
                     if (player.tab == "skyrmion" && player.subtabs.skyrmion.stuff == "Skyrmions")
                         return false
-                    for(let index = 0; index <= 11; index++) {
-                        if (temp.skyrmion.upgrades[index].unlocked && temp.skyrmion.upgrades[index].canAfford && !hasUpgrade('skyrmion', index))
-                            return true
-                    }
-                    return false
+                    return Object.values(temp.skyrmion.upgrades).some(upgrade =>
+                        upgrade.unlocked && upgrade.canAfford && !hasUpgrade('skyrmion', upgrade.id))
                 },
                 content: [
                     "blank",
@@ -642,15 +648,8 @@ addLayer("skyrmion", {
                 shouldNotify() {
                     if (player.tab == "skyrmion" && player.subtabs.skyrmion.stuff == "Pions")
                         return false
-                    for (let row = 1; row <= 5; row++) {
-                        for(let col = 1; col <= 5 - ~~(row/5); col++) {
-                            let index = 100 + 10*row + col
-                            let buyable = temp.skyrmion.buyables[index]
-                            if (buyable.unlocked && buyable.canAfford)
-                                return true
-                        }
-                    }
-                    return false
+                    return Object.values(temp.skyrmion.buyables).some(buyable =>
+                        buyable.id < 200 && buyable.unlocked && buyable.canAfford)
                 },
                 content: [
                     "blank",
@@ -662,7 +661,7 @@ addLayer("skyrmion", {
                     ["row", [["buyable", 121], ["buyable", 122], ["buyable", 123], ["buyable", 124], ["buyable", 125]]],
                     ["row", [["buyable", 131], ["buyable", 132], ["buyable", 133], ["buyable", 134], ["buyable", 135]]],
                     ["row", [["buyable", 141], ["buyable", 142], ["buyable", 143], ["buyable", 144], ["buyable", 145]]],
-                    ["row", [["buyable", 151], ["buyable", 152], ["buyable", 153], ["buyable", 154]]]
+                    ["row", [["buyable", 151], ["buyable", 152], ["buyable", 153], ["buyable", 154], ["buyable", 155]]]
                     // 
                 ]
             },
@@ -670,15 +669,8 @@ addLayer("skyrmion", {
                 shouldNotify() {
                     if (player.tab == "skyrmion" && player.subtabs.skyrmion.stuff == "Spinors")
                         return false
-                    for (let row = 1; row <= 5; row++) {
-                        for(let col = 1; col <= 5 - ~~(row/5); col++) {
-                            let index = 200 + 10*row + col
-                            let buyable = temp.skyrmion.buyables[index]
-                            if (buyable.unlocked && buyable.canAfford)
-                                return true
-                        }
-                    }
-                    return false
+                    return Object.values(temp.skyrmion.buyables).some(buyable =>
+                        buyable.id >= 200 && buyable.unlocked && buyable.canAfford)
                 },
                 content: [
                     "blank",
@@ -690,7 +682,7 @@ addLayer("skyrmion", {
                     ["row", [["buyable", 221], ["buyable", 222], ["buyable", 223], ["buyable", 224], ["buyable", 225]]],
                     ["row", [["buyable", 231], ["buyable", 232], ["buyable", 233], ["buyable", 234], ["buyable", 235]]],
                     ["row", [["buyable", 241], ["buyable", 242], ["buyable", 243], ["buyable", 244], ["buyable", 245]]],
-                    ["row", [["buyable", 251], ["buyable", 252], ["buyable", 253], ["buyable", 254]]]
+                    ["row", [["buyable", 251], ["buyable", 252], ["buyable", 253], ["buyable", 254], ["buyable", 255]]]
                 ]
             }
         }

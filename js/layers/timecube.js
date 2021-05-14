@@ -9,14 +9,6 @@ addLayer("timecube", {
     resource() { return player[this.layer].points.equals(1) ? "Time Cube" : "Time Cubes" },
     color: "#f037ea",
     type: "none",
-    effect() {
-    },
-    effectDescription() {
-    },
-
-    update(delta) {
-        delta = Decimal.times(delta, temp.acceleron.effect)
-    },
 
     startData() {
         return {

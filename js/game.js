@@ -102,9 +102,10 @@ function shouldNotify(layer){
 
 	for (family in tmp[layer].microtabs) {
 		for (subtab in tmp[layer].microtabs[family]){
-			if (subtabShouldNotify(layer, family, subtab))
+			if (subtabShouldNotify(layer, family, subtab)) {
 				tmp[layer].trueGlowColor = tmp[layer].microtabs[family][subtab].glowColor
 				return true
+			}
 		}
 	}
 	 
@@ -266,7 +267,7 @@ function startChallenge(layer, x) {
 	doReset(layer, true)
 	if(enter) {
 		player[layer].activeChallenge = x
-		if (layers[layer].challenges[x].onEnter) run(layers[layer].challenges[x].onEnter, layers[layer].challenges[x])
+		run(layers[layer].challenges[x].onEnter, layers[layer].challenges[x])
 	}
 
 	updateChallengeTemp(layer)
@@ -303,17 +304,18 @@ function completeChallenge(layer, x) {
 	
 	let completions = canCompleteChallenge(layer, x)
 	if (!completions){
-		 if (layers[layer].challenges[x].onExit) run(layers[layer].challenges[x].onExit, layers[layer].challenges[x])
 		 player[layer].activeChallenge = null
+		 run(layers[layer].challenges[x].onExit, layers[layer].challenges[x])
 		return
 	}
 	if (player[layer].challenges[x] < tmp[layer].challenges[x].completionLimit) {
 		needCanvasUpdate = true
 		player[layer].challenges[x] += completions
 		player[layer].challenges[x] = Math.min(player[layer].challenges[x], tmp[layer].challenges[x].completionLimit)
-		if (layers[layer].challenges[x].onComplete) run(layers[layer].challenges[x].onComplete, layers[layer].challenges[x])
+		run(layers[layer].challenges[x].onComplete, layers[layer].challenges[x])
 	}
 	player[layer].activeChallenge = null
+	run(layers[layer].challenges[x].onExit, layers[layer].challenges[x])
 	updateChallengeTemp(layer)
 }
 
