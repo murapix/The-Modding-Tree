@@ -1,5 +1,11 @@
 Bugfixes and TODO:
 
+Research queue buttons
+Toggle for auto-adding finished repeatables to end of queue
+Change fourth Inflaton upgrade to unlock Skyrmion buyable 14 - increase Pion and Spinor gain based on log(log(Inflatons))?
+Change Inflaton effect to show production gains while not inflating
+Add help tab
+
 -----
 
 Row 3 - Pick one at first

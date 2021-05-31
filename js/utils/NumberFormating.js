@@ -126,6 +126,26 @@ function formatLength(l) {
     return `${format(l.dividedBy(3.086e49))}Gpc`
 }
 
+function formatRoman(x) {
+    x = new Decimal(x).trunc().toNumber()
+    if (x > 4000) return format(x)
+    else if (x < 1) return "Nulla"
+    
+    let out = []
+    let nums = [1,4,5,9,10,40,50,90,100,400,500,900,1000]
+    let syms = ['I', 'IV', 'V', 'IX', 'X', 'XL', 'L', 'XC', 'C', 'CD', 'D', 'CM', 'M']
+    let i = 12
+    while (x > 0) {
+        let div = Math.floor(x / nums[i])
+        x = x % nums[i]
+        while (div--)
+            out.push(syms[i])
+        i--
+    }
+    
+    return out.join('')
+}
+
 // Will also display very small numbers
 function formatSmall(x, precision=2) { 
     return format(x, precision, true)    

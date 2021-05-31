@@ -9,7 +9,7 @@ addLayer("acceleron", {
     position: 0,
     branches: ['fome'],
 
-    layerShown() { return (player.acceleron.unlockOrder > 0 /*&& !hasUpgrade('inflaton', ??)*/) ? "ghost" : player.acceleron.unlocked },
+    layerShown() { return (player.acceleron.unlockOrder > 0 && !hasResearch('inflaton', 25)) ? "ghost" : player.acceleron.unlocked },
     increaseUnlockOrder: ['inflaton'],
     resource() { return player[this.layer].points.equals(1) ? "Acceleron" : "Accelerons" },
     color: "#0f52ba",

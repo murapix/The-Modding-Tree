@@ -7,15 +7,21 @@ function retrieveCanvasData() {
 	let treeCanv = document.getElementById("treeCanvas")
 	let treeTab = document.getElementById("treeTab")
 	if (treeCanv===undefined||treeCanv===null) return false;
+
+	canvas = treeCanv;
+	ctx = canvas.getContext("2d");
+
 	if (treeTab===undefined||treeTab===null) {
 		if (canvas && ctx) {
 			ctx.clearRect(0, 0, canvas.width, canvas.height)
+			canvas.width = 0;
+    		canvas.height = 0;
+			canvas.width  = window.innerWidth;
+			canvas.height = window.innerHeight;
 			drawResearchBranches();
 		}
 		return false;
 	}
-	canvas = treeCanv;
-	ctx = canvas.getContext("2d");
 	return true;
 }
 
@@ -89,18 +95,18 @@ function drawResearchBranches() {
 	if (player.tab !== 'inflaton') return
 	if (player.subtabs.inflaton.stuff !== 'Research') return
 
-	let clickableElements = document.getElementsByClassName('upg')
+	let clickableElements = Array.from(document.getElementsByClassName('upg'))
+	let clickableMapping = {}
 	for (let id in temp.inflaton.clickables) {
 		let clickable = temp.inflaton.clickables[id]
 		if (typeof clickable !== 'object') continue
 		if (clickable.unlocked !== true) continue
-		
+
 		let research = temp.inflaton.research[clickable.research]
-		if (research.requires) {
-			for(req in research.requires) {
-				drawResearchBranch(clickableElements[clickable.research-1], clickableElements[research.requires[req]-1], hasResearch('inflaton', research.requires[req]))
-			}
-		}
+		clickableMapping[clickable.research] = clickableElements.find(element => element.innerText.startsWith(research.title))
+
+		if (research.requires)
+			research.requires.forEach(req => drawResearchBranch(clickableMapping[clickable.research], clickableMapping[req], hasResearch('inflaton', req)))
 	}
 }
 

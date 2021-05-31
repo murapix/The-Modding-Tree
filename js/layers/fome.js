@@ -104,11 +104,14 @@ addLayer("fome", {
         totalGain = {}
 
         let skyrmions = Decimal.plus(player.skyrmion.points, fomeEffect('subspatial', 3))
-        let inflatonBonus = player.inflaton.inflating ? decimalOne : (
-            hasResearch('inflaton', 4) ? researchEffect('inflaton', 4) : decimalOne
-        ).min(temp.inflaton.nerf)
+        let inflatonBonus = decimalOne
+        if (!player.inflaton.inflating) {
+            if (hasResearch('inflaton', 4)) inflatonBonus = inflatonBonus.times(researchEffect('inflaton', 4))
+            if (hasResearch('inflaton', 11)) inflatonBonus = inflatonBonus.times(researchEffect('inflaton', 11))
+        }
+        inflatonBonus = inflatonBonus.min(temp.inflaton.nerf)
 
-        let universalBoost = skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 224)).times(player.acceleron.fomeBoost).times(defaultUpgradeEffect('acceleron', 121)).times(inflatonBonus)
+        let universalBoost = skyrmions.dividedBy(1e2).times(buyableEffect('skyrmion', 224)).times(player.acceleron.fomeBoost).times(defaultUpgradeEffect('acceleron', 121)).times(inflatonBonus).times(defaultUpgradeEffect('inflaton', 21))
 
         baseGain.protoversal = player.fome.fome.protoversal.expansion.gte(1) ? universalBoost.times(buyableEffect('skyrmion', 121)).times(buyableEffect('skyrmion', 122)).times(buyableEffect('skyrmion', 131)).times(defaultUpgradeEffect('acceleron', 11)) : decimalZero
         baseGain.infinitesimal = player.fome.fome.infinitesimal.expansion.gte(1) ? universalBoost.times(buyableEffect('skyrmion', 222)).times(buyableEffect('skyrmion', 132)).times(buyableEffect('skyrmion', 232)).times(defaultUpgradeEffect('acceleron', 11)).times(defaultUpgradeEffect('acceleron', 131)) : decimalZero,
@@ -372,7 +375,7 @@ addLayer("fome", {
         14: {
             cost() {
                 let amount = getBuyableAmount('fome', this.id)
-                amount = amount.lte(5) ? amount.sqr() : amount.sqr().sqr()
+                amount = amount.lte(5) ? amount.sqr() : amount.pow(amount.minus(3))
                 return Decimal.pow(10, amount.plus(1).times(4))
             },
             display() { return `<h3>${player.fome.fome.infinitesimal.points.eq(0) ? `Condense` : `Re-form`} your Protoversal Foam</h3><br/><br/><b>Cost:</b> ${format(temp.fome.buyables[this.id].cost)} Protoversal Foam` },
@@ -411,7 +414,7 @@ addLayer("fome", {
         24: {
             cost() {
                 let amount = getBuyableAmount('fome', this.id)
-                amount = amount.lte(4) ? amount.sqr() : amount.sqr().sqr()
+                amount = amount.lte(4) ? amount.sqr() : amount.pow(amount.minus(2))
                 return Decimal.pow(10, amount.plus(1).times(5)).dividedBy(5)
             },
             display() {
@@ -454,7 +457,7 @@ addLayer("fome", {
         34: {
             cost() {
                 let amount = getBuyableAmount('fome', this.id)
-                amount = amount.lte(3) ? amount.sqr() : amount.sqr().sqr()
+                amount = amount.lte(3) ? amount.sqr() : amount.pow(amount.minus(1))
                 return Decimal.pow(10, amount.plus(1).times(6)).dividedBy(2.5)
             },
             display() {
@@ -497,7 +500,7 @@ addLayer("fome", {
         44: {
             cost() {
                 let amount = getBuyableAmount('fome', this.id)
-                amount = amount.lte(2) ? amount.sqr() : amount.sqr().sqr()
+                amount = amount.lte(2) ? amount.sqr() : amount.pow(amount)
                 return Decimal.pow(10, amount.plus(1).times(7)).dividedBy(1)
             },
             display() {
@@ -540,7 +543,7 @@ addLayer("fome", {
         54: {
             cost() {
                 let amount = getBuyableAmount('fome', this.id)
-                amount = amount.lte(1) ? amount.sqr() : amount.sqr().sqr()
+                amount = amount.lte(1) ? amount.sqr() : amount.pow(amount.plus(1))
                 return Decimal.pow(10, amount.plus(1).times(7)).times(1e2)
             },
             display() {
