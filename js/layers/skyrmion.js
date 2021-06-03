@@ -560,7 +560,7 @@ addLayer("skyrmion", {
                 undefined,
                 `ln(Best Accelerons) increases Pion and Spinor gain`,
                 (effect) => `${format(effect)}x`,
-                (amount) => amount.times(player.acceleron.best.plus(1).ln()).plus(1),
+                (amount) => amount.times(player.acceleron.best.max(0).plus(1).ln()).plus(1),
                 undefined,
                 () => hasUpgrade('acceleron', 13),
                 () => hasUpgrade('skyrmion', 12)),
