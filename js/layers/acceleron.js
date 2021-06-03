@@ -53,7 +53,7 @@ addLayer("acceleron", {
         return mult
     },
     effect() {
-        let effect = player.acceleron.best.plus(1)
+        let effect = player.acceleron.best.max(0).plus(1)
         effect = effect.gte(1e12) ? effect.log10().times(5e5/6) : effect.sqrt()
         return effect.times(getClickableState('acceleron', 0)).times(defaultUpgradeEffect('timecube', 12)).times(defaultUpgradeEffect('acceleron', 113))
     },
@@ -352,7 +352,7 @@ addLayer("acceleron", {
         121: createEnhancement(121, {
             title: 'Entropic Formation',
             description: 'Increase Foam gain based on best Accelerons',
-            effect() { return Decimal.pow(fibonacciNumber(player.acceleron.best.plus(1).log10().floor()), 2.5).plus(1) },
+            effect() { return Decimal.pow(fibonacciNumber(player.acceleron.best.max(0).plus(1).log10().floor()), 2.5).plus(1) },
         }),
         122: createEnhancement(122, {
             title: 'Entropic Development',
@@ -383,17 +383,17 @@ addLayer("acceleron", {
         141: createEnhancement(141, {
             title: 'Entropic Tesselation',
             description: 'Increase Time Cube gain based on best Accelerons',
-            effect() { return player.acceleron.best.plus(1).log10().plus(1) }
+            effect() { return player.acceleron.best.max(0).plus(1).log10().plus(1) }
         }),
         142: createEnhancement(142, {
             title: 'Entropic Amplification',
             description: 'Skyrmions are cheaper based on best Time Cubes',
-            effect() { return Decimal.pow(0.9, fibonacciNumber(player.timecube.best.plus(1).log10().floor())) }
+            effect() { return Decimal.pow(0.9, fibonacciNumber(player.timecube.best.max(0).plus(1).log10().floor())) }
         }),
         143: createEnhancement(143, {
             title: 'Entropic Rotation',
             description: 'Increase Acceleron gain based on best Time Cubes',
-            effect() { return player.timecube.best.plus(1).log10().plus(1) }
+            effect() { return player.timecube.best.max(0).plus(1).log10().plus(1) }
         }),
 
         114: createEnhancement(114, {
@@ -409,7 +409,7 @@ addLayer("acceleron", {
         134: createEnhancement(134, {
             title: 'Entropic Inversion',
             description: 'Increase Acceleron gain based on Quantum Foam',
-            effect() { return player.fome.fome.quantum.points.plus(1).log10().plus(1) },
+            effect() { return player.fome.fome.quantum.points.max(0).plus(1).log10().plus(1) },
             
         }),
         144: createEnhancement(144, {

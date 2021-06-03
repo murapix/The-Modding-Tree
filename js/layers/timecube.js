@@ -25,14 +25,14 @@ addLayer("timecube", {
             title: 'Tile',
             description: 'log10(Accelerons) increases Time Cube gain',
             cost: decimalOne,
-            effect() { return player.acceleron.points.plus(1).log10() },
+            effect() { return player.acceleron.points.max(0).plus(1).log10() },
             effectDisplay() { return `${format(upgradeEffect('timecube', 11))}x` }
         },
         12: {
             title: 'Time',
             description: 'log10(Best Time Cubes) increases Acceleron effect',
             cost: new Decimal(2),
-            effect() { return player.timecube.best.plus(1).log10().plus(1) },
+            effect() { return player.timecube.best.max(0).plus(1).log10().plus(1) },
             effectDisplay() { return `${format(upgradeEffect('timecube', 12))}x` },
             unlocked() { return hasUpgrade('timecube', 11) || hasUpgrade('timecube', this.id) }
         },

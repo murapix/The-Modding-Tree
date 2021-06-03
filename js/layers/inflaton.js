@@ -79,12 +79,12 @@ addLayer("inflaton", {
     },
 
     nerf() {
-        let log = player.inflaton.points.log10()
+        let log = player.inflaton.points.max(1).log10()
         if (player.inflaton.inflating || !hasResearch('inflaton', 20)) log = log.times(buyableEffect('inflaton', 11))
         return Decimal.pow(2, log)
     },
     gain() {
-        let exp = player.inflaton.points.log(10).plus(1).dividedBy(10)
+        let exp = player.inflaton.points.max(1).log10().plus(1).dividedBy(10)
         return player.inflaton.points.times(Decimal.pow(2, exp))
     },
     researchGain() {
@@ -108,13 +108,13 @@ addLayer("inflaton", {
         if (!player.inflaton.inflating && hasResearch('inflaton', 4))
             return `<br>which ${player.inflaton.points.eq(1) ? `is` : `are`} increasing Foam generation by <span style='color:${layers.inflaton.color};text-shadow:${layers.inflaton.color} 0px 0px 10px;'>${formatWhole(temp.fome.effect.inflaton)}x</span>`
         else if (temp.inflaton.nerf.lt(1.5))
-            return `<br>which ${player.inflaton.points.eq(1) ? `is` : `are`} dividing all other resources by <span style='color:${layers.inflaton.color};text-shadow:${layers.inflaton.color} 0px 0px 10px;'>${formatWhole(temp.inflaton.effect.nerf)}x</span> (currently <span style='color:${layers.inflaton.color};text-shadow:${layers.inflaton.color} 0px 0px 10px;'>${formatSmall(player.inflaton.points.log10().times(buyableEffect('inflaton', 11)))}x</span>)`
+            return `<br>which ${player.inflaton.points.eq(1) ? `is` : `are`} dividing all other resources by <span style='color:${layers.inflaton.color};text-shadow:${layers.inflaton.color} 0px 0px 10px;'>${formatWhole(temp.inflaton.effect.nerf)}x</span> (currently <span style='color:${layers.inflaton.color};text-shadow:${layers.inflaton.color} 0px 0px 10px;'>${formatSmall(player.inflaton.points.max(1).log10().times(buyableEffect('inflaton', 11)))}x</span>)`
         return `<br>which ${player.inflaton.points.eq(1) ? `is` : `are`} dividing all other resources by <span style='color:${layers.inflaton.color};text-shadow:${layers.inflaton.color} 0px 0px 10px;'>${formatWhole(temp.inflaton.effect.nerf)}x</span>`
     },
     size() {
         if (player.inflaton.points.lt(1)) return decimalZero
 
-        let size = player.inflaton.points.log(2).log(2)
+        let size = player.inflaton.points.max(2).log2().log2()
         if (hasResearch('inflaton', 2)) size = size.times(2)
         if (hasResearch('inflaton', 8)) size = size.times(2)
         size = size.times(repeatableEffect('inflaton', 111))
