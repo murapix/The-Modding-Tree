@@ -185,7 +185,7 @@ var systemComponents = {
 		template: `
 		<div>
 			<div v-if="typeof tmp.helpTab == 'number'">
-				<ul><br><br><br><li v-for="data in tmp.helpData"><a v-if="data.unlocked" class="link" v-on:click="tmp.helpTab = data.id" v-html="data.title"></a><br></li></ul>
+				<ul><br><br><br><li v-for="data in tmp.helpData"><a v-if="helpData[data.id].unlocked()" class="link" v-on:click="tmp.helpTab = data.id" v-html="data.title"></a><br></li></ul>
 			</div>
 			<div v-else>
 				<h2 v-html="tmp.helpData[tmp.helpTab].title"></h2><br><br>

@@ -1,6 +1,6 @@
 Bugfixes and TODO:
 
-Add help tab
+Help tab's unlock functions are all Decimals
 
 -----
 
