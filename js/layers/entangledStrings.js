@@ -60,6 +60,11 @@ addLayer("entangled", {
 
     hotkeys: [
         {
+            key: "e",
+            description: "E: Entangle spacetime into another String",
+            onPress() { if (canReset('entangled')) doReset('entangled') }
+        },
+        {
             key: "ctrl+e",
             onPress() { if (temp.entangled.layerShown === true) player.tab = 'entangled' }
         }

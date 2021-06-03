@@ -431,7 +431,7 @@ addLayer("inflaton", {
             pos: 2
         },
         9: {
-            title: '9',
+            title: 'Quantum Inflationodynamics',
             description: 'Unlock two Inflaton upgrades',
             cost: new Decimal(750),
             requires: [6],
@@ -439,7 +439,7 @@ addLayer("inflaton", {
             pos: 3
         },
         10: {
-            title: '10',
+            title: 'Superstructural Stability Patterns',
             description: 'Enable individual building respecs',
             cost: new Decimal(750),
             requires: [6],
@@ -447,7 +447,7 @@ addLayer("inflaton", {
             pos: 4
         },
         11: {
-            title: '11',
+            title: 'Scatter-field Repulsion',
             description: 'Retain an additional 1e12x more Foam, based on your current Inflatons',
             cost: new Decimal(1500),
             effect: new Decimal(1e12),
@@ -456,7 +456,7 @@ addLayer("inflaton", {
             pos: 1
         },
         12: {
-            title: '12',
+            title: 'Scheduled Itemization',
             description: 'You can queue up to 2 additional researches',
             cost: new Decimal(10000),
             effect: 2,
@@ -465,7 +465,7 @@ addLayer("inflaton", {
             pos: 2
         },
         13: {
-            title: '13',
+            title: 'Enhanced Isolation Protocols',
             description: 'Improve the Inflaton Containment Unit storage capabilities',
             cost: new Decimal(1500),
             requires: [10],
@@ -473,7 +473,7 @@ addLayer("inflaton", {
             pos: 3
         },
         14: {
-            title: '14',
+            title: 'Aggressive Flow Diffusion',
             description: 'Halve the effect of inflaton on Quantum Foam, again',
             cost: new Decimal(6000),
             effect: new Decimal(0.5),
@@ -482,7 +482,7 @@ addLayer("inflaton", {
             pos: 1
         },
         15: {
-            title: '15',
+            title: 'Infinite Expansion Theories',
             description: 'Unlock two repeatable researches',
             cost: new Decimal(6000),
             requires: [8],
@@ -506,7 +506,7 @@ addLayer("inflaton", {
             pos: 4
         },
         18: {
-            title: '18',
+            title: 'Scalar Flux Reduction',
             description: 'Retain yet another 1e12 Foam, based on your current Inflatons',
             cost: new Decimal(9000),
             effect: new Decimal(1e12),
@@ -515,7 +515,7 @@ addLayer("inflaton", {
             pos: 1  
         },
         19: {
-            title: '19',
+            title: 'Macroscale Synergies',
             description: 'Increase subspace building size tenfold, and increase their effects by twice as much',
             onComplete() { layers.inflaton.buyables.respec() },
             cost: new Decimal(25000),
@@ -533,7 +533,7 @@ addLayer("inflaton", {
             pos: 3
         },
         21: {
-            title: '21',
+            title: 'Instantaneous Limit Testing',
             description: `Beginning to Inflate places you at the limit of your M-field Condenser's safe operation`,
             cost: new Decimal(25000),
             requires: [16, 17],
@@ -541,7 +541,7 @@ addLayer("inflaton", {
             pos: 4
         },
         22: {
-            title: '22',
+            title: 'Sustainable Expansion Hypotheses',
             description: 'Unlock three more repeatable research projects',
             cost: new Decimal(100000),
             requires: [18, 19],
@@ -549,7 +549,7 @@ addLayer("inflaton", {
             pos: 1
         },
         23: {
-            title: '23',
+            title: 'Static Proposal Induction',
             description: 'Increase the research queue size by another 2',
             cost: new Decimal(100000),
             effect: 2,
@@ -558,7 +558,7 @@ addLayer("inflaton", {
             pos: 2
         },
         24: {
-            title: '24',
+            title: 'Mechanized Superscale Subsystems',
             description: 'Automatically build subspace buildings, and building them no longer consumes Foam',
             cost: new Decimal(100000),
             requires: [20, 21],

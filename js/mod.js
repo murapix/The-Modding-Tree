@@ -12,12 +12,20 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.5.0",
-	name: "Dilation",
+	num: "0.6.0",
+	name: "Amplification",
 }
 
 let changelog = `
 	<h1>Changelog:</h1>
+	<br><br>
+	<h3>v0.6.0 - Amplification</h3>
+	<br>- Updated to TMT 2.5.11.1
+	<br>- Filled out the Inflaton layer
+	<br>- Initial balance pass for both Acceleron- and Inflaton-first playthroughs
+	<br>- Added a help tab, with information on each major layer
+	<br>- Various improvements to background systems
+	<br>- Added the initial framework for the final phase 1 layer
 	<br><br>
 	<h3>v0.5.0 - Dilation</h3>
 	<br>- Finished Acceleron layer up to Inflaton unlock
@@ -92,12 +100,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	"Current Endgame: Inflaton challenge attempted"
+	"Current Endgame: 1 Entangled String"
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.inflaton.best.gt(1) && player.fome.fome.quantum.points.lte(10)
+	return player.entangled.points.gte(1)
 }
 
 // Less important things beyond this point!

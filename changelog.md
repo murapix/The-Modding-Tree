@@ -1,5 +1,13 @@
 # Universal Reconstruction changelog:
 
+## v0.6.0 - Amplification
+- Updated to TMT 2.5.11.1
+- Filled out the Inflaton layer
+- Initial balance pass for both Acceleron- and Inflaton-first playthroughs
+- Added a help tab, with information on each major layer
+- Various improvements to background systems
+- Added the initial framework for the final phase 1 layer
+
 ## v0.5.0 - Dilation
 - Finished Acceleron layer up to Inflaton unlock
 - Nerfed higher resource Acceleron and Quantum Foam effects (while likely drop those nerfs by a lot later)
