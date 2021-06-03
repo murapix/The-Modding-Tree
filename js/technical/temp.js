@@ -9,8 +9,8 @@ var activeFunctions = [
 	"buy", "buyMax", "respec", "onPress", "onClick", "onHold", "masterButtonPress",
 	"sellOne", "sellAll", "pay", "actualCostFunction", "actualEffectFunction",
 	"effectDescription", "display", "fullDisplay", "effectDisplay", "rewardDisplay",
-	"tabFormat", "content", //"pay",
-	"onComplete", "onPurchase", "onEnter", "onExit",
+	"tabFormat", "content",
+	"onComplete", "onPurchase", "onEnter", "onExit", "done",
 	"getUnlocked", "getStyle", "getCanClick", "getTitle", "getDisplay"
 ]
 
@@ -87,6 +87,7 @@ function setupTempData(layerData, tmpData, funcsData) {
 	}	
 }
 
+
 function updateTemp() {
 	if (tmp === undefined)
 		setupTemp()
@@ -94,16 +95,34 @@ function updateTemp() {
 	updateTempData(layers, tmp, funcs)
 
 	for (layer in layers){
+		let problem = ""
 		tmp[layer].resetGain = getResetGain(layer)
+		if (checkDecimalNaN(tmp[layer].resetGain))
+			problem = "resetGain"
 		tmp[layer].nextAt = getNextAt(layer)
+		if (checkDecimalNaN(tmp[layer].nextAt))
+			problem = "nextAt"
 		tmp[layer].nextAtDisp = getNextAt(layer, true)
 		tmp[layer].canReset = canReset(layer)
 		tmp[layer].trueGlowColor = tmp[layer].glowColor
 		tmp[layer].notify = shouldNotify(layer)
 		tmp[layer].prestigeNotify = prestigeNotify(layer)
+		if (problem && !NaNalert) {
+			confirm("Invalid value found in temp." + layer + "." + problem + ". Please let the creator of this mod know! You can refresh the page, and you will be un-NaNed.")
+			clearInterval(interval);
+			NaNalert = true;
+			return
+		}
+
 	}
 
 	tmp.pointGen = getPointGen()
+	if (checkDecimalNaN(tmp.pointGen) && !NaNalert) {
+		confirm("Invalid value found in temp.pointGen. Please let the creator of this mod know! You can refresh the page, and you will be un-NaNed.")
+		clearInterval(interval);
+		NaNalert = true;
+		return
+	}
 	tmp.displayThings = []
 	for (thing in displayThings){
 		let text = displayThings[thing]
@@ -115,27 +134,26 @@ function updateTemp() {
 		updateTempData(helpData, tmp.helpData, "help")
 }
 
-function updateTempData(layerData, tmpData, funcsData) {
-	
+function updateTempData(layerData, tmpData, funcsData, useThis) {
 	for (item in funcsData){
 		if (Array.isArray(layerData[item])) {
 			if (item !== "tabFormat" && item !== "content") // These are only updated when needed
-				updateTempData(layerData[item], tmpData[item], funcsData[item])
+				updateTempData(layerData[item], tmpData[item], funcsData[item], useThis)
 		}
 		else if ((!!layerData[item]) && (layerData[item].constructor === Object) || (typeof layerData[item] === "object") && traversableClasses.includes(layerData[item].constructor.name)){
-			updateTempData(layerData[item], tmpData[item], funcsData[item])
+			updateTempData(layerData[item], tmpData[item], funcsData[item], useThis)
 		}
 		else if (isFunction(layerData[item]) && !isFunction(tmpData[item])){
-			let value = layerData[item]()
-			if (value !== value || value === decimalNaN){
-				if (NaNalert === true || confirm ("Invalid value found in tmp, named '" + item + "'. Please let the creator of this mod know! Would you like to try to auto-fix the save and keep going?")){
-					NaNalert = true
-					value = (value !== value ? 0 : decimalZero)
-				}
-				else {
+			let value
+
+			if (useThis !== undefined) value = layerData[item].bind(useThis)()
+			else value = layerData[item]()
+			if (value !== value || checkDecimalNaN(value)){
+				if (!NaNalert) {
+					confirm("Invalid value found in tmp, named '" + item + "'. Please let the creator of this mod know! You can refresh the page, and you will be un-NaNed.")
 					clearInterval(interval);
-					player.autosave = false;
 					NaNalert = true;
+					return
 				}
 			}
 			Vue.set(tmpData, item, value)
@@ -175,4 +193,8 @@ function setupBuyables(layer) {
 			}
 		}
 	}
+}
+
+function checkDecimalNaN(x) {
+	return (x instanceof Decimal) && !x.eq(x)
 }

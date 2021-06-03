@@ -85,6 +85,7 @@ function buyUpg(layer, id) {
 	player[layer].upgrades.push(id);
 	if (upg.onPurchase != undefined)
 		run(upg.onPurchase, upg)
+	needCanvasUpdate = true
 }
 
 function buyMaxBuyable(layer, id) {
@@ -131,7 +132,8 @@ function inChallenge(layer, id) {
 	if (challenge == id) return true
 
 	if (layers[layer].challenges[challenge].countsAs)
-		return tmp[layer].challenges[challenge].countsAs.includes(id)
+		return tmp[layer].challenges[challenge].countsAs.includes(id) || false
+	return false
 }
 
 // ************ Misc ************
@@ -160,7 +162,7 @@ function showNavTab(name, prev) {
 	if (tmp[name] && tmp[name].previousTab !== undefined) prev = tmp[name].previousTab
 	var toTreeTab = name == "tree-tab"
 	console.log(name + prev)
-	if (!tmp[prev]?.leftTab == !tmp[name]?.leftTab) player[name].prevTab = prev
+	if (name!== "none" && prev && !tmp[prev]?.leftTab == !tmp[name]?.leftTab) player[name].prevTab = prev
 	else if (player[name])
 		player[name].prevTab = ""
 	player.navTab = name
@@ -255,6 +257,7 @@ function updateMilestones(layer) {
 	for (id in layers[layer].milestones) {
 		if (!(hasMilestone(layer, id)) && layers[layer].milestones[id].done()) {
 			player[layer].milestones.push(id)
+			if (layers[layer].milestones[id].onComplete) layers[layer].milestones[id].onComplete()
 			if (tmp[layer].milestonePopups || tmp[layer].milestonePopups === undefined) doPopup("milestone", tmp[layer].milestones[id].requirementDescription, "Milestone Gotten!", 3, tmp[layer].color);
 			player[layer].lastMilestone = id
 		}

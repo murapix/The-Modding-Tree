@@ -49,7 +49,6 @@ function achievementStyle(layer, id){
 
 
 
-
 function updateWidth() {
 	var screenWidth = window.innerWidth
 
@@ -152,9 +151,9 @@ function constructTabFormat(layer, id, family){
 
 	}
 	if (isFunction(tabLayer)) {
-		return tabLayer()
+		return tabLayer.bind(location)()
 	}
-	updateTempData(tabLayer, tabTemp, tabFunc)
+	updateTempData(tabLayer, tabTemp, tabFunc, {layer, id, family})
 	return tabTemp
 }
 
