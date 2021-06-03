@@ -446,13 +446,16 @@ function loadVue() {
 	// data = id of the bar
 	Vue.component('bar', {
 		props: ['layer', 'data'],
+		methods: {
+			onClick(layer, data) { if (tmp[layer].bars[data] !== undefined) run(tmp[layer].bars[data].onClick, tmp[layer].bars[data]) }
+		},
 		computed: {
 			style() {return constructBarStyle(this.layer, this.data)},
-			onClick() { run(layers[layer].bars[data].onClick, layers[layer].bars[data]) }
 		},
 		template: `
 		<div v-if="tmp[layer].bars && tmp[layer].bars[data].unlocked" v-bind:style="{'position': 'relative'}"><div v-bind:style="[tmp[layer].bars[data].style, style.dims, {'display': 'table'}]">
-			<div class = "overlayTextContainer barBorder" v-bind:style="[tmp[layer].bars[data].borderStyle, style.dims]" v-on:onclick="onClick">
+			<div class = "overlayTextContainer barBorder" v-bind:style="[tmp[layer].bars[data].borderStyle, style.dims]" v-on:click="onClick(layer, data)">
+				<span @mouseover="hover = true" @mouseleave="hover = false" style="margin: 0px"></span>
 				<span class = "overlayText" v-bind:style="[tmp[layer].bars[data].style, tmp[layer].bars[data].textStyle]" v-html="run(layers[layer].bars[data].display, layers[layer].bars[data])"></span>
 			</div>
 			<div class ="barBG barBorder" v-bind:style="[tmp[layer].bars[data].style, tmp[layer].bars[data].baseStyle, tmp[layer].bars[data].borderStyle,  style.dims]">
@@ -660,6 +663,7 @@ function loadVue() {
 	Vue.component('overlay-head', systemComponents['overlay-head'])
 	Vue.component('info-tab', systemComponents['info-tab'])
 	Vue.component('options-tab', systemComponents['options-tab'])
+	Vue.component('help-tab', systemComponents['help-tab'])
 	Vue.component('tooltip', systemComponents['tooltip'])
 	Vue.component('particle', systemComponents['particle'])
 

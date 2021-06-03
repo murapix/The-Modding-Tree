@@ -5,7 +5,7 @@ addLayer("timecube", {
     position: 1,
     branches: ['acceleron'],
 
-    layerShown() { return isLoopFinished(2) },
+    layerShown() { return hasMilestone('entangled', 0) || isLoopFinished(2) },
     resource() { return player[this.layer].points.equals(1) ? "Time Cube" : "Time Cubes" },
     color: "#f037ea",
     type: "none",

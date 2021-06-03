@@ -203,6 +203,7 @@ function load() {
 	}
 	player.time = Date.now();
 	versionCheck();
+	fixRepeatables();
 	changeTheme();
 	changeTreeQuality();
 	updateLayers();

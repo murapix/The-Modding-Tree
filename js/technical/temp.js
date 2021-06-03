@@ -24,6 +24,8 @@ var traversableClasses = []
 
 function setupTemp() {
 	tmp = {}
+	tmp.helpTab = NaN;
+	tmp.helpData = {};
 	tmp.pointGen = {}
 	tmp.displayThings = []
 	tmp.scrolled = 0
@@ -41,6 +43,7 @@ function setupTemp() {
 		setupBuyables(layer)
 		tmp[layer].trueGlowColor = []
 	}
+	if (typeof helpData != 'undefined') setupTempData(helpData, tmp.helpData, {})
 
 	tmp.other = {
 		lastPoints: player.points || decimalZero,
@@ -107,6 +110,9 @@ function updateTemp() {
 		if (isFunction(text)) text = text()
 		tmp.displayThings.push(text) 
 	}
+
+	if (typeof helpData != 'undefined' && player.tab == 'help')
+		updateTempData(helpData, tmp.helpData, "help")
 }
 
 function updateTempData(layerData, tmpData, funcsData) {

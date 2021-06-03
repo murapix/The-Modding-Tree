@@ -128,9 +128,9 @@ function setupLayer(layer){
         }
     }
 
-    if (layer === 'inflaton') layers[layer].clickables = createResearchClickables();
     if (layers[layer].clickables){
         layers[layer].clickables.layer = layer
+        if (layer === 'inflaton') createResearchClickables(layers[layer].clickables);
         setRowCol(layers[layer].clickables)
         for (thing in layers[layer].clickables){
             if (isPlainObject(layers[layer].clickables[thing])){
@@ -322,6 +322,11 @@ addLayer("options-tab", {
     componentStyles: {
         "microtabs"() { return { "border-style": "none" } }
     }
+})
+
+addLayer("help-tab", {
+    tabFormat: ["help-tab"],
+    row: "otherside"
 })
 
 addLayer("changelog-tab", {

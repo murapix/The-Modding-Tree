@@ -88,6 +88,16 @@ addLayer("fome", {
                     for(let i = 0; i < 5; i++)
                         player.fome.boosts[fome].boosts[i] = boosts[fome][i]
                 break
+            case "entangled":
+                layerDataReset('fome')
+                layerDataReset('fome')
+                player.fome.autoProtoversal = false
+                player.fome.autoInfinitesimal = false
+                player.fome.autoSubspatial = false
+                player.fome.autoSubplanck = false
+                player.fome.autoQuantum = false
+                player.fome.autoReform = false
+                break
             default:
                 break
         }
@@ -108,6 +118,8 @@ addLayer("fome", {
         if (!player.inflaton.inflating) {
             if (hasResearch('inflaton', 4)) inflatonBonus = inflatonBonus.times(researchEffect('inflaton', 4))
             if (hasResearch('inflaton', 11)) inflatonBonus = inflatonBonus.times(researchEffect('inflaton', 11))
+            if (hasResearch('inflaton', 18)) inflatonBonus = inflatonBonus.times(researchEffect('inflaton', 18))
+            inflatonBonus = inflatonBonus.times(repeatableEffect('inflaton', 115))
         }
         inflatonBonus = inflatonBonus.min(temp.inflaton.nerf)
 
@@ -132,6 +144,7 @@ addLayer("fome", {
         fomeTypes.forEach(fome => totalGain[fome] = baseGain[fome].times(boostGain[fome]).times(boostGain.quantum).times(boostGain.quantum2).times(enlargeGain[fome]).pow(expansionGain[fome]))
 
         return {
+            inflaton: inflatonBonus,
             boosts: {
                 bonus: bonusBoosts,
                 total: totalBoosts
@@ -615,6 +628,7 @@ addLayer("fome", {
                     for (let col = 1; col <= 4; col++)
                         while (temp.fome.buyables[row+col].canAfford) buyBuyable('fome', row+col)
             },
+            onHold() { layers.fome.clickables[0].onClick() },
             style: {
                 'min-height': "30px",
                 width: "100px"

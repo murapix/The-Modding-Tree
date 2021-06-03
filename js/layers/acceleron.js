@@ -16,12 +16,20 @@ addLayer("acceleron", {
     type: "normal",
     baseResource: "Quantum Foam",
     baseAmount() { return player.fome.fome.quantum.points },
-    requires() { return player.acceleron.unlockOrder > 0 ? new Decimal(1e50) : new Decimal(1e12) },
-    exponent: 0.1,
+    requires() { return player.acceleron.unlockOrder > 0 ? new Decimal(1e80) : new Decimal(1e12) },
+    exponent() { return player.acceleron.unlockOrder > 0 ? 0.05 : 0.1 },
     canReset() { return !hasUpgrade('acceleron', 24) && getBuyableAmount('fome', 54).gte(1) && Decimal.gte(temp.acceleron.resetGain, 1) },
     prestigeNotify() { return isLoopFinished(0) ? false : temp.acceleron.canReset },
+    doReset(layer) {
+        switch (layer) {
+            case "entangled":
+                layerDataReset('acceleron', ['milestones'])
+                break
+            default:
+        }
+    },
     onPrestige() {
-        if (player.acceleron.unlockOrder === 0 && player.inflaton.unlockOrder === 0)
+        if (!hasMilestone('entangled', 0) && player.acceleron.unlockOrder === 0 && player.inflaton.unlockOrder === 0)
             player.inflaton.unlockOrder = 1
     },
     gainMult() {
@@ -319,7 +327,8 @@ addLayer("acceleron", {
             title: 'Temporal Mastery',
             description: 'Unlock Inflatons',
             cost: new Decimal(1e19),
-            unlocked() { return hasUpgrade('acceleron', 24) }
+            unlocked() { return hasUpgrade('acceleron', 24) },
+            onPurchase() { if (hasResearch('inflaton', 25)) player.entangled.unlocked = true }
         },
 
 

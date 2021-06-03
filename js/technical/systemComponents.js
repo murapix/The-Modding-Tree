@@ -67,7 +67,10 @@ var systemComponents = {
 	'layer-tab': {
 		props: ['layer', 'back', 'spacing', 'embedded'],
 		template: `<div v-bind:style="[tmp[layer].style ? tmp[layer].style : {}, (tmp[layer].tabFormat && !Array.isArray(tmp[layer].tabFormat)) ? tmp[layer].tabFormat[player.subtabs[layer].mainTabs].style : {}]">
-		<div v-if="back"><button v-bind:class="back == 'big' ? 'other-back' : 'back'" v-on:click="goBack(layer)">←</button></div>
+		<div v-if="back">
+			<button v-if="typeof tmp.helpTab != 'number'" v-bind:class="back == 'big' ? 'other-back' : 'back'" v-on:click="tmp.helpTab = NaN">←</button>
+			<button v-else v-bind:class="back == 'big' ? 'other-back' : 'back'" v-on:click="goBack(layer)">←</button>
+		</div>
 		<div v-if="!tmp[layer].tabFormat">
 			<div v-if="spacing" v-bind:style="{'height': spacing}" :key="this.$vnode.key + '-spacing'"></div>
 			<infobox v-if="tmp[layer].infoboxes" :layer="layer" :data="Object.keys(tmp[layer].infoboxes)[0]":key="this.$vnode.key + '-info'"></infobox>
@@ -178,9 +181,23 @@ var systemComponents = {
         </table>`
     },
 
+	'help-tab': {
+		template: `
+		<div>
+			<div v-if="typeof tmp.helpTab == 'number'">
+				<ul><br><br><br><li v-for="data in tmp.helpData"><a v-if="data.unlocked" class="link" v-on:click="tmp.helpTab = data.id" v-html="data.title"></a><br></li></ul>
+			</div>
+			<div v-else>
+				<h2 v-html="tmp.helpData[tmp.helpTab].title"></h2><br><br>
+				<div style="max-width: 512px" v-html="tmp.helpData[tmp.helpTab].text"></div>
+		</div>
+		`
+	},
+
     'back-button': {
         template: `
-        <button v-bind:class="back" onclick="goBack()">←</button>
+		<button v-if="typeof tmp.helpTab != 'number'" v-bind:class="back" onclick="tmp.helpTab = NaN">←</button>
+        <button v-else v-bind:class="back" onclick="goBack()">←</button>
         `
     },
 

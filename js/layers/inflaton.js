@@ -16,15 +16,34 @@ addLayer("inflaton", {
     base: 1e308,
     exponent: 1e308,
     doReset(layer) {
-        if (inChallenge('inflaton', 11)) {
-            player.inflaton.inflating = true
+        switch (layer) {
+            case "entangled":
+                layerDataReset('inflaton')
+                player.inflaton.inflating = false
+                player.inflaton.size = decimalZero
+                player.inflaton.maxSize = decimalZero
+                player.inflaton.researchProgress = decimalZero
+                player.inflaton.researchQueue = []
+                player.inflaton.research = []
+                player.inflaton.repeatables = {}
+                player.inflaton.autoBuild = false
+                player.inflaton.autoResearch = false
+                player.subtabs.inflaton.stuff = "Upgrades"
 
+                player.inflaton.points = decimalOne
+                player.inflaton.unlocked = true
+                break
+            default:
+        }
+
+        if (inChallenge('inflaton', 11)) {
+            
         }
         else if (player.inflaton.inflating) {
             
         }
         else {
-            if (player.acceleron.unlockOrder === 0 && player.inflaton.unlockOrder === 0)
+            if (!hasMilestone('entangled', 0) && player.acceleron.unlockOrder === 0 && player.inflaton.unlockOrder === 0)
                 player.acceleron.unlockOrder = 1
         }
     },
@@ -42,11 +61,27 @@ addLayer("inflaton", {
         researchProgress: decimalZero,
         researchQueue: [],
         research: [],
-        repeatables: {}
+        repeatables: {},
+
+        autoBuild: false,
+        autoResearch: false
     }},
 
+    automate() {
+        if (player.inflaton.autoBuild && hasResearch('inflaton', 24))
+            Object.keys(player.inflaton.buyables).forEach(id => buyBuyable('inflaton', id))
+        if (player.inflaton.autoResearch && player.inflaton.researchQueue.length == 0 && Object.keys(player.inflaton.repeatables).length !== 0) {
+            player.inflaton.researchQueue.push(
+                Object.keys(player.inflaton.repeatables)
+                      .filter(id => temp.inflaton.research[id].canResearch === undefined || temp.inflaton.research[id].canResearch)
+                      .map(id => [id, layers.inflaton.research[id].cost(researchLevel('inflaton', id))]).reduce((a,b) => a[1].gt(b[1]) ? b : a)[0])
+        }
+    },
+
     nerf() {
-        return Decimal.pow(2, player.inflaton.points.log10().times(buyableEffect('inflaton', 11)))
+        let log = player.inflaton.points.log10()
+        if (player.inflaton.inflating || !hasResearch('inflaton', 20)) log = log.times(buyableEffect('inflaton', 11))
+        return Decimal.pow(2, log)
     },
     gain() {
         let exp = player.inflaton.points.log(10).plus(1).dividedBy(10)
@@ -58,7 +93,7 @@ addLayer("inflaton", {
         return researchGain
     },
     effect() {
-        if (player.inflaton.points.gt(temp.inflaton.storage) || player.inflaton.inflating) {
+        if (player.inflaton.inflating || (hasResearch('inflaton', 17) && player.inflaton.points.lt(temp.inflaton.storage))) {
             return {
                 gain: temp.inflaton.gain,
                 nerf: temp.inflaton.nerf
@@ -70,6 +105,10 @@ addLayer("inflaton", {
         }
     },
     effectDescription() {
+        if (!player.inflaton.inflating && hasResearch('inflaton', 4))
+            return `<br>which ${player.inflaton.points.eq(1) ? `is` : `are`} increasing Foam generation by <span style='color:${layers.inflaton.color};text-shadow:${layers.inflaton.color} 0px 0px 10px;'>${formatWhole(temp.fome.effect.inflaton)}x</span>`
+        else if (temp.inflaton.nerf.lt(1.5))
+            return `<br>which ${player.inflaton.points.eq(1) ? `is` : `are`} dividing all other resources by <span style='color:${layers.inflaton.color};text-shadow:${layers.inflaton.color} 0px 0px 10px;'>${formatWhole(temp.inflaton.effect.nerf)}x</span> (currently <span style='color:${layers.inflaton.color};text-shadow:${layers.inflaton.color} 0px 0px 10px;'>${formatSmall(player.inflaton.points.log10().times(buyableEffect('inflaton', 11)))}x</span>)`
         return `<br>which ${player.inflaton.points.eq(1) ? `is` : `are`} dividing all other resources by <span style='color:${layers.inflaton.color};text-shadow:${layers.inflaton.color} 0px 0px 10px;'>${formatWhole(temp.inflaton.effect.nerf)}x</span>`
     },
     size() {
@@ -78,6 +117,7 @@ addLayer("inflaton", {
         let size = player.inflaton.points.log(2).log(2)
         if (hasResearch('inflaton', 2)) size = size.times(2)
         if (hasResearch('inflaton', 8)) size = size.times(2)
+        size = size.times(repeatableEffect('inflaton', 111))
         return size
     },
     storage() {
@@ -96,28 +136,31 @@ addLayer("inflaton", {
 
         if (player.inflaton.points.gt(player.inflaton.best)) player.inflaton.best = player.inflaton.points
 
-        let individualNerfs = { pion: decimalOne, spinor: decimalOne }
-        for (fomeType of fomeTypes) individualNerfs[fomeType] = decimalOne
-        if (hasResearch('inflaton', 7)) individualNerfs.quantum = individualNerfs.quantum.times(researchEffect('inflaton', 7))
-        if (hasResearch('inflaton', 14)) individualNerfs.quantum = individualNerfs.quantum.times(researchEffect('inflaton', 14))
-
-        let fomeNerf = effect.nerf
-        if (hasResearch('inflaton', 4)) fomeNerf = fomeNerf.dividedBy(researchEffect('inflaton', 4)).max(1)
-        for (fomeType of fomeTypes) {
-            player.fome.fome[fomeType].points = player.fome.fome[fomeType].points.dividedBy(fomeNerf.times(individualNerfs[fomeType]).max(1))
-        }
-        player.skyrmion.pion.points = player.skyrmion.pion.points.dividedBy(effect.nerf.times(individualNerfs.pion).max(1))
-        player.skyrmion.spinor.points = player.skyrmion.spinor.points.dividedBy(effect.nerf.times(individualNerfs.spinor).max(1))
-        if (player.inflaton.unlockOrder > 0) {
-            player.acceleron.points = player.acceleron.points.dividedBy(effect.nerf)
-            player.timecube.points = player.timecube.points.dividedBy(effect.nerf)
-        }
-
-        temp.inflaton.size = layers.inflaton.size()
-        if (temp.inflaton.size.gt(player.inflaton.maxSize))
-            player.inflaton.maxSize = temp.inflaton.size;
-
         if (inChallenge('inflaton', 11)) {
+            let individualNerfs = { pion: decimalOne, spinor: decimalOne }
+            for (fomeType of fomeTypes) individualNerfs[fomeType] = decimalOne
+            if (hasResearch('inflaton', 7)) individualNerfs.quantum = individualNerfs.quantum.times(researchEffect('inflaton', 7))
+            if (hasResearch('inflaton', 14)) individualNerfs.quantum = individualNerfs.quantum.times(researchEffect('inflaton', 14))
+    
+            let fomeNerf = effect.nerf
+            if (hasResearch('inflaton', 4)) fomeNerf = fomeNerf.dividedBy(researchEffect('inflaton', 4)).max(1)
+            if (hasResearch('inflaton', 11)) fomeNerf = fomeNerf.dividedBy(researchEffect('inflaton', 11)).max(1)
+            if (hasResearch('inflaton', 18)) fomeNerf = fomeNerf.dividedBy(researchEffect('inflaton', 18)).max(1)
+            fomeNerf = fomeNerf.dividedBy(repeatableEffect('inflaton', 115))
+            for (fomeType of fomeTypes) {
+                player.fome.fome[fomeType].points = player.fome.fome[fomeType].points.dividedBy(fomeNerf.times(individualNerfs[fomeType]).max(1))
+            }
+            player.skyrmion.pion.points = player.skyrmion.pion.points.dividedBy(effect.nerf.times(individualNerfs.pion).max(1))
+            player.skyrmion.spinor.points = player.skyrmion.spinor.points.dividedBy(effect.nerf.times(individualNerfs.spinor).max(1))
+            if (player.inflaton.unlockOrder > 0) {
+                player.acceleron.points = player.acceleron.points.dividedBy(effect.nerf)
+                player.timecube.points = player.timecube.points.dividedBy(effect.nerf)
+            }
+    
+            temp.inflaton.size = layers.inflaton.size()
+            if (temp.inflaton.size.gt(player.inflaton.maxSize))
+                player.inflaton.maxSize = temp.inflaton.size;
+            
             for (fomeType of fomeTypes)
                 if (player.fome.fome[fomeType].points.lt(1)) {
                     startChallenge('inflaton', 11)
@@ -138,10 +181,14 @@ addLayer("inflaton", {
         }
 
         if (player.inflaton.researchQueue.length > 0) {
-            player.inflaton.researchProgress = player.inflaton.researchProgress.plus(temp.inflaton.researchGain.times(delta))
-            if(player.inflaton.researchProgress.gte(temp.inflaton.research[player.inflaton.researchQueue[0]].cost)) {
-                let id = player.inflaton.researchQueue.shift()
-                player.inflaton.research.push(id)
+            player.inflaton.researchProgress = player.inflaton.researchProgress.plus(temp.inflaton.researchGain.minus(buyableEffect('inflaton', 14).cost).times(delta))
+            let id = player.inflaton.researchQueue[0]
+            let cost = temp.inflaton.research[id].repeatable ? layers.inflaton.research[id].cost(researchLevel('inflaton', id)) : temp.inflaton.research[id].cost
+            if (player.inflaton.researchProgress.gte(cost)) {
+                player.inflaton.researchQueue.shift()
+                if (temp.inflaton.research[id].repeatable)
+                    player.inflaton.repeatables[id] = Decimal.add(player.inflaton.repeatables[id], 1)
+                else player.inflaton.research.push(id)
                 player.inflaton.researchProgress = decimalZero
                 run(temp.inflaton.research[id].onComplete, temp.inflaton.research[id])
             }
@@ -154,13 +201,14 @@ addLayer("inflaton", {
         11: {
             name: "INFLATE",
             challengeDescription: "<i>Survive</i><br/>",
-            goalDescription: `${format('10^^1000')} Inflatons`,
-            canComplete() { return player.inflaton.points.eq('10^^1e308') },
-            rewardDescription: `Keep a second Inflaton`,
+            goalDescription: `Surpass the heat death of the universe`,
+            canComplete() { return false },
+            rewardDescription: `Begin anew`,
             unlocked() { return player.inflaton.points.lte(temp.inflaton.storage) || inChallenge('inflaton', this.id) },
             onEnter() {
                 player.inflaton.inflating = true
-                player.inflaton.points = player.inflaton.points.plus(1)
+                if (hasResearch('inflaton', 21)) player.inflaton.points = buyableEffect('inflaton', 11).recip().div(10).pow10()
+                else player.inflaton.points = player.inflaton.points.plus(1)
             },
             onExit() {
                 player.inflaton.inflating = false
@@ -176,7 +224,7 @@ addLayer("inflaton", {
         11: {
             title: 'Subspatial Field Stabilizers',
             description: 'Allow the creation of Subspatial Structures',
-            cost: new Decimal(5e13),
+            cost() { return player.inflaton.unlockOrder > 0 ? new Decimal(5e46) : new Decimal(5e13) },
             currencyDisplayName: 'Quantum Foam',
             currencyInternalName: 'points',
             currencyLocation() { return player.fome.fome.quantum },
@@ -185,16 +233,16 @@ addLayer("inflaton", {
         12: {
             title: 'Quantum Field Investigations',
             description: `Stabilization isn't enough. Maybe the constant bubbling of the quantum field may hold the secret to sustaining inflation`,
-            cost: new Decimal(1e14),
+            cost() { return player.inflaton.unlockOrder > 0 ? new Decimal(1e47) : new Decimal(1e14) },
             currencyDisplayName: 'Quantum Foam',
             currencyInternalName: 'points',
             currencyLocation() { return player.fome.fome.quantum },
             unlocked() { return hasUpgrade('inflaton', 12) || (!player.inflaton.inflating && player.inflaton.maxSize.gt(player.inflaton.unlockOrder > 0 ? 9 : 7.01) && hasUpgrade('inflaton', 11)) }
         },
         21: {
-            title: '',
+            title: 'Dynamic Inflational Formation',
             description: `Generate more Foam based on the size of your universe`,
-            cost: new Decimal(1e25),
+            cost() { return player.inflaton.unlockOrder > 0 ? new Decimal(1e58) : new Decimal(1e25) },
             effect() { return player.inflaton.maxSize.max(1) },
             effectDisplay() { return `${format(upgradeEffect('inflaton', 21))}x` },
             currencyDisplayName: 'Quantum Foam',
@@ -203,9 +251,9 @@ addLayer("inflaton", {
             unlocked() { return hasUpgrade('inflaton', 21) || (!player.inflaton.inflating && hasResearch('inflaton', 9)) }
         },
         22: {
-            title: 'Perpetual Testing Initiative',
-            description: `Unlock repeatable research`,
-            cost: new Decimal(1e27),
+            title: 'Micro-inflational Subsystems',
+            description: `Gain a new Pion and Spinor Upgrade`,
+            cost() { return player.inflaton.unlockOrder > 0 ? new Decimal(1e60) : new Decimal(1e27) },
             currencyDisplayName: 'Quantum Foam',
             currencyInternalName: 'points',
             currencyLocation() { return player.fome.fome.quantum },
@@ -214,8 +262,6 @@ addLayer("inflaton", {
     },
 
     buyables: {
-        rows: 1,
-        cols: 99,
         respec() {
             Object.keys(player.inflaton.buyables).forEach(id => player.inflaton.buyables[id] = decimalZero)
             player.inflaton.size = decimalZero
@@ -227,15 +273,17 @@ addLayer("inflaton", {
             effect(amount) {
                 if (hasResearch('inflaton', 1)) amount = amount.times(researchEffect('inflaton', 1))
                 if (hasResearch('inflaton', 19)) amount = amount.times(researchEffect('inflaton', 19).gain)
+                amount = amount.times(buyableEffect('inflaton', 14).gain)
                 return Decimal.pow(0.975, amount)
             },
             effectDisplay(effect) { return `${formatSmall(effect)}x` },
-            cost: [1e30, 1.1],
+            cost() { return [player.inflaton.unlockOrder > 0 ? 1e82 : 1e30, 1.1] },
             currencyDisplayName: 'Subspatial Foam',
             currencyLocation() { return player.fome.fome.subspatial },
             size() {
                 let size = decimalOne
                 if (hasResearch('inflaton', 19)) size = size.times(researchEffect('inflaton', 19).size)
+                size = size.times(repeatableEffect('inflaton', 113).size)
                 return size
             },
             unlocked() { return hasUpgrade('inflaton', 11) }
@@ -247,13 +295,14 @@ addLayer("inflaton", {
                 if (hasResearch('inflaton', 19)) amount = amount.times(researchEffect('inflaton', 19).gain)
                 return amount
             },
-            effectDisplay(effect) { return `+${formatWhole(effect)} research points/s` },
-            cost() { return [1e30, hasResearch('inflaton', 3) ? 1.5 : 15] },
+            effectDisplay() { return `+${formatWhole(temp.inflaton.researchGain)} research points/s` },
+            cost() { return [player.inflaton.unlockOrder > 0 ? 1e82 : 1e30, hasResearch('inflaton', 3) ? 1.5 : 15] },
             currencyDisplayName: 'Subspatial Foam',
             currencyLocation() { return player.fome.fome.subspatial },
             size() {
                 let size = decimalOne
                 if (hasResearch('inflaton', 19)) size = size.times(researchEffect('inflaton', 19).size)
+                size = size.times(repeatableEffect('inflaton', 113).size)
                 return size
             },
             unlocked() { return hasUpgrade('inflaton', 12) }
@@ -266,12 +315,13 @@ addLayer("inflaton", {
                 return Decimal.pow(500, amount.dividedBy(3))
             },
             effectDisplay(effect) { return `Store ${formatWhole(effect)}x more Inflatons`},
-            cost: [1e15, 1.2],
+            cost() { return [player.inflaton.unlockOrder > 0 ? 1e48 : 1e15, 1.2] },
             currencyDisplayName: 'Quantum Foam',
             currencyLocation() { return player.fome.fome.quantum },
             size() {
                 let size = new Decimal(3)
                 if (hasResearch('inflaton', 19)) size = size.times(researchEffect('inflaton', 19).size)
+                size = size.times(repeatableEffect('inflaton', 113).size)
                 return size
             },
             unlocked() { return hasResearch('inflaton', 6) }
@@ -280,8 +330,8 @@ addLayer("inflaton", {
             title: 'Active Redistribution Center',
             description: 'Tune your M-field Condensers with continuous analysis of inflation patterns',
             effect(amount) {
-                let gain = Decimal.pow(1.5, amount)
-                let cost = Decimal.pow(100, amount)
+                let gain = amount.times(0.01).plus(1)
+                let cost = amount
 
                 let capacity = temp.inflaton.researchGain
                 if (cost.gt(capacity)) {
@@ -290,11 +340,26 @@ addLayer("inflaton", {
                 }
                 return { gain: gain, cost: cost }
             },
-            effectDisplay(effect) { return `${format(effect.gain)}x<br><b>Consumes:</b> ${format(effect.cost)} Research/sec` }
+            effectDisplay(effect) { return `${format(effect.gain)}x<br><b>Consumes:</b> ${format(effect.cost)} Research/sec` },
+            cost() { return [player.inflaton.unlockOrder > 0 ? 1e92 : 1e40, 1.5] },
+            currencyDisplayName: 'Subspatial Foam',
+            currencyLocation() { return player.fome.fome.subspatial },
+            size() {
+                let size = new Decimal(1)
+                if (hasResearch('inflaton', 19)) size = size.times(researchEffect('inflaton', 19).size)
+                size = size.times(repeatableEffect('inflaton', 113).size)
+                return size
+            },
+            unlocked() { return hasResearch('inflaton', 16)}
         })
     },
 
-    queueSize: 1,
+    queueSize() {
+        let size = 1
+        if (hasResearch('inflaton', 12)) size += researchEffect('inflaton', 12)
+        if (hasResearch('inflaton', 23)) size += researchEffect('inflaton', 23)
+        return size
+    },
     research: {
         1: {
             title: 'Branon Induction Phases',
@@ -332,9 +397,10 @@ addLayer("inflaton", {
         },
         5: {
             title: 'Distributed Analysis Framework',
-            description: 'Each Quantum Flux Analyzer increases Research Point gain by 10%',
+            description: 'The first 6 Quantum Flux Analyzers increase Research Point gain by 10%',
             cost: new Decimal(1500),
-            effect() { return Decimal.pow(1.1, getBuyableAmount('inflaton', 12)) },
+            effect() { return Decimal.pow(1.1, getBuyableAmount('inflaton', 12).min(temp.inflaton.research[5].limit)) },
+            limit() { return new Decimal(6).plus(repeatableEffect('inflaton', 112)) },
             requires: [2, 3],
             row: 3,
             pos: 2
@@ -392,7 +458,8 @@ addLayer("inflaton", {
         12: {
             title: '12',
             description: 'You can queue up to 2 additional researches',
-            cost: new Decimal(25000),
+            cost: new Decimal(10000),
+            effect: 2,
             requires: [5],
             row: 5,
             pos: 2
@@ -408,7 +475,7 @@ addLayer("inflaton", {
         14: {
             title: '14',
             description: 'Halve the effect of inflaton on Quantum Foam, again',
-            cost: new Decimal(1500),
+            cost: new Decimal(6000),
             effect: new Decimal(0.5),
             requires: [7, 11],
             row: 6,
@@ -416,16 +483,16 @@ addLayer("inflaton", {
         },
         15: {
             title: '15',
-            description: 'Unlock a repeatable research',
-            cost: new Decimal(1500),
+            description: 'Unlock two repeatable researches',
+            cost: new Decimal(6000),
             requires: [8],
             row: 6,
             pos: 2
         },
         16: {
             title: 'Active Restoration Protocols',
-            description: 'Allow the construction of ???',
-            cost: new Decimal(1500),
+            description: 'Allow the construction of Active Redistribution Centers',
+            cost: new Decimal(15000),
             requires: [12, 13],
             row: 6,
             pos: 3
@@ -433,15 +500,16 @@ addLayer("inflaton", {
         17: {
             title: 'Inflationary Tolerances',
             description: 'Allow stored Inflatons to inflate to fill your storage',
-            cost: new Decimal(1500),
+            cost: new Decimal(6000),
             requires: [10, 13],
             row: 6,
             pos: 4
         },
         18: {
             title: '18',
-            description: '',
-            cost: new Decimal(1500),
+            description: 'Retain yet another 1e12 Foam, based on your current Inflatons',
+            cost: new Decimal(9000),
+            effect: new Decimal(1e12),
             requires: [14, 15],
             row: 7,
             pos: 1  
@@ -450,7 +518,7 @@ addLayer("inflaton", {
             title: '19',
             description: 'Increase subspace building size tenfold, and increase their effects by twice as much',
             onComplete() { layers.inflaton.buyables.respec() },
-            cost: new Decimal(1500),
+            cost: new Decimal(25000),
             effect() { return { size: new Decimal(10), gain: new Decimal(2) } },
             requires: [14, 15, 16],
             row: 7,
@@ -458,32 +526,33 @@ addLayer("inflaton", {
         },
         20: {
             title: 'Secondary Isolation Standards',
-            description: 'M-field Condensers no longer affect ',
-            cost: new Decimal(1500),
+            description: 'M-field Condensers no longer reduce the effect of stored Inflatons',
+            cost: new Decimal(25000),
             requires: [16],
             row: 7,
             pos: 3
         },
         21: {
             title: '21',
-            description: '',
-            cost: new Decimal(1500),
+            description: `Beginning to Inflate places you at the limit of your M-field Condenser's safe operation`,
+            cost: new Decimal(25000),
             requires: [16, 17],
             row: 7,
             pos: 4
         },
         22: {
             title: '22',
-            description: 'Unlock another repeatable research project',
-            cost: new Decimal(1500),
+            description: 'Unlock three more repeatable research projects',
+            cost: new Decimal(100000),
             requires: [18, 19],
             row: 8,
             pos: 1
         },
         23: {
             title: '23',
-            description: 'Unlock another repeatable research project',
-            cost: new Decimal(1500),
+            description: 'Increase the research queue size by another 2',
+            cost: new Decimal(100000),
+            effect: 2,
             requires: [12, 15],
             row: 8,
             pos: 2
@@ -491,7 +560,7 @@ addLayer("inflaton", {
         24: {
             title: '24',
             description: 'Automatically build subspace buildings, and building them no longer consumes Foam',
-            cost: new Decimal(1500),
+            cost: new Decimal(100000),
             requires: [20, 21],
             row: 8,
             pos: 3
@@ -499,7 +568,8 @@ addLayer("inflaton", {
         25: {
             title: 'Spatial Mastery',
             description: 'Unlock Accelerons',
-            cost: new Decimal(1500),
+            cost: new Decimal(750000),
+            onComplete() { if (hasUpgrade('acceleron', 25)) player.entangled.unlocked = true },
             requires: [22, 23, 24],
             row: 9,
             pos: 1
@@ -508,70 +578,228 @@ addLayer("inflaton", {
         111: {
             title: 'Repeatable: Eternal Inflation',
             description: 'Double the size of your universe',
-            cost(amount) { return Decimal.pow(1000, amount).times(1e30) },
+            cost(amount) { return Decimal.pow(4, amount).times(12000) },
             effect(amount) { return Decimal.pow(2, amount) },
-            effectDisplay(effect) { return `${format(effect)}x` },
+            effectDisplay(effect) { return `${formatWhole(effect)}x` },
             unlocked() { return hasResearch('inflaton', 15) },
             repeatable: true,
             row: 0,
             pos: 1
         },
         112: {
-            title: 'Repeatable: Subspacial Construction',
-            description: 'Increase subspace building size tenfold, and increase their effects by twice as much',
-            cost(amount) { return Decimal.pow(1000, amount).times(1e30) },
-            effect(amount) { return { size: Decimal.pow(10, amount), gain: Decimal.pow(2, amount) } },
-            effectDisplay(effect) { return `${format(effect)}x` },
-            unlocked() { return hasResearch('inflaton', 22) },
+            title: 'Repeatable: Perpetual Testing',
+            description: `Increase Distributed Analysis Framework's maximum Analyzer limit by ${formatLength(6)}`,
+            cost(amount) { return Decimal.pow(8, amount).times(15000) },
+            effect(amount) { return Decimal.times(amount, 6) },
+            effectDisplay(effect) { return `+${formatLength(effect)}` },
+            unlocked() { return hasResearch('inflaton', 15) },
             repeatable: true,
             row: 0,
             pos: 2
         },
         113: {
-            title: 'Repeatable: Efficient Design',
-            description: '',
-            cost(amount) { return Decimal.pow(1000, amount).times(1e30) },
-            effect(amount) { return Decimal.pow(1.5, amount) },
-            effectDisplay(effect) { return `${format(effect)}x` },
-            unlocked() { return hasResearch('inflaton', 23) },
+            title: 'Repeatable: Subspacial Construction',
+            description: 'Increase subspace building size tenfold, and increase their effects by twice as much',
+            cost(amount) { return Decimal.pow(200, amount).times(150000) },
+            effect(amount) { return { size: Decimal.pow(10, amount), gain: Decimal.pow(2, amount) } },
+            effectDisplay(effect) { return `${formatWhole(effect.size)}x, ${formatWhole(effect.gain.times(effect.size))}x` },
+            onComplete() { layers.inflaton.buyables.respec() },
+            canResearch() { return Object.keys(player.inflaton.buyables).map(id => player.inflaton.buyables[id].div(temp.inflaton.buyables[id].size).gt(10)).reduce((a,b) => a && b) },
+            unlocked() { return hasResearch('inflaton', 22) },
             repeatable: true,
             row: 0,
             pos: 3
         },
         114: {
-            title: 'Repeatable: Inflational Dynamics',
-            description: '',
-            cost(amount) { return Decimal.pow(1000, amount).times(1e30) },
-            effect(amount) { return Decimal.pow(1e3, amount) },
-            effectDisplay(effect) { return `${format(effect)}x` },
-            unlocked() { return false },
+            title: 'Repeatable: Efficient Design',
+            description: 'Decrease Subspace building cost scaling by 1.5x',
+            cost(amount) { return Decimal.pow(3, amount).times(120000) },
+            effect(amount) { return Decimal.pow(1.5, amount) },
+            effectDisplay(effect) { return `1/${format(effect)}x` },
+            unlocked() { return hasResearch('inflaton', 22) },
             repeatable: true,
             row: 0,
             pos: 4
         },
         115: {
-            title: 'Repeatable: Perpetual Testing',
-            description: `Increase Distributed Analysis Framework's maximum Analyzer limit`,
-            cost(amount) { return Decimal.pow(1000, amount).times(1e30) },
-            effect(amount) { return Decimal.pow(10, amount) },
-            effectDisplay(effect) { return `${format(effect)}x` },
-            unlocked() { return false },
+            title: 'Repeatable: Inflational Dynamics',
+            description: 'Retain up to 1e6x more Foam',
+            cost(amount) { return Decimal.pow(5, amount).times(160000) },
+            effect(amount) { return Decimal.pow(1e6, amount) },
+            effectDisplay(effect) { return `${formatWhole(effect)}x` },
+            unlocked() { return hasResearch('inflaton', 22) },
             repeatable: true,
             row: 0,
             pos: 5
         }
     },
 
-    clickables: {},
+    clickables: {
+        "-1": {
+            display() { if (player.inflaton.researchQueue.length > 1) {
+                    let id = player.inflaton.researchQueue[1]
+                    let title = temp.inflaton.research[id].title
+                    return title
+                }
+                return `Research Slot 1`
+            },
+            canClick() { return player.inflaton.researchQueue.length > 1 },
+            onClick() { player.inflaton.researchQueue.splice(1, 1) },
+            unlocked() { return temp.inflaton.queueSize >= 2 },
+            style() {
+                let width = temp.inflaton.queueSize > 1 ? 500 / (temp.inflaton.queueSize - 1) : 500
+                return {
+                "min-height": "50px",
+                "width": `${width}px`
+            }}
+        },
+        "-2": {
+            display() { if (player.inflaton.researchQueue.length > 2) {
+                    let id = player.inflaton.researchQueue[2]
+                    let title = temp.inflaton.research[id].title
+                    return title
+                }
+                return `Research Slot 2`
+            },
+            canClick() { return player.inflaton.researchQueue.length > 2 },
+            onClick() { player.inflaton.researchQueue.splice(2, 1) },
+            unlocked() { return temp.inflaton.queueSize >= 3 },
+            style() {
+                let width = temp.inflaton.queueSize > 1 ? 500 / (temp.inflaton.queueSize - 1) : 500
+                return {
+                "min-height": "50px",
+                "width": `${width}px`
+            }}
+        },
+        "-3": {
+            display() { if (player.inflaton.researchQueue.length > 3) {
+                    let id = player.inflaton.researchQueue[3]
+                    let title = temp.inflaton.research[id].title
+                    return title
+                }
+                return `Research Slot 3`
+            },
+            canClick() { return player.inflaton.researchQueue.length > 3 },
+            onClick() { player.inflaton.researchQueue.splice(3, 1) },
+            unlocked() { return temp.inflaton.queueSize >= 4 },
+            style() {
+                let width = temp.inflaton.queueSize > 1 ? 500 / (temp.inflaton.queueSize - 1) : 500
+                return {
+                "min-height": "50px",
+                "width": `${width}px`
+            }}
+        },
+        "-4": {
+            display() { if (player.inflaton.researchQueue.length > 4) {
+                    let id = player.inflaton.researchQueue[4]
+                    let title = temp.inflaton.research[id].title
+                    return title
+                }
+                return `Research Slot 5`
+            },
+            canClick() { return player.inflaton.researchQueue.length > 4 },
+            onClick() { player.inflaton.researchQueue.splice(4, 1) },
+            unlocked() { return temp.inflaton.queueSize >= 5 },
+            style() {
+                let width = temp.inflaton.queueSize > 1 ? 500 / (temp.inflaton.queueSize - 1) : 500
+                return {
+                "min-height": "50px",
+                "width": `${width}px`
+            }}
+        },
+
+        "sell11": {
+            display: `Sell One`,
+            unlocked() { return hasResearch('inflaton', 10) && temp.inflaton.buyables[11].unlocked },
+            canClick() { return getBuyableAmount('inflaton', 11).gt(0) },
+            onClick() {
+                setBuyableAmount('inflaton', 11, getBuyableAmount('inflaton', 11).minus(temp.inflaton.buyables[11].size).max(0))
+                player.inflaton.size = player.inflaton.size.minus(temp.inflaton.buyables[11].size)
+            },
+            style: { "min-height": "25px", "width": "125px", "margin-top": "50px" }
+        },
+        "sellAll11": {
+            display: `Sell All`,
+            unlocked() { return hasResearch('inflaton', 10) && temp.inflaton.buyables[11].unlocked },
+            canClick() { return getBuyableAmount('inflaton', 11).gt(0) },
+            onClick() {
+                player.inflaton.size = player.inflaton.size.minus(getBuyableAmount('inflaton', 11))
+                setBuyableAmount('inflaton', 11, decimalZero)
+            },
+            style: { "min-height": "25px", "width": "125px", "margin-top": "50px" }
+        },
+        "sell12": {
+            display: `Sell One`,
+            unlocked() { return hasResearch('inflaton', 10) && temp.inflaton.buyables[12].unlocked },
+            canClick() { return getBuyableAmount('inflaton', 12).gt(0) },
+            onClick() {
+                setBuyableAmount('inflaton', 12, getBuyableAmount('inflaton', 12).minus(temp.inflaton.buyables[12].size).max(0))
+                player.inflaton.size = player.inflaton.size.minus(temp.inflaton.buyables[12].size)
+            },
+            style: { "min-height": "25px", "width": "125px", "margin-top": "50px" }
+        },
+        "sellAll12": {
+            display: `Sell All`,
+            unlocked() { return hasResearch('inflaton', 10) && temp.inflaton.buyables[12].unlocked },
+            canClick() { return getBuyableAmount('inflaton', 12).gt(0) },
+            onClick() {
+                player.inflaton.size = player.inflaton.size.minus(getBuyableAmount('inflaton', 12))
+                setBuyableAmount('inflaton', 12, decimalZero)
+            },
+            style: { "min-height": "25px", "width": "125px", "margin-top": "50px" }
+        },
+        "sell13": {
+            display: `Sell One`,
+            unlocked() { return hasResearch('inflaton', 10) && temp.inflaton.buyables[13].unlocked },
+            canClick() { return getBuyableAmount('inflaton', 13).gt(0) },
+            onClick() {
+                setBuyableAmount('inflaton', 13, getBuyableAmount('inflaton', 13).minus(temp.inflaton.buyables[13].size).max(0))
+                player.inflaton.size = player.inflaton.size.minus(temp.inflaton.buyables[13].size)
+            },
+            style: { "min-height": "25px", "width": "125px", "margin-top": "50px" }
+        },
+        "sellAll13": {
+            display: `Sell All`,
+            unlocked() { return hasResearch('inflaton', 10) && temp.inflaton.buyables[13].unlocked },
+            canClick() { return getBuyableAmount('inflaton', 13).gt(0) },
+            onClick() {
+                player.inflaton.size = player.inflaton.size.minus(getBuyableAmount('inflaton', 13))
+                setBuyableAmount('inflaton', 13, decimalZero)
+            },
+            style: { "min-height": "25px", "width": "125px", "margin-top": "50px" }
+        },
+        "sell14": {
+            display: `Sell One`,
+            unlocked() { return hasResearch('inflaton', 10) && temp.inflaton.buyables[14].unlocked },
+            canClick() { return getBuyableAmount('inflaton', 14).gt(0) },
+            onClick() {
+                setBuyableAmount('inflaton', 14, getBuyableAmount('inflaton', 14).minus(temp.inflaton.buyables[14].size).max(0))
+                player.inflaton.size = player.inflaton.size.minus(temp.inflaton.buyables[14].size)
+            },
+            style: { "min-height": "25px", "width": "125px", "margin-top": "50px" }
+        },
+        "sellAll14": {
+            display: `Sell All`,
+            unlocked() { return hasResearch('inflaton', 10) && temp.inflaton.buyables[14].unlocked },
+            canClick() { return getBuyableAmount('inflaton', 14).gt(0) },
+            onClick() {
+                player.inflaton.size = player.inflaton.size.minus(getBuyableAmount('inflaton', 14))
+                setBuyableAmount('inflaton', 14, decimalZero)
+            },
+            style: { "min-height": "25px", "width": "125px", "margin-top": "50px" }
+        }
+    },
     bars: {
         research: {
             direction: RIGHT,
             width: 500,
             height: 50,
             progress() {
-                if (player.inflaton.researchQueue.length > 0)
-                    return Decimal.div(player.inflaton.researchProgress,
-                        temp.inflaton.research[player.inflaton.researchQueue[0]].cost)
+                if (player.inflaton.researchQueue.length > 0) {
+                    let id = player.inflaton.researchQueue[0]
+                    let cost = temp.inflaton.research[id].repeatable ? layers.inflaton.research[id].cost(researchLevel('inflaton', id)) : temp.inflaton.research[id].cost
+                    return Decimal.div(player.inflaton.researchProgress, cost)
+                }
                 return decimalZero
             },
             display() {
@@ -579,7 +807,7 @@ addLayer("inflaton", {
                     let id = player.inflaton.researchQueue[0]
                     let title = temp.inflaton.research[id].title
                     let progress = player.inflaton.researchProgress
-                    let max = temp.inflaton.research[id].cost
+                    let max = typeof layers.inflaton.research[id].cost === 'function' ? layers.inflaton.research[id].cost(researchLevel('inflaton', id)) : temp.inflaton.research[id].cost
                     return `Current Research: ${title}<br>Progress: ${formatWhole(progress)} / ${formatWhole(max)}`
                 }
                 return `Current Research: None`
@@ -588,7 +816,6 @@ addLayer("inflaton", {
             onClick() {
                 player.inflaton.researchQueue.shift()
                 player.inflaton.researchProgress = decimalZero
-                console.log(3)
             }
         }
     },
@@ -608,18 +835,35 @@ addLayer("inflaton", {
                 unlocked() { return hasUpgrade('inflaton', 11) },
                 content: [
                     "blank",
-                    "buyables"
+                    () => hasResearch('inflaton', 24) ? ["row", [["display-text", "Enable Auto-Build"], "blank", ["toggle", ["inflaton", "autoBuild"]]]] : '',
+                    () => hasResearch('inflaton', 24) ? "blank" : '',
+                    "respec-button",
+                    "blank",
+                    ["row", [
+                        ["column", [["buyable", 11], ["row", [["clickable", "sell11"], ["clickable", "sellAll11"]]]]],
+                        ["column", [["buyable", 12], ["row", [["clickable", "sell12"], ["clickable", "sellAll12"]]]]],
+                        ["column", [["buyable", 13], ["row", [["clickable", "sell13"], ["clickable", "sellAll13"]]]]]
+                    ]],
+                    "blank",
+                    ["row", [
+                        ["column", [["buyable", 14], ["row", [["clickable", "sell14"], ["clickable", "sellAll14"]]]]],
+                        ["column", [["buyable", 15], ["row", [["clickable", "sell15"], ["clickable", "sellAll15"]]]]],
+                        ["column", [["buyable", 16], ["row", [["clickable", "sell16"], ["clickable", "sellAll16"]]]]]
+                    ]]
                 ]
             },
             "Research": {
                 unlocked() { return hasUpgrade('inflaton', 12) },
                 content: [
                     "blank",
-                    ["display-text", () => `You are producing <h3 style='color:${layers[layer].color};text-shadow:${layers[layer].color} 0px 0px 10px;'>${formatWhole(temp.inflaton.researchGain)}</h3> research points per second`],
+                    ["display-text", () => `You are producing <h3 style='color:${layers[layer].color};text-shadow:${layers[layer].color} 0px 0px 10px;'>${formatWhole(temp.inflaton.researchGain.minus(buyableEffect('inflaton', 14).cost))}</h3> research points per second`],
                     "blank",
                     ["bar", "research"],
+                    ["row", [["clickable", "-1"], ["clickable", "-2"], ["clickable", "-3"], ["clickable", "-4"]]],
                     "blank",
                     ["row", [["clickable", 1], ["clickable", 2], ["clickable", 3], ["clickable", 4], ["clickable", 5]]],
+                    () => hasResearch('inflaton', 15) ? ["row", [["display-text", "Enable Auto-Repeatable Research"], "blank", ["toggle", ["inflaton", "autoResearch"]]]] : '',
+                    () => hasResearch('inflaton', 15) ? "blank" : '',
                     "clickables"
                 ]
             }
@@ -667,8 +911,10 @@ function createInflatonBuilding(id, data) {
                 [mult, base] = data.cost
             mult = new Decimal(mult)
             base = new Decimal(base)
-            let amount = getBuyableAmount('inflaton', id)
+            let amount = getBuyableAmount('inflaton', id).dividedBy(repeatableEffect('inflaton', 114))
             let size = temp.inflaton.buyables[id].size
+            if (hasResearch('inflaton', 24))
+                return mult.times(base.pow(amount))
             return mult.times(base.pow(size).minus(1)).times(base.pow(amount)).dividedBy(base.minus(1))
         },
         effect() { return data.effect(getBuyableAmount('inflaton', id)) },
@@ -676,38 +922,29 @@ function createInflatonBuilding(id, data) {
         canAfford() { return player.inflaton.size.plus(temp.inflaton.buyables[id].size).lte(player.inflaton.maxSize) && currencyLocation()[currencyInternalName].gte(temp.inflaton.buyables[id].cost) },
         buy() {
             setBuyableAmount('inflaton', id, getBuyableAmount('inflaton', id).plus(temp.inflaton.buyables[id].size))
-            currencyLocation()[currencyInternalName] = currencyLocation()[currencyInternalName].minus(temp.inflaton.buyables[id].cost)
+            if (!hasResearch('inflaton', 24)) currencyLocation()[currencyInternalName] = currencyLocation()[currencyInternalName].minus(temp.inflaton.buyables[id].cost)
             player.inflaton.size = player.inflaton.size.plus(temp.inflaton.buyables[id].size)
         },
-        sellOne() {
-            if (getBuyableAmount('inflaton', id).gt(0)) {
-                setBuyableAmount('inflaton', id, getBuyableAmount('inflaton', id).minus(temp.inflaton.buyables[id].size).max(0))
-                player.inflaton.size = player.inflaton.size.minus(temp.inflaton.buyables[id].size)
-            }
-        },
-        sellAll() {
-            player.inflaton.size = player.inflaton.size.minus(getBuyableAmount('inflaton', id))
-            setBuyableAmount('inflaton', id, decimalZero)
-        },
-        canSellOne() { return hasResearch('inflaton', 10) },
-        canSellAll() { return hasResearch('inflaton', 10) },
         size: data.size,
         unlocked: data.unlocked,
 
-        style: data.style,
+        style() {
+            let style = data.style ? data.style : {}
+            style["height"] = "150px"
+            style["width"] = "250px"
+            style["padding-top"] = "6px"
+            style["padding-bottom"] = "6px"
+            return style
+        },
         purchaseLimit: data.purchaseLimit
     }
 }
 
-function createResearchClickables() {
-    let clickables = {}
-
+function createResearchClickables(clickables) {
     for(let id in layers.inflaton.research) {
         let research = layers.inflaton.research[id]
         clickables[research.row*10 + research.pos] = createResearchClickable(id, research)
     }
-
-    return clickables
 }
 
 function createResearchClickable(id, research) {
@@ -725,6 +962,9 @@ function createResearchClickable(id, research) {
             return temp.inflaton.research[id].unlocked === undefined ? true : temp.inflaton.research[id].unlocked
         },
         canClick() {
+            if (research.canResearch !== undefined)
+                if (!temp.inflaton.research[id].canResearch)
+                    return false
             if (research.requires) {
                 for (let requirement of research.requires) {
                     if (!hasResearch('inflaton', requirement))
@@ -782,4 +1022,8 @@ function researchEffect(layer, id) {
 
 function repeatableEffect(layer, id) {
     return layers[layer].research[id].effect(researchLevel(layer, id))
+}
+
+function fixRepeatables() {
+    Object.keys(player.inflaton.repeatables).forEach(id => player.inflaton.repeatables[id] = new Decimal(player.inflaton.repeatables[id]))
 }

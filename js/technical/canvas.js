@@ -95,12 +95,13 @@ function drawResearchBranches() {
 	if (player.tab !== 'inflaton') return
 	if (player.subtabs.inflaton.stuff !== 'Research') return
 
-	let clickableElements = Array.from(document.getElementsByClassName('upg'))
+	let clickableElements = Array.from(document.getElementsByClassName('upg')).slice(temp.inflaton.queueSize-1)
 	let clickableMapping = {}
 	for (let id in temp.inflaton.clickables) {
 		let clickable = temp.inflaton.clickables[id]
 		if (typeof clickable !== 'object') continue
 		if (clickable.unlocked !== true) continue
+		if (clickable.research === undefined) continue
 
 		let research = temp.inflaton.research[clickable.research]
 		clickableMapping[clickable.research] = clickableElements.find(element => element.innerText.startsWith(research.title))
