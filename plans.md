@@ -1,7 +1,5 @@
 Bugfixes and TODO:
 
-Help tab's unlock functions are all Decimals
-
 -----
 
 Row 4 - Space and time are laid down, and so begin strings and forces

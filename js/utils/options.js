@@ -11,7 +11,7 @@ function getStartOptions() {
 		offlineProd: true,
 		hideChallenges: false,
 		showStory: true,
-		forceOneTab: false,
+		splitMode: "flexible",
 		oldStyle: false,
 	}
 }

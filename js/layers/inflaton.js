@@ -431,7 +431,7 @@ addLayer("inflaton", {
             pos: 2
         },
         9: {
-            title: 'Quantum Inflationodynamics',
+            title: 'Quantum Inflationo-dynamics',
             description: 'Unlock two Inflaton upgrades',
             cost: new Decimal(750),
             requires: [6],
