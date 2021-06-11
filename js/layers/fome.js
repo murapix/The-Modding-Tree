@@ -24,9 +24,9 @@ addLayer("fome", {
     },
     tooltip() {
         let lines = []
-        for (let fome in fomeTypes) {
-            if (player.fome.fome[fomeTypes[fome]].expansion.gte(1)) lines.unshift(`${format(player.fome.fome[fomeTypes[fome]].points)}${player.fome.fome[fomeTypes[fome]].expansion.gt(1) ? `<sup>${formatWhole(player.fome.fome[fomeTypes[fome]].expansion)}</sup>`: ``} ${fomeNames[fome]} Foam`)
-        }
+        for (let fome in fomeTypes)
+            if (player.fome.fome[fomeTypes[fome]].expansion.gte(1))
+                lines.unshift(`${format(player.fome.fome[fomeTypes[fome]].points)} ${fomeNames[fome]} Foam${player.fome.fome[fomeTypes[fome]].expansion.gt(1) ? `<sup>${formatWhole(player.fome.fome[fomeTypes[fome]].expansion)}</sup>`: ``}`)
         return lines.join('<br>')
     },
     color: "#ffffff",

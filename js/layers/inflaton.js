@@ -32,6 +32,11 @@ addLayer("inflaton", {
 
                 player.inflaton.points = decimalOne
                 player.inflaton.unlocked = true
+
+                if (hasMilestone('entangled', 0)) {
+                    let max = player.entangled.points.times(20).plus(10).toNumber()
+                    Object.keys(temp.inflaton.clickables).map(id => ~~id).filter(id => id > 10 && id < max).forEach(player.inflaton.research.push)
+                }
                 break
             default:
         }
@@ -258,6 +263,52 @@ addLayer("inflaton", {
             currencyInternalName: 'points',
             currencyLocation() { return player.fome.fome.quantum },
             unlocked() { return hasUpgrade('inflaton', 22) || (!player.inflaton.inflating && hasResearch('inflaton', 9)) }
+        },
+
+        31: {
+            title: '',
+            description: '',
+            cost() { return new Decimal(1e300) },
+            currencyDisplayName: 'Quantum Foam',
+            currencyInternalName: 'points',
+            currencyLocation() { return player.fome.fome.quantum },
+            unlocked() { return hasUpgrade('inflaton', 31) || hasMilestone('entangled', 1) }
+        },
+        32: {
+            title: '',
+            description: '',
+            cost() { return new Decimal(1e300) },
+            currencyDisplayName: 'Quantum Foam',
+            currencyInternalName: 'points',
+            currencyLocation() { return player.fome.fome.quantum },
+            unlocked() { return hasUpgrade('inflaton', 32) || hasMilestone('entangled', 1) }
+        },
+        33: {
+            title: '',
+            description: '',
+            cost() { return new Decimal(1e300) },
+            currencyDisplayName: 'Quantum Foam',
+            currencyInternalName: 'points',
+            currencyLocation() { return player.fome.fome.quantum },
+            unlocked() { return hasUpgrade('inflaton', 33) || hasMilestone('entangled', 1) }
+        },
+        23: {
+            title: '',
+            description: '',
+            cost() { return new Decimal(1e300) },
+            currencyDisplayName: 'Quantum Foam',
+            currencyInternalName: 'points',
+            currencyLocation() { return player.fome.fome.quantum },
+            unlocked() { return hasUpgrade('inflaton', 23) || hasMilestone('entangled', 1) }
+        },
+        13: {
+            title: '',
+            description: '',
+            cost() { return new Decimal(1e300) },
+            currencyDisplayName: 'Quantum Foam',
+            currencyInternalName: 'points',
+            currencyLocation() { return player.fome.fome.quantum },
+            unlocked() { return hasUpgrade('inflaton', 13) || hasMilestone('entangled', 1) }
         }
     },
 
@@ -823,7 +874,7 @@ addLayer("inflaton", {
     microtabs: {
         stuff: {
             "Upgrades": {
-                unlocked() { return hasUpgrade('inflaton', 11) },
+                unlocked() { return hasUpgrade('inflaton', 11) || hasMilestone('entangled', 0) },
                 content: [
                     "blank",
                     "challenges",
@@ -832,7 +883,7 @@ addLayer("inflaton", {
                 ]
             },
             "Subspace": {
-                unlocked() { return hasUpgrade('inflaton', 11) },
+                unlocked() { return hasUpgrade('inflaton', 11) || hasMilestone('entangled', 0) },
                 content: [
                     "blank",
                     () => hasResearch('inflaton', 24) ? ["row", [["display-text", "Enable Auto-Build"], "blank", ["toggle", ["inflaton", "autoBuild"]]]] : '',
@@ -853,7 +904,7 @@ addLayer("inflaton", {
                 ]
             },
             "Research": {
-                unlocked() { return hasUpgrade('inflaton', 12) },
+                unlocked() { return hasUpgrade('inflaton', 12) || hasMilestone('entangled', 0) },
                 content: [
                     "blank",
                     ["display-text", () => `You are producing <h3 style='color:${layers[layer].color};text-shadow:${layers[layer].color} 0px 0px 10px;'>${formatWhole(temp.inflaton.researchGain.minus(buyableEffect('inflaton', 14).cost))}</h3> research points per second`],
@@ -878,10 +929,10 @@ addLayer("inflaton", {
         ["display-text", () => `You have managed to stabilize the universe at a diameter of ${formatLength(player.inflaton.maxSize)}`],
         ["display-text", () => `Construction Space Used: ${formatLength(player.inflaton.size)} / ${formatLength(player.inflaton.maxSize)}`],
         "blank",
-        () => !hasUpgrade('inflaton', 11) ? "challenges" : '',
-        () => !hasUpgrade('inflaton', 11) ? "blank" : '',
-        () => !hasUpgrade('inflaton', 11) ? "upgrades" : '',
-        () => hasUpgrade('inflaton', 11) ? ["microtabs", "stuff"] : ''
+        () => !(hasUpgrade('inflaton', 11) || hasMilestone('entangled', 0)) ? "challenges" : '',
+        () => !(hasUpgrade('inflaton', 11) || hasMilestone('entangled', 0)) ? "blank" : '',
+        () => !(hasUpgrade('inflaton', 11) || hasMilestone('entangled', 0)) ? "upgrades" : '',
+        () => hasUpgrade('inflaton', 11) || hasMilestone('entangled', 0) ? ["microtabs", "stuff"] : ''
     ],
 
     componentStyles: {
@@ -990,15 +1041,14 @@ function createResearchClickable(id, research) {
     else {
         clickable.style = () => {
             let style = { "margin": "10px" }
-            if (player.inflaton.research.includes(id))
-                style["background-color"] = "#77bf5f"
+            if (hasResearch('inflaton', id)) style["background-color"] = "#77bf5f"
             return style
         }
         clickable.display = () => `<h3>${research.title}</h3><br>${research.description}<br><b>Cost:</b> ${formatWhole(research.cost)} Research Points`
         clickable.onClick = () => {
             if (player.inflaton.researchQueue.length >= temp.inflaton.queueSize) return
             if (player.inflaton.researchQueue.includes(id)) return
-            if (player.inflaton.research.includes(id)) return
+            if (hasResearch('inflaton', id)) return
             player.inflaton.researchQueue.push(id)
         }
     }

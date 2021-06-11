@@ -24,6 +24,12 @@ addLayer("acceleron", {
         switch (layer) {
             case "entangled":
                 layerDataReset('acceleron', ['milestones'])
+
+                if (hasMilestone('entangled', 1)) {
+                    for (let id = 0; id < player.entangled.points.minus(2).toNumber(); id++) {
+                        player.acceleron.loops[id].progress = temp.acceleron.loops[id].max
+                    }
+                }
                 break
             default:
         }
@@ -140,7 +146,7 @@ addLayer("acceleron", {
     loops: {
         maxRadius: 150,
         0: {
-            unlocked() { return hasUpgrade('acceleron', 14) },
+            unlocked() { return hasUpgrade('acceleron', 14) || isLoopFinished(0) },
             max: new Decimal(60),
             duration: decimalOne,
             intervalEffect(intervals = decimalOne) { addPoints('acceleron', new Decimal(temp.acceleron.resetGain).times(Decimal.plus(0.001, defaultUpgradeEffect('acceleron', 123, 0))).times(intervals)) },
@@ -149,7 +155,7 @@ addLayer("acceleron", {
             width: 10
         },
         1: {
-            unlocked() { return isLoopFinished(0) },
+            unlocked() { return isLoopFinished(0) || isLoopFinished(1) },
             max: new Decimal(360),
             duration: new Decimal(60),
             intervalEffect(intervals = decimalOne) {
@@ -167,7 +173,7 @@ addLayer("acceleron", {
             width: 10
         },
         2: {
-            unlocked() { return isLoopFinished(1) },
+            unlocked() { return isLoopFinished(1) || isLoopFinished(2) },
             max: new Decimal(600),
             duration: new Decimal(3600),
             intervalEffect(intervals = decimalOne) { addPoints('timecube', intervals.times(defaultUpgradeEffect('timecube', 11)).times(defaultUpgradeEffect('acceleron', 22)).times(defaultUpgradeEffect('acceleron', 141))) },
@@ -176,7 +182,7 @@ addLayer("acceleron", {
             width: 10
         },
         3: {
-            unlocked() { return hasUpgrade('timecube', 15) },
+            unlocked() { return hasUpgrade('timecube', 15) || isLoopFinished(3) },
             max: new Decimal(250000),
             duration: new Decimal(86400),
             intervalEffect(intervals = decimalOne) { player.acceleron.fomeBoost = Decimal.times(1e6, intervals) },
@@ -185,7 +191,7 @@ addLayer("acceleron", {
             width: 10
         },
         4: {
-            unlocked() { return hasUpgrade('acceleron', 24) },
+            unlocked() { return hasUpgrade('acceleron', 24) || isLoopFinished(4) },
             max: new Decimal(1e11),
             duration: new Decimal(31536000),
             intervalEffect(intervals = decimalOne) { player.acceleron.acceleronBoost = Decimal.times(1e3, intervals) },
@@ -194,7 +200,7 @@ addLayer("acceleron", {
             width: 10
         },
         5: {
-            unlocked() { return isLoopFinished(4) },
+            unlocked() { return isLoopFinished(4) || isLoopFinished(5) },
             max: new Decimal(4e17),
             duration: new Decimal(315360000),
             intervalEffect(intervals = decimalOne) { player.acceleron.skyrmionBoost = Decimal.times(1e9, intervals) },
@@ -410,7 +416,6 @@ addLayer("acceleron", {
             title: 'Entropic Inversion',
             description: 'Increase Acceleron gain based on Quantum Foam',
             effect() { return player.fome.fome.quantum.points.max(0).plus(1).log10().plus(1) },
-            
         }),
         144: createEnhancement(144, {
             title: 'Entropic Entitlement',
@@ -462,7 +467,7 @@ addLayer("acceleron", {
                 ]
             },
             "Entropic Loops": {
-                unlocked() { return hasUpgrade('acceleron', 14) },
+                unlocked() { return hasUpgrade('acceleron', 14) || hasMilestone('entangled', 1) },
                 content: [
                     "blank",
                     "loops",
