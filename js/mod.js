@@ -3,6 +3,16 @@ let modInfo = {
 	id: "universal-reconstruction",
 	author: "Escapee",
 	pointsName: "??",
+	modFiles: [
+		"layers/help.js",
+		"layers/skyrmion.js",
+		"layers/fome.js",
+		"layers/acceleron.js",
+		"layers/timecube.js",
+		"layers/inflaton.js",
+		"layers/entangledStrings.js"
+	],
+
 	discordName: "Escapee",
 	discordLink: "",
 	initialStartPoints: new Decimal (0), // Used for hard resets and new players
