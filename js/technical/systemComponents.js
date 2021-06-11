@@ -58,7 +58,7 @@ var systemComponents = {
 				tmp[layer].canClick ? (tmp[layer].tooltip ? tmp[layer].tooltip : 'I am a button!')
 				: (tmp[layer].tooltipLocked ? tmp[layer].tooltipLocked : 'I am a button!')
 			)"></tooltip>
-			<node-mark :layer='layer' :data='layers[layer].marked'></node-mark></span>
+			<node-mark :layer='layer' :data='tmp[layer].marked'></node-mark></span>
 		</button>
 		`
 	},
@@ -66,7 +66,7 @@ var systemComponents = {
 	
 	'layer-tab': {
 		props: ['layer', 'back', 'spacing', 'embedded'],
-		template: `<div v-bind:style="[tmp[layer].style ? tmp[layer].style : {}, (tmp[layer].tabFormat && !Array.isArray(tmp[layer].tabFormat)) ? tmp[layer].tabFormat[player.subtabs[layer].mainTabs].style : {}, {'background-color': 'transparent !important', '--background': 'transparent !important'}]">
+		template: `<div v-bind:style="[tmp[layer].style ? tmp[layer].style : {}, (tmp[layer].tabFormat && !Array.isArray(tmp[layer].tabFormat)) ? tmp[layer].tabFormat[player.subtabs[layer].mainTabs].style : {}]" class="noBackground">
 		<div v-if="back">
 			<button v-if="typeof tmp.helpTab != 'number'" v-bind:class="back == 'big' ? 'other-back' : 'back'" v-on:click="tmp.helpTab = NaN">←</button>
 			<button v-else v-bind:class="back == 'big' ? 'other-back' : 'back'" v-on:click="goBack(layer)">←</button>
