@@ -94,8 +94,10 @@ function updateTemp() {
 		setupTemp()
 
 	updateTempData(layers, tmp, funcs)
+	updateActive(layers, tmp, funcs)
 
 	for (layer in layers){
+		if (!tmp[layer].isUpdated) continue
 		tmp[layer].resetGain = getResetGain(layer)
 		tmp[layer].nextAt = getNextAt(layer)
 		tmp[layer].nextAtDisp = getNextAt(layer, true)
@@ -104,7 +106,6 @@ function updateTemp() {
 		tmp[layer].notify = shouldNotify(layer)
 		tmp[layer].prestigeNotify = prestigeNotify(layer)
 		if (tmp[layer].passiveGeneration === true) tmp[layer].passiveGeneration = 1 // new Decimal(true) = decimalZero
-
 	}
 
 	tmp.pointGen = getPointGen()
@@ -121,8 +122,23 @@ function updateTemp() {
 		updateTempData(helpData, tmp.helpData, "help")
 }
 
+function updateActive(layerData, tmpData, funcsData, useThis) {
+	for (item in funcsData){
+		if ((!!layerData[item]) && (layerData[item].constructor === Object) || (typeof layerData[item] === "object") && traversableClasses.includes(layerData[item].constructor.name)) {
+			if (isFunction(layerData[item].isUpdated) && !isFunction(tmpData[item].isUpdated)) {
+				let value
+
+				if (useThis !== undefined) value = layerData[item].isUpdated.bind(useThis)()
+				else value = layerData[item].isUpdated()
+				Vue.set(tmpData[item], "isUpdated", value)
+			}
+		}
+	}
+}
+
 function updateTempData(layerData, tmpData, funcsData, useThis) {
 	for (item in funcsData){
+		if (tmpData[item] && tmpData[item].isUpdated === false) continue
 		if (Array.isArray(layerData[item])) {
 			if (item !== "tabFormat" && item !== "content") // These are only updated when needed
 				updateTempData(layerData[item], tmpData[item], funcsData[item], useThis)

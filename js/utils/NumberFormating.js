@@ -48,7 +48,7 @@ function format(decimal, precision = 2, small) {
         return "NaN"
     }
     if (decimal.sign < 0) return "-" + format(decimal.neg(), precision)
-    if (decimal.mag == Number.POSITIVE_INFINITY) return "Infinity"
+    if (decimal.mag == Number.POSITIVE_INFINITY) return "Infinite"
     if (decimal.gte("eeee1000")) {
         var slog = decimal.slog()
         if (slog.gte(1e6)) return "F" + format(slog.floor())

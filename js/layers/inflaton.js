@@ -32,11 +32,6 @@ addLayer("inflaton", {
 
                 player.inflaton.points = decimalOne
                 player.inflaton.unlocked = true
-
-                if (hasMilestone('entangled', 0)) {
-                    let max = player.entangled.points.times(20).plus(10).toNumber()
-                    Object.keys(temp.inflaton.clickables).map(id => ~~id).filter(id => id > 10 && id < max).forEach(player.inflaton.research.push)
-                }
                 break
             default:
         }
@@ -67,6 +62,13 @@ addLayer("inflaton", {
         researchQueue: [],
         research: [],
         repeatables: {},
+        upgradeCosts: {
+            13: new Decimal(2),
+            23: new Decimal(2),
+            31: new Decimal(2),
+            32: new Decimal(2),
+            33: new Decimal(2)
+        },
 
         autoBuild: false,
         autoResearch: false
@@ -76,10 +78,14 @@ addLayer("inflaton", {
         if (player.inflaton.autoBuild && hasResearch('inflaton', 24))
             Object.keys(player.inflaton.buyables).forEach(id => buyBuyable('inflaton', id))
         if (player.inflaton.autoResearch && player.inflaton.researchQueue.length == 0 && Object.keys(player.inflaton.repeatables).length !== 0) {
-            player.inflaton.researchQueue.push(
-                Object.keys(player.inflaton.repeatables)
-                      .filter(id => temp.inflaton.research[id].canResearch === undefined || temp.inflaton.research[id].canResearch)
-                      .map(id => [id, layers.inflaton.research[id].cost(researchLevel('inflaton', id))]).reduce((a,b) => a[1].gt(b[1]) ? b : a)[0])
+            let availableResearch = Object.keys(player.inflaton.repeatables)
+                                          .filter(id => temp.inflaton.research[id].canResearch === undefined || temp.inflaton.research[id].canResearch)
+                                          .filter(id => layers.inflaton.research[id].cost(researchLevel('inflaton', id)).lt(Decimal.dInf))
+            if (availableResearch.length > 0)
+                player.inflaton.researchQueue.push(
+                    availableResearch.map(id => [id, layers.inflaton.research[id].cost(researchLevel('inflaton', id))])
+                                     .reduce((a,b) => a[1].gt(b[1]) ? b : a)[0]
+                )
         }
     },
 
@@ -95,6 +101,7 @@ addLayer("inflaton", {
     researchGain() {
         let researchGain = buyableEffect('inflaton', 12)
         if (hasResearch('inflaton', 5)) researchGain = researchGain.times(researchEffect('inflaton', 5))
+        researchGain = researchGain.times(buyableEffect('skyrmion', 141))
         return researchGain
     },
     effect() {
@@ -266,49 +273,84 @@ addLayer("inflaton", {
         },
 
         31: {
-            title: '',
-            description: '',
-            cost() { return new Decimal(1e300) },
-            currencyDisplayName: 'Quantum Foam',
+            title: 'Technological Ascendency',
+            description: 'You have shown mastery over space and time, at least individually. Together though, there are more secrets to unlock',
+            cost() { return player.inflaton.upgradeCosts[31] },
+            currencyDisplayName: 'Entangled Strings',
             currencyInternalName: 'points',
-            currencyLocation() { return player.fome.fome.quantum },
-            unlocked() { return hasUpgrade('inflaton', 31) || hasMilestone('entangled', 1) }
+            currencyLayer: 'entangled',
+            unlocked() { return hasUpgrade('inflaton', 31) || hasMilestone('entangled', 1) },
+            canAfford() { return player.entangled.points.gte(temp.inflaton.upgrades[this.id].cost) },
+            pay() {
+                if (!hasUpgrade('inflaton', 32)) player.inflaton.upgradeCosts[32] = player.inflaton.upgradeCosts[32].plus(1)
+                if (!hasUpgrade('inflaton', 33)) player.inflaton.upgradeCosts[33] = player.inflaton.upgradeCosts[33].plus(1)
+                if (!hasUpgrade('inflaton', 23)) player.inflaton.upgradeCosts[23] = player.inflaton.upgradeCosts[23].plus(1)
+                if (!hasUpgrade('inflaton', 13)) player.inflaton.upgradeCosts[13] = player.inflaton.upgradeCosts[13].plus(1)
+            }
         },
         32: {
-            title: '',
-            description: '',
-            cost() { return new Decimal(1e300) },
-            currencyDisplayName: 'Quantum Foam',
+            title: 'Tetradimensional Engineering',
+            description: 'Application of structural ideas gained from Entropic Loops may give rise to a powerful new sector of exploration and progress',
+            cost() { return player.inflaton.upgradeCosts[32] },
+            currencyDisplayName: 'Entangled Strings',
             currencyInternalName: 'points',
-            currencyLocation() { return player.fome.fome.quantum },
-            unlocked() { return hasUpgrade('inflaton', 32) || hasMilestone('entangled', 1) }
+            currencyLayer: 'entangled',
+            unlocked() { return hasUpgrade('inflaton', 32) || hasMilestone('entangled', 1) },
+            canAfford() { return player.entangled.points.gte(temp.inflaton.upgrades[this.id].cost) },
+            pay() {
+                if (!hasUpgrade('inflaton', 31)) player.inflaton.upgradeCosts[31] = player.inflaton.upgradeCosts[31].plus(1)
+                if (!hasUpgrade('inflaton', 33)) player.inflaton.upgradeCosts[33] = player.inflaton.upgradeCosts[33].plus(1)
+                if (!hasUpgrade('inflaton', 23)) player.inflaton.upgradeCosts[23] = player.inflaton.upgradeCosts[23].plus(1)
+                if (!hasUpgrade('inflaton', 13)) player.inflaton.upgradeCosts[13] = player.inflaton.upgradeCosts[13].plus(1)
+            }
         },
         33: {
-            title: '',
-            description: '',
-            cost() { return new Decimal(1e300) },
-            currencyDisplayName: 'Quantum Foam',
+            title: 'Architectural Renaissance',
+            description: 'Look to the past, and see what glories the future may hold',
+            cost() { return player.inflaton.upgradeCosts[33] },
+            currencyDisplayName: 'Entangled Strings',
             currencyInternalName: 'points',
-            currencyLocation() { return player.fome.fome.quantum },
-            unlocked() { return hasUpgrade('inflaton', 33) || hasMilestone('entangled', 1) }
+            currencyLayer: 'entangled',
+            unlocked() { return hasUpgrade('inflaton', 33) || hasMilestone('entangled', 1) },
+            canAfford() { return player.entangled.points.gte(temp.inflaton.upgrades[this.id].cost) },
+            pay() {
+                if (!hasUpgrade('inflaton', 31)) player.inflaton.upgradeCosts[31] = player.inflaton.upgradeCosts[31].plus(1)
+                if (!hasUpgrade('inflaton', 32)) player.inflaton.upgradeCosts[32] = player.inflaton.upgradeCosts[32].plus(1)
+                if (!hasUpgrade('inflaton', 23)) player.inflaton.upgradeCosts[23] = player.inflaton.upgradeCosts[23].plus(1)
+                if (!hasUpgrade('inflaton', 13)) player.inflaton.upgradeCosts[13] = player.inflaton.upgradeCosts[13].plus(1)
+            }
         },
         23: {
-            title: '',
-            description: '',
-            cost() { return new Decimal(1e300) },
-            currencyDisplayName: 'Quantum Foam',
+            title: 'Enigmatic Engineering',
+            description: 'Time Cubes seem helpful, but limited in power. Maybe your newfound mastery over space and time can reveal more of their secrets',
+            cost() { return player.inflaton.upgradeCosts[23] },
+            currencyDisplayName: 'Entangled Strings',
             currencyInternalName: 'points',
-            currencyLocation() { return player.fome.fome.quantum },
-            unlocked() { return hasUpgrade('inflaton', 23) || hasMilestone('entangled', 1) }
+            currencyLayer: 'entangled',
+            unlocked() { return hasUpgrade('inflaton', 23) || hasMilestone('entangled', 1) },
+            canAfford() { return player.entangled.points.gte(temp.inflaton.upgrades[this.id].cost) },
+            pay() {
+                if (!hasUpgrade('inflaton', 31)) player.inflaton.upgradeCosts[31] = player.inflaton.upgradeCosts[31].plus(1)
+                if (!hasUpgrade('inflaton', 32)) player.inflaton.upgradeCosts[32] = player.inflaton.upgradeCosts[32].plus(1)
+                if (!hasUpgrade('inflaton', 33)) player.inflaton.upgradeCosts[33] = player.inflaton.upgradeCosts[33].plus(1)
+                if (!hasUpgrade('inflaton', 13)) player.inflaton.upgradeCosts[13] = player.inflaton.upgradeCosts[13].plus(1)
+            }
         },
         13: {
-            title: '',
-            description: '',
-            cost() { return new Decimal(1e300) },
-            currencyDisplayName: 'Quantum Foam',
+            title: 'Grasp the Void',
+            description: 'You have long since extracted all you can from your Skyrmions, but new insights show there may be more yet to gain',
+            cost() { return player.inflaton.upgradeCosts[13] },
+            currencyDisplayName: 'Entangled Strings',
             currencyInternalName: 'points',
-            currencyLocation() { return player.fome.fome.quantum },
-            unlocked() { return hasUpgrade('inflaton', 13) || hasMilestone('entangled', 1) }
+            currencyLayer: 'entangled',
+            unlocked() { return hasUpgrade('inflaton', 13) || hasMilestone('entangled', 1) },
+            canAfford() { return player.entangled.points.gte(temp.inflaton.upgrades[this.id].cost) },
+            pay() {
+                if (!hasUpgrade('inflaton', 31)) player.inflaton.upgradeCosts[31] = player.inflaton.upgradeCosts[31].plus(1)
+                if (!hasUpgrade('inflaton', 32)) player.inflaton.upgradeCosts[32] = player.inflaton.upgradeCosts[32].plus(1)
+                if (!hasUpgrade('inflaton', 33)) player.inflaton.upgradeCosts[33] = player.inflaton.upgradeCosts[33].plus(1)
+                if (!hasUpgrade('inflaton', 23)) player.inflaton.upgradeCosts[23] = player.inflaton.upgradeCosts[23].plus(1)
+            }
         }
     },
 
@@ -629,7 +671,7 @@ addLayer("inflaton", {
         111: {
             title: 'Repeatable: Eternal Inflation',
             description: 'Double the size of your universe',
-            cost(amount) { return Decimal.pow(4, amount).times(12000) },
+            cost(amount) { return Decimal.gte(amount, 3998) ? Decimal.dInf : Decimal.pow(4, amount).times(12000).div(buyableEffect('skyrmion', 241)) },
             effect(amount) { return Decimal.pow(2, amount) },
             effectDisplay(effect) { return `${formatWhole(effect)}x` },
             unlocked() { return hasResearch('inflaton', 15) },
@@ -640,7 +682,7 @@ addLayer("inflaton", {
         112: {
             title: 'Repeatable: Perpetual Testing',
             description: `Increase Distributed Analysis Framework's maximum Analyzer limit by ${formatLength(6)}`,
-            cost(amount) { return Decimal.pow(8, amount).times(15000) },
+            cost(amount) { return Decimal.gte(amount, 3998) ? Decimal.dInf : Decimal.pow(8, amount).times(15000).div(buyableEffect('skyrmion', 241)) },
             effect(amount) { return Decimal.times(amount, 6) },
             effectDisplay(effect) { return `+${formatLength(effect)}` },
             unlocked() { return hasResearch('inflaton', 15) },
@@ -651,7 +693,7 @@ addLayer("inflaton", {
         113: {
             title: 'Repeatable: Subspacial Construction',
             description: 'Increase subspace building size tenfold, and increase their effects by twice as much',
-            cost(amount) { return Decimal.pow(200, amount).times(150000) },
+            cost(amount) { return Decimal.gte(amount, 3998) ? Decimal.dInf : Decimal.pow(200, amount).times(150000).div(buyableEffect('skyrmion', 241)) },
             effect(amount) { return { size: Decimal.pow(10, amount), gain: Decimal.pow(2, amount) } },
             effectDisplay(effect) { return `${formatWhole(effect.size)}x, ${formatWhole(effect.gain.times(effect.size))}x` },
             onComplete() { layers.inflaton.buyables.respec() },
@@ -664,7 +706,7 @@ addLayer("inflaton", {
         114: {
             title: 'Repeatable: Efficient Design',
             description: 'Decrease Subspace building cost scaling by 1.5x',
-            cost(amount) { return Decimal.pow(3, amount).times(120000) },
+            cost(amount) { return Decimal.gte(amount, 3998) ? Decimal.dInf : Decimal.pow(3, amount).times(120000).div(buyableEffect('skyrmion', 241)) },
             effect(amount) { return Decimal.pow(1.5, amount) },
             effectDisplay(effect) { return `1/${format(effect)}x` },
             unlocked() { return hasResearch('inflaton', 22) },
@@ -675,7 +717,7 @@ addLayer("inflaton", {
         115: {
             title: 'Repeatable: Inflational Dynamics',
             description: 'Retain up to 1e6x more Foam',
-            cost(amount) { return Decimal.pow(5, amount).times(160000) },
+            cost(amount) { return Decimal.gte(amount, 3998) ? Decimal.dInf : Decimal.pow(5, amount).times(160000).div(buyableEffect('skyrmion', 241)) },
             effect(amount) { return Decimal.pow(1e6, amount) },
             effectDisplay(effect) { return `${formatWhole(effect)}x` },
             unlocked() { return hasResearch('inflaton', 22) },
@@ -937,7 +979,8 @@ addLayer("inflaton", {
 
     componentStyles: {
         "microtabs"() { return { "border-style": "none" } },
-        "buyable"() { return { "height": "100px", "width": "300px" } }
+        "buyable"() { return { "height": "100px", "width": "300px" } },
+        "upgrade"() { return { "min-height": "150px", "width": "150px" } }
     },
 
     hotkeys: [
@@ -994,11 +1037,11 @@ function createInflatonBuilding(id, data) {
 function createResearchClickables(clickables) {
     for(let id in layers.inflaton.research) {
         let research = layers.inflaton.research[id]
-        clickables[research.row*10 + research.pos] = createResearchClickable(id, research)
+        clickables[research.row*10 + research.pos] = createResearchClickable(id, research, research.row*10 + research.pos)
     }
 }
 
-function createResearchClickable(id, research) {
+function createResearchClickable(id, research, index) {
     let clickable = {
         unlocked() {
             if (hasResearch('inflaton', id)) return true
@@ -1011,18 +1054,6 @@ function createResearchClickable(id, research) {
                 }
             }
             return temp.inflaton.research[id].unlocked === undefined ? true : temp.inflaton.research[id].unlocked
-        },
-        canClick() {
-            if (research.canResearch !== undefined)
-                if (!temp.inflaton.research[id].canResearch)
-                    return false
-            if (research.requires) {
-                for (let requirement of research.requires) {
-                    if (!hasResearch('inflaton', requirement))
-                        return false
-                }
-            }
-            return true
         },
         research: id
     }
@@ -1037,6 +1068,18 @@ function createResearchClickable(id, research) {
         clickable.cost = () => research.cost(researchLevel('inflaton', id))
         clickable.effect = () => research.effect(researchLevel('inflaton', id))
         clickable.effectDisplay = () => research.effectDisplay(temp.inflaton.clickables[id-110].effect)
+        clickable.canClick = () => {
+            if (research.canResearch !== undefined)
+                if (!temp.inflaton.research[id].canResearch)
+                    return false
+            if (research.requires) {
+                for (let requirement of research.requires) {
+                    if (!hasResearch('inflaton', requirement))
+                        return false
+                }
+            }
+            return temp.inflaton.clickables[index].cost.lt(Decimal.dInf)
+        }
     }
     else {
         clickable.style = () => {
@@ -1050,6 +1093,18 @@ function createResearchClickable(id, research) {
             if (player.inflaton.researchQueue.includes(id)) return
             if (hasResearch('inflaton', id)) return
             player.inflaton.researchQueue.push(id)
+        }
+        clickable.canClick = () => {
+            if (research.canResearch !== undefined)
+                if (!temp.inflaton.research[id].canResearch)
+                    return false
+            if (research.requires) {
+                for (let requirement of research.requires) {
+                    if (!hasResearch('inflaton', requirement))
+                        return false
+                }
+            }
+            return true
         }
     }
 

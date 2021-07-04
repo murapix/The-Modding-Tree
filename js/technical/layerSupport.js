@@ -187,6 +187,7 @@ function setupLayer(layer){
     if(layers[layer].softcapPower === undefined) layers[layer].softcapPower = new Decimal("0.5")
     if(layers[layer].displayRow === undefined) layers[layer].displayRow = layers[layer].row
     if(layers[layer].name === undefined) layers[layer].name = layer
+    if(layers[layer].isUpdated === undefined) layers[layer].isUpdated = true
     if(layers[layer].layerShown === undefined) layers[layer].layerShown = true
     if(layers[layer].glowColor === undefined) layers[layer].glowColor = "#ff0000"
 

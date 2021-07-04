@@ -1,12 +1,16 @@
 Bugfixes and TODO:
 
------
+Skyrmion Upgrades: (4 remaining)
+- Decrease building cost scaling (same as repeatable)
+- Total building size -> ???
+- ???
+- ???
 
-Row 4 - Space and time are laid down, and so begin strings and forces
-
-Strings: Decently small layer?
-
-Forces: Construct a set of four fundamental forces from Strings, each provides a different mechanic to progress with in Phase 2
+Upgrade Automation Challenges
+- Big softcap to Beta effect
+- ???
+- ???
+- ???
 
 -----
 

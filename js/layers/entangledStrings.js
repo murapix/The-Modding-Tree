@@ -5,7 +5,8 @@ addLayer("entangled", {
     position: 0,
     branches: ['acceleron', 'inflaton'],
 
-    layerShown() { return player.entangled.unlocked },
+    isUpdated() { return !hasMilestone('entangled', 2) },
+    layerShown() { return player.entangled.unlocked && temp.entangled.isUpdated },
     resource() { return player.entangled.points.equals(1) ? "Entangled String" : "Entangled Strings" },
     color: "#9a4500",
     type: "custom",
@@ -18,10 +19,10 @@ addLayer("entangled", {
         }
     },
     acceleronRequirements: [
-        new Decimal(1e19), new Decimal(1e29), new Decimal("10^^1e308")
+        new Decimal(1e19), new Decimal(1e29), Decimal.dInf
     ],
     inflatonRequirements: [
-        new Decimal("1e30000"), new Decimal("1e30000"), new Decimal("10^^1e308")
+        new Decimal("1e30000"), new Decimal("1e30000"), Decimal.dInf
     ],
 
     prestigeButtonText() {
@@ -51,13 +52,18 @@ addLayer("entangled", {
     milestones: {
         0: {
             requirementDescription: "1 Entangled String",
-            effectDescription: "Accelerons and Inflatons no longer inflate each other's costs<br>Start with a row of Inflaton research for each Entangled String",
+            effectDescription: "Accelerons and Inflatons no longer inflate each other's costs",
             done() { return player.entangled.points.gte(1) }
         },
         1: {
             requirementDescription: "2 Entangled Strings",
-            effectDescription: "Start with a completed Entropic Loop for each Entangled String beyond the first<br>Unlock more Acceleron and Inflaton content",
+            effectDescription: "Unlock more Acceleron and Inflaton content",
             done() { return player.entangled.points.gte(2) }
+        },
+        2: {
+            requirementDescription: "7 Entangled Strings",
+            effectDescription: "Unlock Fundamental Particles",
+            done() { return player.entangled.points.gte(7) }
         }
     },
 

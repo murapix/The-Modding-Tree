@@ -4,6 +4,7 @@ let modInfo = {
 	author: "Escapee",
 	pointsName: "??",
 	modFiles: [
+		"tree.js",
 		"layers/help.js",
 		"layers/skyrmion.js",
 		"layers/fome.js",
@@ -110,6 +111,11 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
+	() => player.points.gt(0)
+		? player.points.gt(1)
+			? `You have completed <h2 class="overlayThing" id="points">${formatWhole(player.points)}</h2> Universes`
+			: `You have completed <h2 class="overlayThing" id="points">${formatWhole(player.points)}</h2> Universe`
+		: `You have <h2 class="overlayThing" id="points">0</h2> ??`,
 	"Current Endgame: 1 Entangled String"
 ]
 

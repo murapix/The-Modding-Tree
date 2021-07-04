@@ -24,12 +24,6 @@ addLayer("acceleron", {
         switch (layer) {
             case "entangled":
                 layerDataReset('acceleron', ['milestones'])
-
-                if (hasMilestone('entangled', 1)) {
-                    for (let id = 0; id < player.entangled.points.minus(2).toNumber(); id++) {
-                        player.acceleron.loops[id].progress = temp.acceleron.loops[id].max
-                    }
-                }
                 break
             default:
         }
@@ -76,7 +70,7 @@ addLayer("acceleron", {
             let finished = isLoopFinished(loop)
             if (delta.lt(0)) {
                 if (temp.acceleron.loops[loop].unlocked && !finished) {
-                    let buildSpeed = delta.times(defaultUpgradeEffect('acceleron', 112)).times(defaultUpgradeEffect('timecube', 23)).negate()
+                    let buildSpeed = delta.times(defaultUpgradeEffect('acceleron', 112)).times(defaultUpgradeEffect('timecube', 23)).times(buyableEffect('skyrmion', 144)).negate()
                     if (player.acceleron.points.gte(buildSpeed)) {
                         player.acceleron.loops[loop].progress = player.acceleron.loops[loop].progress.plus(buildSpeed).min(temp.acceleron.loops[loop].max)
                         player.acceleron.points = player.acceleron.points.minus(buildSpeed.times(defaultUpgradeEffect('acceleron', 122)))
@@ -133,7 +127,7 @@ addLayer("acceleron", {
     },
 
     numFinishedLoops() {
-        let count = 1
+        let count = 0
         for (let loop in layers.acceleron.loops) {
             if (temp.acceleron.loops[loop].unlocked) {
                 if(isLoopFinished(loop)) count++

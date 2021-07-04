@@ -47,9 +47,9 @@ function achievementStyle(layer, id){
     return style
 }
 
-
-
 function updateWidth() {
+	if (player.tab !== "none" && !tmp[player.tab].layerShown) player.tab = "none"
+
 	var screenWidth = window.innerWidth
 
 	var splitScreen
