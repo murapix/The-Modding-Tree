@@ -95,7 +95,7 @@ function shouldNotify(layer){
 	if (isPlainObject(tmp[layer].tabFormat)) {
 		for (subtab in tmp[layer].tabFormat){
 			if (subtabShouldNotify(layer, 'mainTabs', subtab)) {
-				tmp[layer].trueGlowColor = tmp[layer].tabFormat[subtab].glowColor
+				if (tmp[layer].tabFormat[subtab].glowColor) tmp[layer].trueGlowColor = tmp[layer].tabFormat[subtab].glowColor
 				return true
 			}
 		}
@@ -104,7 +104,7 @@ function shouldNotify(layer){
 	for (family in tmp[layer].microtabs) {
 		for (subtab in tmp[layer].microtabs[family]){
 			if (subtabShouldNotify(layer, family, subtab)) {
-				tmp[layer].trueGlowColor = tmp[layer].microtabs[family][subtab].glowColor
+				if (tmp[layer].microtabs[family][subtab].glowColor) tmp[layer].trueGlowColor = tmp[layer].microtabs[family][subtab].glowColor
 				return true
 			}
 		}
