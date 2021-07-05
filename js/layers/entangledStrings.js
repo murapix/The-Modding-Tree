@@ -5,8 +5,7 @@ addLayer("entangled", {
     position: 0,
     branches: ['acceleron', 'inflaton'],
 
-    isUpdated() { return !hasMilestone('entangled', 2) },
-    layerShown() { return player.entangled.unlocked && temp.entangled.isUpdated },
+    layerShown() { return player.entangled.unlocked },
     resource() { return player.entangled.points.equals(1) ? "Entangled String" : "Entangled Strings" },
     color: "#9a4500",
     type: "custom",
