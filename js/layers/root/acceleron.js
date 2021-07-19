@@ -9,7 +9,8 @@ addLayer("acceleron", {
     position: 0,
     branches: ['fome'],
 
-    layerShown() { return (player.acceleron.unlockOrder > 0 && !hasResearch('inflaton', 25)) ? "ghost" : player.acceleron.unlocked },
+    layerShown() { return temp.acceleron.paused ? false : ((player.acceleron.unlockOrder > 0 && !hasResearch('inflaton', 25)) ? "ghost" : player.acceleron.unlocked) },
+    paused() { return player.universeTab !== "none" },
     increaseUnlockOrder: ['inflaton'],
     resource() { return player[this.layer].points.equals(1) ? "Acceleron" : "Accelerons" },
     color: "#0f52ba",
@@ -281,7 +282,7 @@ addLayer("acceleron", {
         15: {
             title: 'Temporal Fluctuation',
             description: 'Each Entropic Loop multiplies Acceleron gain',
-            effect() { return temp.acceleron.numFinishedLoops },
+            effect() { return temp.acceleron.numFinishedLoops.plus(1) },
             effectDisplay() { return `${formatWhole(upgradeEffect('acceleron', 15))}x`},
             cost: new Decimal(100),
             unlocked() { return isLoopFinished(0) },
@@ -461,7 +462,7 @@ addLayer("acceleron", {
                 ]
             },
             "Entropic Loops": {
-                unlocked() { return hasUpgrade('acceleron', 14) || hasMilestone('entangled', 1) },
+                unlocked() { return hasUpgrade('acceleron', 14) },
                 content: [
                     "blank",
                     "loops",

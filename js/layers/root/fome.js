@@ -7,7 +7,8 @@ addLayer("fome", {
     position: 0,
     branches: ['skyrmion'],
 
-    layerShown() { return player.fome.unlocked },
+    layerShown() { return temp.fome.paused ? false : player.fome.unlocked },
+    paused() { return player.universeTab !== "none" },
     resource() {
         if (player.fome.fome.quantum.expansion.gte(1)) return "Quantum Foam"
         if (player.fome.fome.subplanck.expansion.gte(1)) return "Subplanck Foam"
@@ -89,14 +90,18 @@ addLayer("fome", {
                         player.fome.boosts[fome].boosts[i] = boosts[fome][i]
                 break
             case "entangled":
-                layerDataReset('fome')
-                layerDataReset('fome')
-                player.fome.autoProtoversal = false
-                player.fome.autoInfinitesimal = false
-                player.fome.autoSubspatial = false
-                player.fome.autoSubplanck = false
-                player.fome.autoQuantum = false
-                player.fome.autoReform = false
+                let keep = []
+                if (hasMilestone('entangled', 1)) keep.push("milestones")
+                layerDataReset('fome', keep)
+                layerDataReset('fome', keep)
+                if (!hasMilestone('entangled', 1)) {
+                    player.fome.autoProtoversal = false
+                    player.fome.autoInfinitesimal = false
+                    player.fome.autoSubspatial = false
+                    player.fome.autoSubplanck = false
+                    player.fome.autoQuantum = false
+                    player.fome.autoReform = false
+                }
                 break
             default:
                 break
@@ -619,16 +624,16 @@ addLayer("fome", {
     },
 
     clickables: {
-        0: {
+        11: {
             title: "Buy All",
-            unlocked() { return hasMilestone('acceleron', 0) },
+            unlocked() { return hasMilestone('inflaton', 1) || hasMilestone('acceleron', 0) },
             canClick: true,
             onClick() {
                 for (let row = 10; row <= 50; row += 10)
                     for (let col = 1; col <= 4; col++)
                         while (temp.fome.buyables[row+col].canAfford) buyBuyable('fome', row+col)
             },
-            onHold() { layers.fome.clickables[0].onClick() },
+            onHold() { layers.fome.clickables[11].onClick() },
             style: {
                 'min-height': "30px",
                 width: "100px"
@@ -647,7 +652,7 @@ addLayer("fome", {
                 content: [
                     "blank",
                     ["clickable", 0],
-                    () => hasMilestone('acceleron', 0) ? "blank" : "",
+                    () => hasMilestone('inflaton', 1) || hasMilestone('acceleron', 0) ? "blank" : "",
                     () => player.fome.fome.quantum.expansion.gte(1) ? ["row", [ ["column", [
                                 ["display-text", `You have ${format(player.fome.fome.quantum.points)} Quantum Foam${player.fome.fome.quantum.expansion.gt(1) ? `<sup>${formatWhole(player.fome.fome.quantum.expansion)}</sup>` : ``}`],
                                 ["display-text", `(${format(temp.fome.effect.gain.total.quantum)}/sec)`]
@@ -741,7 +746,7 @@ addLayer("fome", {
     hotkeys: [
         {
             key: "F",
-            onPress() { if (temp.fome.clickables[0].unlocked) clickClickable('fome', 0) }
+            onPress() { if (temp.fome.clickables[11].unlocked) clickClickable('fome', 11) }
         },
         {
             key: "ctrl+f",

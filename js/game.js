@@ -127,6 +127,7 @@ function canReset(layer)
 
 function rowReset(row, layer) {
 	for (lr in ROW_LAYERS[row]){
+		if(tmp[lr].paused) continue
 		if(layers[lr].doReset) {
 			if (!isNaN(row)) Vue.set(player[lr], "activeChallenge", null) // Exit challenges on any row reset on an equal or higher row
 			run(layers[lr].doReset, layers[lr], layer)
@@ -342,7 +343,7 @@ function gameLoop(diff) {
 	for (let x = 0; x <= maxRow; x++){
 		for (item in TREE_LAYERS[x]) {
 			let layer = TREE_LAYERS[x][item]
-			if (!tmp[layer].isUpdated) continue
+			if (tmp[layer].paused) continue
 			player[layer].resetTime += diff
 			if (tmp[layer].passiveGeneration) generatePoints(layer, diff*tmp[layer].passiveGeneration);
 			if (layers[layer].update) layers[layer].update(diff);
@@ -352,7 +353,7 @@ function gameLoop(diff) {
 	for (row in OTHER_LAYERS){
 		for (item in OTHER_LAYERS[row]) {
 			let layer = OTHER_LAYERS[row][item]
-			if (!tmp[layer].isUpdated) continue
+			if (tmp[layer].paused) continue
 			player[layer].resetTime += diff
 			if (tmp[layer].passiveGeneration) generatePoints(layer, diff*tmp[layer].passiveGeneration);
 			if (layers[layer].update) layers[layer].update(diff);
@@ -362,7 +363,7 @@ function gameLoop(diff) {
 	for (let x = maxRow; x >= 0; x--){
 		for (item in TREE_LAYERS[x]) {
 			let layer = TREE_LAYERS[x][item]
-			if (!tmp[layer].isUpdated) continue
+			if (tmp[layer].paused) continue
 			if (tmp[layer].autoPrestige && tmp[layer].canReset) doReset(layer);
 			if (layers[layer].automate) layers[layer].automate();
 			if (tmp[layer].autoUpgrade) autobuyUpgrades(layer)
@@ -372,7 +373,7 @@ function gameLoop(diff) {
 	for (row in OTHER_LAYERS){
 		for (item in OTHER_LAYERS[row]) {
 			let layer = OTHER_LAYERS[row][item]
-			if (!tmp[layer].isUpdated) continue
+			if (tmp[layer].paused) continue
 			if (tmp[layer].autoPrestige && tmp[layer].canReset) doReset(layer);
 			if (layers[layer].automate) layers[layer].automate();
 				player[layer].best = player[layer].best.max(player[layer].points)
@@ -381,7 +382,7 @@ function gameLoop(diff) {
 	}
 
 	for (layer in layers){
-		if (!tmp[layer].isUpdated) continue
+		if (tmp[layer].paused) continue
 		if (layers[layer].milestones) updateMilestones(layer);
 		if (layers[layer].achievements) updateAchievements(layer)
 	}

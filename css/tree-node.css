@@ -1,3 +1,79 @@
+#bosons {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin: 0%;
+	offset-path: path('m -100 0 a 100 100 0 1 1 200 0 a 100 100 0 1 1 -200 0');
+	offset-rotate: 0deg;
+	animation: followpath 30s linear infinite, bosoncolor 4s linear infinite;
+}
+
+#gluons {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin: 0%;
+	offset-path: path('m 0 -100 a 100 100 0 1 1 0 200 a 100 100 0 1 1 0 -200');
+	offset-rotate: 0deg;
+	animation: followpath 30s linear infinite, gluoncolor 6s linear infinite;
+}
+
+#gravitons {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin: 0%;
+	offset-path: path('m 100 0 a 100 100 0 1 1 -200 0 a 100 100 0 1 1 200 0');
+	offset-rotate: 0deg;
+	animation: followpath 30s linear infinite;
+}
+
+#photons {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin: 0%;
+	offset-path: path('m 0 100 a 100 100 0 1 1 0 -200 a 100 100 0 1 1 0 200');
+	offset-rotate: 0deg;
+	animation: followpath 30s linear infinite;
+}
+
+@keyframes followpath {
+	0% {offset-distance: 0%;}
+	100% {offset-distance: 100%;}
+}
+
+@-webkit-keyframes followpath {
+	0% {offset-distance: 0%;}
+	100% {offset-distance: 100%;}
+}
+
+@keyframes bosoncolor {
+	0% {background: #1fbffd;}
+	50% {background: #4e4e4e;}
+	100% {background: #1fbffd;}
+}
+
+@-webkit-keyframes bosoncolor {
+	0% {background: #1fbffd;}
+	50% {background: #4e4e4e;}
+	100% {background: #1fbffd;}
+}
+
+@keyframes gluoncolor {
+	0% {background: #ff0000;}
+	33% {background: #00ff00;}
+	66% {background: #0000ff;}
+	100% {background: #ff0000;}
+}
+
+@-webkit-keyframes gluoncolor {
+	0% {background: #ff0000;}
+	33% {background: #00ff00;}
+	66% {background: #0000ff;}
+	100% {background: #ff0000;}
+}
+
 /* Tree nodes, button nodes, and side layers */
 .treeNode {
 	height: 100px;

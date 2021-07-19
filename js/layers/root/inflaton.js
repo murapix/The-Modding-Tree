@@ -5,7 +5,8 @@ addLayer("inflaton", {
     position: 2,
     branches: ['fome'],
 
-    layerShown() { return (player.inflaton.unlockOrder > 0 && !hasUpgrade('acceleron', 25)) ? "ghost" : player.inflaton.unlocked },
+    layerShown() { return temp.inflaton.paused ? false : ((player.inflaton.unlockOrder > 0 && !hasUpgrade('acceleron', 25)) ? "ghost" : player.inflaton.unlocked) },
+    paused() { return player.universeTab !== "none" },
     resource() { return player[this.layer].points.equals(1) ? "Inflaton" : "Inflatons" },
     color: "#ff5e13",
     type: "static",
@@ -240,7 +241,7 @@ addLayer("inflaton", {
             currencyDisplayName: 'Quantum Foam',
             currencyInternalName: 'points',
             currencyLocation() { return player.fome.fome.quantum },
-            unlocked() { return hasUpgrade('inflaton', 11) || !player.inflaton.inflating }
+            unlocked() { return  hasMilestone('entangled', 1) || hasUpgrade('inflaton', 11) || !player.inflaton.inflating }
         },
         12: {
             title: 'Quantum Field Investigations',
@@ -249,7 +250,7 @@ addLayer("inflaton", {
             currencyDisplayName: 'Quantum Foam',
             currencyInternalName: 'points',
             currencyLocation() { return player.fome.fome.quantum },
-            unlocked() { return hasUpgrade('inflaton', 12) || (!player.inflaton.inflating && player.inflaton.maxSize.gt(player.inflaton.unlockOrder > 0 ? 9 : 7.01) && hasUpgrade('inflaton', 11)) }
+            unlocked() { return hasMilestone('entangled', 1) || hasUpgrade('inflaton', 12) || (!player.inflaton.inflating && player.inflaton.maxSize.gt(player.inflaton.unlockOrder > 0 ? 9 : 7.01) && hasUpgrade('inflaton', 11)) }
         },
         21: {
             title: 'Dynamic Inflational Formation',
@@ -260,7 +261,7 @@ addLayer("inflaton", {
             currencyDisplayName: 'Quantum Foam',
             currencyInternalName: 'points',
             currencyLocation() { return player.fome.fome.quantum },
-            unlocked() { return hasUpgrade('inflaton', 21) || (!player.inflaton.inflating && hasResearch('inflaton', 9)) }
+            unlocked() { return hasMilestone('entangled', 1) || hasUpgrade('inflaton', 21) || (!player.inflaton.inflating && hasResearch('inflaton', 9)) }
         },
         22: {
             title: 'Micro-inflational Subsystems',
@@ -269,7 +270,7 @@ addLayer("inflaton", {
             currencyDisplayName: 'Quantum Foam',
             currencyInternalName: 'points',
             currencyLocation() { return player.fome.fome.quantum },
-            unlocked() { return hasUpgrade('inflaton', 22) || (!player.inflaton.inflating && hasResearch('inflaton', 9)) }
+            unlocked() { return hasMilestone('entangled', 1) || hasUpgrade('inflaton', 22) || (!player.inflaton.inflating && hasResearch('inflaton', 9)) }
         },
 
         31: {
@@ -949,7 +950,7 @@ addLayer("inflaton", {
                 unlocked() { return hasUpgrade('inflaton', 12) || hasMilestone('entangled', 0) },
                 content: [
                     "blank",
-                    ["display-text", () => `You are producing <h3 style='color:${layers[layer].color};text-shadow:${layers[layer].color} 0px 0px 10px;'>${formatWhole(temp.inflaton.researchGain.minus(buyableEffect('inflaton', 14).cost))}</h3> research points per second`],
+                    ["display-text", () => `You are producing <h3 style='color:${temp.inflaton.color};text-shadow:${temp.inflaton.color} 0px 0px 10px;'>${formatWhole(temp.inflaton.researchGain.minus(buyableEffect('inflaton', 14).cost))}</h3> research points per second`],
                     "blank",
                     ["bar", "research"],
                     ["row", [["clickable", "-1"], ["clickable", "-2"], ["clickable", "-3"], ["clickable", "-4"]]],
@@ -1005,14 +1006,15 @@ function createInflatonBuilding(id, data) {
                 [mult, base] = data.cost
             mult = new Decimal(mult)
             base = new Decimal(base)
-            let amount = getBuyableAmount('inflaton', id).dividedBy(repeatableEffect('inflaton', 114))
+            let amount = getBuyableAmount('inflaton', id).dividedBy(repeatableEffect('inflaton', 114)).dividedBy(buyableEffect('skyrmion', 143))
             let size = temp.inflaton.buyables[id].size
             if (hasResearch('inflaton', 24))
                 return mult.times(base.pow(amount))
             return mult.times(base.pow(size).minus(1)).times(base.pow(amount)).dividedBy(base.minus(1))
         },
-        effect() { return data.effect(getBuyableAmount('inflaton', id)) },
-        display() { return `<br>${data.description}<br><b>Size: </b>${formatLength(temp.inflaton.buyables[id].size)}<br><b>Area:</b> ${formatLength(getBuyableAmount('inflaton', id))}<br><b>Current Effect: </b>${data.effectDisplay(temp.inflaton.buyables[id].effect)}<br><b>Cost:</b> ${format(temp.inflaton.buyables[id].cost)} ${data.currencyDisplayName}` },
+        bonus() { return getBuyableAmount('inflaton', id).times(buyableEffect('skyrmion', 243)).floor() },
+        effect() { return data.effect(getBuyableAmount('inflaton', id).plus(temp.inflaton.buyables[id].bonus)) },
+        display() { return `<br>${data.description}<br><b>Size: </b>${formatLength(temp.inflaton.buyables[id].size)}<br><b>Area:</b> ${formatLength(getBuyableAmount('inflaton', id))}${temp.inflaton.buyables[id].bonus.gt(0) ? ` + ${formatLength(temp.inflaton.buyables[id].bonus)}` : ''}<br><b>Current Effect: </b>${data.effectDisplay(temp.inflaton.buyables[id].effect)}<br><b>Cost:</b> ${format(temp.inflaton.buyables[id].cost)} ${data.currencyDisplayName}` },
         canAfford() { return player.inflaton.size.plus(temp.inflaton.buyables[id].size).lte(player.inflaton.maxSize) && currencyLocation()[currencyInternalName].gte(temp.inflaton.buyables[id].cost) },
         buy() {
             setBuyableAmount('inflaton', id, getBuyableAmount('inflaton', id).plus(temp.inflaton.buyables[id].size))

@@ -187,7 +187,6 @@ function setupLayer(layer){
     if(layers[layer].softcapPower === undefined) layers[layer].softcapPower = new Decimal("0.5")
     if(layers[layer].displayRow === undefined) layers[layer].displayRow = layers[layer].row
     if(layers[layer].name === undefined) layers[layer].name = layer
-    if(layers[layer].isUpdated === undefined) layers[layer].isUpdated = true
     if(layers[layer].layerShown === undefined) layers[layer].layerShown = true
     if(layers[layer].glowColor === undefined) layers[layer].glowColor = "#ff0000"
 
@@ -290,13 +289,13 @@ addLayer("options-tab", {
                     ["raw-html", `
                         <table><tr>
                             <td><button class="opt" onclick="save()">Save</button></td>
-                            <td><button class="opt" onclick="toggleOpt('autosave')">Autosave: ${player.autosave?"ENABLED":"DISABLED"}</button></td>
+                            <td><button class="opt" onclick="toggleOpt('autosave')">Autosave: ${options.autosave?"ENABLED":"DISABLED"}</button></td>
                             <td><button class="opt" onclick="hardReset()">HARD RESET</button></td>
                         </tr>
                         <tr>
                             <td><button class="opt" onclick="exportSave()">Export to clipboard</button></td>
                             <td><button class="opt" onclick="importSave()">Import</button></td>
-                            <td><button class="opt" onclick="toggleOpt('offlineProd')">Offline Prod: ${player.offlineProd?"ENABLED":"DISABLED"}</button></td>
+                            <td><button class="opt" onclick="toggleOpt('offlineProd')">Offline Prod: ${options.offlineProd?"ENABLED":"DISABLED"}</button></td>
                         </tr>
                     `]
                 ]
@@ -306,12 +305,12 @@ addLayer("options-tab", {
                     ["raw-html", `
                         <table><tr>
                             <td><button class="opt" onclick="switchTheme()">Color Theme: ${getThemeName()}</button></td>
-                            <td><button class="opt" onclick="adjustMSDisp()">Show Milestones: ${player.msDisplay.toUpperCase()}</button></td>
-                            <td><button class="opt" onclick="toggleOpt('hqTree')">High-Quality Tree: ${player.hqTree?"ENABLED":"DISABLED"}</button></td>
+                            <td><button class="opt" onclick="adjustMSDisp()">Show Milestones: ${options.msDisplay.toUpperCase()}</button></td>
+                            <td><button class="opt" onclick="toggleOpt('hqTree')">High-Quality Tree: ${options.hqTree?"ENABLED":"DISABLED"}</button></td>
                         </tr>
                         <tr>
-                            <td><button class="opt" onclick="toggleOpt('hideChallenges')">Completed Challenges: ${player.hideChallenges?"HIDDEN":"SHOWN"}</button></td>
-                            <td><button class="opt" onclick="switchOpt('splitMode', ['flexible', 'enabled', 'disabled'])">Tab Splitting: ${player.splitMode == "flexible" ? "DYNAMIC" : "FORCE " + player.splitMode.toUpperCase()}</button></td>
+                            <td><button class="opt" onclick="toggleOpt('hideChallenges')">Completed Challenges: ${options.hideChallenges?"HIDDEN":"SHOWN"}</button></td>
+                            <td><button class="opt" onclick="switchOpt('splitMode', ['flexible', 'enabled', 'disabled'])">Tab Splitting: ${options.splitMode == "flexible" ? "DYNAMIC" : "FORCE " + options.splitMode.toUpperCase()}</button></td>
                         </tr> 
                     `]
                 ]

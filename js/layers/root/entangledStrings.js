@@ -5,23 +5,45 @@ addLayer("entangled", {
     position: 0,
     branches: ['acceleron', 'inflaton'],
 
-    layerShown() { return player.entangled.unlocked },
+    layerShown() { return temp.entangled.paused ? false : player.entangled.unlocked },
+    paused() { return player.universeTab !== "none" },
     resource() { return player.entangled.points.equals(1) ? "Entangled String" : "Entangled Strings" },
     color: "#9a4500",
     type: "custom",
     getResetGain() { return (player.acceleron.points.gte(temp.entangled.nextAt.acceleron) && temp.inflaton.storage.gte(temp.entangled.nextAt.inflaton)) ? decimalOne : decimalZero },
     getNextAt() {
-        let points = player.entangled.points.min(2).toNumber()
+        if (player.entangled.points.eq(0)) return { acceleron: new Decimal(1e19), inflaton: new Decimal("1e12000") }
+        if (player.entangled.points.eq(1)) return { acceleron: new Decimal(1e29), inflaton: new Decimal("1e30000") }
+
+        let numUpgrades = [13, 23, 31, 32, 33].map(id => hasUpgrade('inflaton', id)).reduce((a,b) => a+b)
+        if (player.entangled.points.lt(numUpgrades+1)) return { acceleron: Decimal.dInf, inflaton: Decimal.dInf }
+
+        let points = (hasUpgrade('inflaton', 13) ? 1 : 0) + (hasUpgrade('inflaton', 23) ? 2 : 0) + (hasUpgrade('inflaton', 31) ? 4 : 0) + (hasUpgrade('inflaton', 32) ? 8 : 0) + (hasUpgrade('inflaton', 33) ? 16 : 0)
+
         return {
             acceleron: temp.entangled.acceleronRequirements[points],
             inflaton: temp.entangled.inflatonRequirements[points]
         }
     },
     acceleronRequirements: [
-        new Decimal(1e19), new Decimal(1e29), Decimal.dInf
+        new Decimal(1e29), Decimal.dInf, Decimal.dInf, Decimal.dInf,
+        Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
+        Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
+        Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
+        Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
+        Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
+        Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
+        Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf
     ],
     inflatonRequirements: [
-        new Decimal("1e30000"), new Decimal("1e30000"), Decimal.dInf
+        new Decimal("1e30000"), Decimal.dInf, Decimal.dInf, Decimal.dInf,
+        Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
+        Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
+        Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
+        Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
+        Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
+        Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
+        Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf
     ],
 
     prestigeButtonText() {
@@ -56,10 +78,15 @@ addLayer("entangled", {
         },
         1: {
             requirementDescription: "2 Entangled Strings",
-            effectDescription: "Unlock more Acceleron and Inflaton content",
+            effectDescription: "Unlock more Acceleron and Inflaton content<br>Keep Skyrmion upgrades and Foam milestones",
             done() { return player.entangled.points.gte(2) }
         },
         2: {
+            requirementDescription: "3 Entangled Strings",
+            effectDescription: "Keep all parallel research and research queue researches",
+            done() { return player.entangled.points.gte(3) }
+        },
+        6: {
             requirementDescription: "7 Entangled Strings",
             effectDescription: "Unlock Fundamental Particles",
             done() { return player.entangled.points.gte(7) }

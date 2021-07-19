@@ -5,7 +5,8 @@ addLayer("timecube", {
     position: 1,
     branches: ['acceleron'],
 
-    layerShown() { return hasMilestone('entangled', 0) || isLoopFinished(2) },
+    layerShown() { return temp.timecube.paused ? false : (hasMilestone('entangled', 0) || isLoopFinished(2)) },
+    paused() { return player.universeTab !== "none" },
     resource() { return player[this.layer].points.equals(1) ? "Time Cube" : "Time Cubes" },
     color: "#f037ea",
     type: "none",

@@ -6,12 +6,16 @@ let modInfo = {
 	modFiles: [
 		"tree.js",
 		"layers/help.js",
-		"layers/skyrmion.js",
-		"layers/fome.js",
-		"layers/acceleron.js",
-		"layers/timecube.js",
-		"layers/inflaton.js",
-		"layers/entangledStrings.js"
+		"layers/root/skyrmion.js",
+		"layers/root/fome.js",
+		"layers/root/acceleron.js",
+		"layers/root/timecube.js",
+		"layers/root/inflaton.js",
+		"layers/root/entangledStrings.js",
+		"layers/standard/bosons.js",
+		"layers/standard/gluons.js",
+		"layers/standard/gravitons.js",
+		"layers/standard/photons.js",
 	],
 
 	discordName: "Escapee",
@@ -107,6 +111,7 @@ function getPointGen() {
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
+	universeTab: "none"
 }}
 
 // Display extra things at the top of the page
@@ -139,5 +144,6 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
-	
+	delete player.skyrmion.clickables[0]
+	delete player.skyrmion.clickables[1]
 }
