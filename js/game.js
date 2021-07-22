@@ -398,6 +398,7 @@ function hardReset(resetOptions) {
 }
 
 var ticking = false
+var paused = false
 
 var interval = setInterval(function() {
 	if (player===undefined||tmp===undefined) return;
@@ -407,16 +408,19 @@ var interval = setInterval(function() {
 	let now = Date.now()
 	let diff = (now - player.time) / 1e3
 	let trueDiff = diff
-	if (player.offTime !== undefined) {
-		if (player.offTime.remain > modInfo.offlineLimit * 3600) player.offTime.remain = modInfo.offlineLimit * 3600
-		if (player.offTime.remain > 0) {
-			let offlineDiff = Math.max(player.offTime.remain / 10, diff)
-			player.offTime.remain -= offlineDiff
-			diff += offlineDiff
+	if (!paused && !player.paused) {
+		if (player.offTime !== undefined) {
+			if (player.offTime.remain > modInfo.offlineLimit * 3600) player.offTime.remain = modInfo.offlineLimit * 3600
+			if (player.offTime.remain > 0) {
+				let offlineDiff = Math.max(player.offTime.remain / 10, diff)
+				player.offTime.remain -= offlineDiff
+				diff += offlineDiff
+			}
+			if (!options.offlineProd || player.offTime.remain <= 0) player.offTime = undefined
 		}
-		if (!options.offlineProd || player.offTime.remain <= 0) player.offTime = undefined
-	}
-	if (player.devSpeed) diff *= player.devSpeed
+		if (player.devSpeed) diff *= player.devSpeed
+	} else diff = 0
+	
 	player.time = now
 	if (needCanvasUpdate){ resizeCanvas();
 		needCanvasUpdate = false;
