@@ -27,12 +27,20 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.6.0",
-	name: "Amplification",
+	num: "0.7.0",
+	name: "Prioritization",
 }
 
 let changelog = `
 	<h1>Changelog:</h1>
+	<br><br>
+	<h3>v0.7.0 - Prioritization</h3>
+	<br>- Update to TMT 2.6.5.1
+	<br>- Tons of backend changes, improvements, and future systems
+	<br>- Added five new content-selector upgrades (only one implemented so far)
+	<br>- Four more repeatable Pion and Spinor upgrades each
+	<br>- An optional challenge to beat to unlock their automation
+	<br>- Official support for pausing the game (if you feel like it)
 	<br><br>
 	<h3>v0.6.0 - Amplification</h3>
 	<br>- Updated to TMT 2.5.11.1

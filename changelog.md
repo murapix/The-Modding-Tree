@@ -1,5 +1,14 @@
 # Universal Reconstruction changelog:
 
+## v0.7.0 - Prioritization
+- Update to TMT 2.6.5.1
+- Tons of backend changes, improvements, and future systems
+- Added five new content-selector upgrades (only one implemented so far)
+- Four more repeatable Pion and Spinor upgrades each
+- An optional challenge to beat to unlock their automation
+- Official support for pausing the game (if you feel like it)
+- player.universeTab should definitely be "none", not "standard"
+
 ## v0.6.0 - Amplification
 - Updated to TMT 2.5.11.1
 - Filled out the Inflaton layer

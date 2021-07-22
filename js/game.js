@@ -430,7 +430,7 @@ var interval = setInterval(function() {
 	updateOomps(diff);
 	updateWidth()
 	updateTabFormats()
-	gameLoop(diff)
+	if (!paused && !player.paused) gameLoop(diff)
 	fixNaNs()
 	adjustPopupTime(trueDiff)
 	updateParticles(trueDiff)

@@ -294,7 +294,7 @@ addLayer("inflaton", {
             currencyInternalName: 'points',
             currencyLayer: 'entangled',
             unlocked() { return hasUpgrade('inflaton', 31) || hasMilestone('entangled', 1) },
-            canAfford() { return player.entangled.points.gte(temp.inflaton.upgrades[this.id].cost) },
+            canAfford() { return false },//player.entangled.points.gte(temp.inflaton.upgrades[this.id].cost) },
             pay() {
                 if (!hasUpgrade('inflaton', 32)) player.inflaton.upgradeCosts[32] = player.inflaton.upgradeCosts[32].plus(1)
                 if (!hasUpgrade('inflaton', 33)) player.inflaton.upgradeCosts[33] = player.inflaton.upgradeCosts[33].plus(1)
@@ -310,7 +310,7 @@ addLayer("inflaton", {
             currencyInternalName: 'points',
             currencyLayer: 'entangled',
             unlocked() { return hasUpgrade('inflaton', 32) || hasMilestone('entangled', 1) },
-            canAfford() { return player.entangled.points.gte(temp.inflaton.upgrades[this.id].cost) },
+            canAfford() { return false },//player.entangled.points.gte(temp.inflaton.upgrades[this.id].cost) },
             pay() {
                 if (!hasUpgrade('inflaton', 31)) player.inflaton.upgradeCosts[31] = player.inflaton.upgradeCosts[31].plus(1)
                 if (!hasUpgrade('inflaton', 33)) player.inflaton.upgradeCosts[33] = player.inflaton.upgradeCosts[33].plus(1)
@@ -326,7 +326,7 @@ addLayer("inflaton", {
             currencyInternalName: 'points',
             currencyLayer: 'entangled',
             unlocked() { return hasUpgrade('inflaton', 33) || hasMilestone('entangled', 1) },
-            canAfford() { return player.entangled.points.gte(temp.inflaton.upgrades[this.id].cost) },
+            canAfford() { return false },//player.entangled.points.gte(temp.inflaton.upgrades[this.id].cost) },
             pay() {
                 if (!hasUpgrade('inflaton', 31)) player.inflaton.upgradeCosts[31] = player.inflaton.upgradeCosts[31].plus(1)
                 if (!hasUpgrade('inflaton', 32)) player.inflaton.upgradeCosts[32] = player.inflaton.upgradeCosts[32].plus(1)
@@ -342,7 +342,7 @@ addLayer("inflaton", {
             currencyInternalName: 'points',
             currencyLayer: 'entangled',
             unlocked() { return hasUpgrade('inflaton', 23) || hasMilestone('entangled', 1) },
-            canAfford() { return player.entangled.points.gte(temp.inflaton.upgrades[this.id].cost) },
+            canAfford() { return false },//player.entangled.points.gte(temp.inflaton.upgrades[this.id].cost) },
             pay() {
                 if (!hasUpgrade('inflaton', 31)) player.inflaton.upgradeCosts[31] = player.inflaton.upgradeCosts[31].plus(1)
                 if (!hasUpgrade('inflaton', 32)) player.inflaton.upgradeCosts[32] = player.inflaton.upgradeCosts[32].plus(1)
