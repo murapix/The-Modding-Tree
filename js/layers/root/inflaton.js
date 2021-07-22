@@ -144,7 +144,7 @@ addLayer("inflaton", {
         if (hasResearch('inflaton', 2)) size = size.times(2)
         if (hasResearch('inflaton', 8)) size = size.times(2)
         size = size.times(repeatableEffect('inflaton', 111))
-        return size
+        return softcap(size, new Decimal(6.187e10), 0.1)
     },
     storage() {
         let base = decimalOne
@@ -287,7 +287,7 @@ addLayer("inflaton", {
         },
 
         31: {
-            title: 'Technological Ascendency',
+            title: 'Technological Ascendency (tbd)',
             description: 'You have shown mastery over space and time, at least individually. Together though, there are more secrets to unlock',
             cost() { return player.inflaton.upgradeCosts[31] },
             currencyDisplayName: 'Entangled Strings',
@@ -303,7 +303,7 @@ addLayer("inflaton", {
             }
         },
         32: {
-            title: 'Tetradimensional Engineering',
+            title: 'Tetradimensional Engineering (tbd)',
             description: 'Application of structural ideas gained from Entropic Loops may give rise to a powerful new sector of exploration and progress',
             cost() { return player.inflaton.upgradeCosts[32] },
             currencyDisplayName: 'Entangled Strings',
@@ -319,7 +319,7 @@ addLayer("inflaton", {
             }
         },
         33: {
-            title: 'Architectural Renaissance',
+            title: 'Architectural Renaissance (tbd)',
             description: 'Look to the past, and see what glories the future may hold',
             cost() { return player.inflaton.upgradeCosts[33] },
             currencyDisplayName: 'Entangled Strings',
@@ -335,7 +335,7 @@ addLayer("inflaton", {
             }
         },
         23: {
-            title: 'Enigmatic Engineering',
+            title: 'Enigmatic Engineering (tbd)',
             description: 'Time Cubes seem helpful, but limited in power. Maybe your newfound mastery over space and time can reveal more of their secrets',
             cost() { return player.inflaton.upgradeCosts[23] },
             currencyDisplayName: 'Entangled Strings',

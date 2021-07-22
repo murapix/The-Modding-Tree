@@ -113,7 +113,7 @@ function drawResearchBranches() {
 		clickableMapping[clickable.research] = clickableElements.find(element => element.innerText.startsWith(research.title))
 
 		if (research.requires)
-			research.requires.forEach(req => drawResearchBranch(clickableMapping[clickable.research], clickableMapping[req], hasResearch('inflaton', req)))
+			research.requires.filter(req => clickableMapping[req]).forEach(req => drawResearchBranch(clickableMapping[clickable.research], clickableMapping[req], hasResearch('inflaton', req)))
 	}
 }
 

@@ -21,12 +21,12 @@ addLayer("entangled", {
         let points = (hasUpgrade('inflaton', 13) ? 1 : 0) + (hasUpgrade('inflaton', 23) ? 2 : 0) + (hasUpgrade('inflaton', 31) ? 4 : 0) + (hasUpgrade('inflaton', 32) ? 8 : 0) + (hasUpgrade('inflaton', 33) ? 16 : 0)
 
         return {
-            acceleron: temp.entangled.acceleronRequirements[points],
-            inflaton: temp.entangled.inflatonRequirements[points]
+            acceleron: temp.entangled.acceleronRequirements[points].times(buyableEffect('skyrmion', 142)),
+            inflaton: temp.entangled.inflatonRequirements[points].times(buyableEffect('skyrmion', 242)).pow10()
         }
     },
     acceleronRequirements: [
-        new Decimal(1e29), Decimal.dInf, Decimal.dInf, Decimal.dInf,
+        new Decimal(1e29), new Decimal(1.5e41), Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
@@ -36,7 +36,7 @@ addLayer("entangled", {
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf
     ],
     inflatonRequirements: [
-        new Decimal("1e30000"), Decimal.dInf, Decimal.dInf, Decimal.dInf,
+        new Decimal(3e4), new Decimal(8.5e12), Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,

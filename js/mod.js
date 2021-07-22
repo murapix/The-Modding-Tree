@@ -123,12 +123,12 @@ var displayThings = [
 			? `You have completed <h2 class="overlayThing" id="points">${formatWhole(player.points)}</h2> Universes`
 			: `You have completed <h2 class="overlayThing" id="points">${formatWhole(player.points)}</h2> Universe`
 		: `You have <h2 class="overlayThing" id="points">0</h2> ??`,
-	"Current Endgame: 1 Entangled String"
+	"Current Endgame: 3 Entangled Strings"
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.entangled.points.gte(1)
+	return player.entangled.points.gte(3)
 }
 
 // Less important things beyond this point!
