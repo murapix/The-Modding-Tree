@@ -72,13 +72,12 @@ addLayer("acceleron", {
             if (delta.lt(0)) {
                 if (temp.acceleron.loops[loop].unlocked && !finished) {
                     let buildSpeed = delta.times(defaultUpgradeEffect('acceleron', 112)).times(defaultUpgradeEffect('timecube', 23)).times(buyableEffect('skyrmion', 144)).negate()
-                    if (player.acceleron.points.gte(buildSpeed)) {
-                        player.acceleron.loops[loop].progress = player.acceleron.loops[loop].progress.plus(buildSpeed).min(temp.acceleron.loops[loop].max)
-                        player.acceleron.points = player.acceleron.points.minus(buildSpeed.times(defaultUpgradeEffect('acceleron', 122)))
-                        if (isLoopFinished(loop)) {
-                            player.acceleron.entropy = player.acceleron.entropy.plus(temp.acceleron.entropyMult)
-                            clickClickable('acceleron', 0)
-                        }
+                    buildSpeed = buildSpeed.min(player.acceleron.points).min(temp.acceleron.loops[loop].max.minus(player.acceleron.loops[loop].progress))
+                    player.acceleron.loops[loop].progress = player.acceleron.loops[loop].progress.plus(buildSpeed).min(temp.acceleron.loops[loop].max)
+                    player.acceleron.points = player.acceleron.points.minus(buildSpeed.times(defaultUpgradeEffect('acceleron', 122)))
+                    if (isLoopFinished(loop)) {
+                        player.acceleron.entropy = player.acceleron.entropy.plus(temp.acceleron.entropyMult)
+                        clickClickable('acceleron', 0)
                     }
                     break
                 }

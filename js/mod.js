@@ -117,6 +117,7 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
+	() => player.paused ? "Paused (press P to resume)<br><br>" : "",
 	() => player.points.gt(0)
 		? player.points.gt(1)
 			? `You have completed <h2 class="overlayThing" id="points">${formatWhole(player.points)}</h2> Universes`

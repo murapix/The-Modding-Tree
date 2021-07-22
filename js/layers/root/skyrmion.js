@@ -875,13 +875,14 @@ addLayer("skyrmion", {
             onPress() { if (temp.skyrmion.layerShown === true) player.tab = 'skyrmion' }
         },
         {
+            key: "p",
+            description: "P: Pause the game",
+            onPress() { if (player.paused) { delete player.paused } else { player.paused = true } }
+        },
+        {
             key: "s",
             description: "S: Condense some Pions and Spinors for another Skyrmion",
             onPress() { if (canReset('skyrmion')) doReset('skyrmion') } 
-        },
-        {
-            key: "p",
-            onPress() { if (player.devSpeed) { delete(player.devSpeed) } else { player.devSpeed = 1e-100 } }
         }
     ]
 })
