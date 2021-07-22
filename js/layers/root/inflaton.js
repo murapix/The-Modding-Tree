@@ -19,6 +19,16 @@ addLayer("inflaton", {
     doReset(layer) {
         switch (layer) {
             case "entangled":
+                let upgradeKeep = []
+                for (id of [13,23,31,32,33])
+                    if (hasUpgrade('inflaton', id))
+                        upgradeKeep.push(id)
+                let researchKeep = []
+                if (hasMilestone('entangled', 2))
+                    for (id of [12,23])
+                        if (hasResearch('inflaton', id))
+                            researchKeep.push(id)
+
                 layerDataReset('inflaton')
                 player.inflaton.inflating = false
                 player.inflaton.size = decimalZero
@@ -33,6 +43,9 @@ addLayer("inflaton", {
 
                 player.inflaton.points = decimalOne
                 player.inflaton.unlocked = true
+
+                upgradeKeep.forEach(id => buyUpgrade('inflaton', id))
+                researchKeep.forEach(id => player.inflaton.research.push(id))
                 break
             default:
         }

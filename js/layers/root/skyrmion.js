@@ -6,7 +6,7 @@ addLayer("skyrmion", {
 
     layerShown() { return !temp.skyrmion.paused },
     paused() { return player.universeTab !== "none" },
-    resource() { return player.skyrmion.points.equals(1) ? "Skyrmion" : "Skyrmions" },
+    resource() { return Decimal.equals(player.skyrmion.points, 1) ? "Skyrmion" : "Skyrmions" },
     resetDescription: 'Condense ',
     color: "#37d7ff",
     type: "static",
@@ -35,13 +35,10 @@ addLayer("skyrmion", {
                 break;
             case "entangled":
                 let keep = []
-                if (inChallenge('skyrmion', 11) || hasMilestone('entangled', 1)) keep.push("upgrades")
+                if (hasMilestone('entangled', 1)) keep.push("upgrades", "autobuyPion", "autobuySpinor", "challenges")
                 layerDataReset('skyrmion', keep)
                 layerDataReset('skyrmion', keep)
-                if (!inChallenge('skyrmion', 11) || hasMilestone('entangled', 1)) {
-                    player.skyrmion.autobuyPion = false
-                    player.skyrmion.autobuySpinor = false
-                }
+                player.skyrmion.points = hasMilestone('acceleron', 3) ? new Decimal(10) : decimalOne
                 break
             default:
                 break;
@@ -84,6 +81,8 @@ addLayer("skyrmion", {
                 costNerf: Decimal.pow(player.skyrmion.pion.upgrades.minus(fomeCount).times(nerfBase).times(pion.beta).plus(1), player.skyrmion.pion.upgrades.minus(fomeCount).times(nerfExp))
             }
         }
+        if (inChallenge('skyrmion', 11))
+            [eff.pion.costNerf, eff.spinor.costNerf] = [eff.pion.costNerf.times(eff.spinor.costNerf), eff.pion.costNerf.times(eff.spinor.costNerf)]
         return eff
     },
     effectDescription() {
@@ -108,6 +107,12 @@ addLayer("skyrmion", {
         spinor: {
             points: decimalZero,
             upgrades: decimalZero
+        },
+        upgradeCosts: {
+            14: 1,
+            15: 1,
+            16: 1,
+            17: 1
         }
     }},
 
@@ -120,6 +125,7 @@ addLayer("skyrmion", {
     },
 
     automate() {
+        if (inChallenge('skyrmion', 11)) return
         if (player.skyrmion.autobuyPion) {
             if (hasUpgrade('skyrmion', 2)) buyBuyable('skyrmion', 111)
             if (hasUpgrade('skyrmion', 3)) buyBuyable('skyrmion', 112)
@@ -256,7 +262,7 @@ addLayer("skyrmion", {
             pay() {}
         },
         12: {
-            unlocked() { return (player.skyrmion.points.gte(70) || hasUpgrade('skyrmion', 12)) && hasUpgrade('acceleron', 13) },
+            unlocked() { return (player.skyrmion.points.gte(70) && hasUpgrade('acceleron', 13)) || hasUpgrade('skyrmion', 12) },
             title: 'Lateralization',
             description: `Allow the autobuyers to buy <b>λ</b> upgrades. <b>λ</b> upgrades no longer consume Pions or Spinors`,
             cost: new Decimal(72),
@@ -264,7 +270,7 @@ addLayer("skyrmion", {
             pay() {}
         },
         13: {
-            unlocked() { return (player.skyrmion.points.gte(90) || hasUpgrade('skyrmion', 13)) && hasUpgrade('inflaton', 22) },
+            unlocked() { return (player.skyrmion.points.gte(90) && hasUpgrade('inflaton', 22)) || hasUpgrade('skyrmion', 13) },
             title: 'Materialization',
             description: `Allow the autobuyers to buy <b>μ</b> upgrades. <b>μ</b> upgrades no longer consume Pions or Spinors`,
             cost: new Decimal(92),
@@ -272,36 +278,60 @@ addLayer("skyrmion", {
             pay() {}
         },
         14: {
-            unlocked() { return (player.skyrmion.points.gte(300) || hasUpgrade('skyrmion', 14)) && hasUpgrade('inflaton', 13) },
+            unlocked() { return inChallenge('skyrmion', 11) || hasUpgrade('skyrmion', 14) },
             title: 'Neutralization',
             description: `Allow the autobuyers to buy <b>ν</b> upgrades. <b>ν</b> upgrades no longer consume Pions or Spinors`,
-            cost: new Decimal(300),
-            canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
-            pay() {}
+            cost: decimalZero,
+            currencyDisplayName() { return `${fomeNames[player.skyrmion.upgradeCosts[14]]} Foam<sup>2</sup>` },
+            canAfford() { return player.fome.fome[fomeTypes[player.skyrmion.upgradeCosts[14]]].expansion.gt(1) },
+            pay() {
+                player.skyrmion.challenges[11]++
+                if (!hasUpgrade('skyrmion', 15)) player.skyrmion.upgradeCosts[15]++
+                if (!hasUpgrade('skyrmion', 16)) player.skyrmion.upgradeCosts[16]++
+                if (!hasUpgrade('skyrmion', 17)) player.skyrmion.upgradeCosts[17]++
+            }
         },
         15: {
-            unlocked() { return (player.skyrmion.points.gte(300) || hasUpgrade('skyrmion', 14)) && hasUpgrade('inflaton', 13) },
+            unlocked() { return inChallenge('skyrmion', 11) || hasUpgrade('skyrmion', 15) },
             title: 'Externalization',
             description: `Allow the autobuyers to buy <b>ξ</b> upgrades. <b>ξ</b> upgrades no longer consume Pions or Spinors`,
-            cost: new Decimal(300),
-            canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
-            pay() {}
+            cost: decimalZero,
+            currencyDisplayName() { return `${fomeNames[player.skyrmion.upgradeCosts[15]]} Foam<sup>2</sup>` },
+            canAfford() { return player.fome.fome[fomeTypes[player.skyrmion.upgradeCosts[15]]].expansion.gt(1) },
+            pay() {
+                player.skyrmion.challenges[11]++
+                if (!hasUpgrade('skyrmion', 14)) player.skyrmion.upgradeCosts[14]++
+                if (!hasUpgrade('skyrmion', 16)) player.skyrmion.upgradeCosts[16]++
+                if (!hasUpgrade('skyrmion', 17)) player.skyrmion.upgradeCosts[17]++
+            }
         },
         16: {
-            unlocked() { return (player.skyrmion.points.gte(300) || hasUpgrade('skyrmion', 14)) && hasUpgrade('inflaton', 13) },
+            unlocked() { return inChallenge('skyrmion', 11) || hasUpgrade('skyrmion', 16) },
             title: 'Obfuscation',
             description: `Allow the autobuyers to buy <b>ο</b> upgrades. <b>ο</b> upgrades no longer consume Pions or Spinors`,
-            cost: new Decimal(300),
-            canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
-            pay() {}
+            cost: decimalZero,
+            currencyDisplayName() { return `${fomeNames[player.skyrmion.upgradeCosts[16]]} Foam<sup>2</sup>` },
+            canAfford() { return player.fome.fome[fomeTypes[player.skyrmion.upgradeCosts[16]]].expansion.gt(1) },
+            pay() {
+                player.skyrmion.challenges[11]++
+                if (!hasUpgrade('skyrmion', 14)) player.skyrmion.upgradeCosts[14]++
+                if (!hasUpgrade('skyrmion', 15)) player.skyrmion.upgradeCosts[15]++
+                if (!hasUpgrade('skyrmion', 17)) player.skyrmion.upgradeCosts[17]++
+            }
         },
         17: {
-            unlocked() { return (player.skyrmion.points.gte(300) || hasUpgrade('skyrmion', 14)) && hasUpgrade('inflaton', 13) },
+            unlocked() { return inChallenge('skyrmion', 11) || hasUpgrade('skyrmion', 17) },
             title: 'Prioritization',
             description: `Allow the autobuyers to buy <b>π</b> upgrades. <b>π</b> upgrades no longer consume Pions or Spinors`,
-            cost: new Decimal(300),
-            canAfford() { return player.skyrmion.points.gte(temp.skyrmion.upgrades[this.id].cost) },
-            pay() {}
+            cost: decimalZero,
+            currencyDisplayName() { return `${fomeNames[player.skyrmion.upgradeCosts[17]]} Foam<sup>2</sup>` },
+            canAfford() { return player.fome.fome[fomeTypes[player.skyrmion.upgradeCosts[17]]].expansion.gt(1) },
+            pay() {
+                player.skyrmion.challenges[11]++
+                if (!hasUpgrade('skyrmion', 14)) player.skyrmion.upgradeCosts[14]++
+                if (!hasUpgrade('skyrmion', 15)) player.skyrmion.upgradeCosts[15]++
+                if (!hasUpgrade('skyrmion', 16)) player.skyrmion.upgradeCosts[16]++
+            }
         }
     },
 
@@ -660,6 +690,8 @@ addLayer("skyrmion", {
                     for (let row = 10; row <= 40; row += 10)
                         for (let col = 1; col <= 4; col++)
                             player.skyrmion.buyables[type+row+col] = decimalZero
+                player.skyrmion.pion.upgrades = decimalZero
+                player.skyrmion.spinor.upgrades = decimalZero
             },
             style: {
                 'min-height': "30px",
@@ -671,13 +703,54 @@ addLayer("skyrmion", {
     challenges: {
         11: {
             name: `Enter the Abyss`,
-            challengeDescription: `Pion and Spinor upgrade autobuyers are disabled and Pion and Spinor <b>β</b> upgrades are heavily nerfed`,
-            goalDescription() { return `${formatWhole(player.skyrmion.challenges[11]+1)}/${formatWhole(temp.skyrmion.challenges[11].completionLimit)} `/*`Re-form Quantum Foam<sup>2</sup>`*/ },
+            challengeDescription: `Disable Pion and Spinor upgrade autobuyers.<br>Pion and Spinor upgrades additionally increase their own costs.`,
+            goalDescription() { return `${formatWhole(Math.min(player.skyrmion.challenges[11]+1, 4))}/${formatWhole(temp.skyrmion.challenges[11].completionLimit)} automation upgrades purchased` },
             completionLimit: 4,
-            canComplete() { return player.fome.fome.quantum.expansion.gte(2) },
+            canComplete() { return player.skyrmion.challenges[11] >= 4 || [14,15,16,17].map(id => hasUpgrade('skyrmion', id)).reduce((a,b) => a+b) > player.skyrmion.challenges[11] },
             rewardDescription: `More Pion and Spinor upgrade autobuyers`,
             unlocked() { return hasUpgrade('inflaton', 13) || temp.inflaton.deactivated },
+            onEnter() {
+                player.abyss = {
+                    skyrmion: getStartLayerData('skyrmion'),
+                    fome: getStartLayerData('fome'),
+                    acceleron: getStartLayerData('acceleron'),
+                    timecube: getStartLayerData('timecube'),
+                    inflaton: getStartLayerData('inflaton')
+                }
+                for (item of ['activeChallenge', 'autobuyPion', 'autobuySpinor', 'challenges', 'forceTooltip', 'upgradeCosts', 'upgrades'])
+                    player.abyss.skyrmion[item] = player.skyrmion[item]
+                for (item of ['autoInfinitesimal', 'autoProtoversal', 'autoQuantum', 'autoReform', 'autoSubplanck', 'autoSubspatial', 'forceTooltip', 'lastMilestone', 'milestones', 'unlocked'])
+                    player.abyss.fome[item] = player.fome[item]
+                for (item of ['forceTooltip', 'lastMilestone', 'milestones', 'unlockOrder', 'unlocked'])
+                    player.abyss.acceleron[item] = player.acceleron[item]
+                for (item of ['forceTooltip', 'unlocked'])
+                    player.abyss.timecube[item] = player.timecube[item]
+                for (item of ['autoBuild', 'autoResearch', 'forceTooltip', 'unlockOrder', 'unlocked', 'upgradeCosts', 'upgrades'])
+                    player.abyss.inflaton[item] = player.inflaton[item]
+                
+                Object.keys(player.abyss).forEach(swapLayerData)
+                for (let i = 0; i < 10; i++) // nasty hack, don't like this, but not sure of better option
+                    updateTemp()
+            },
+            onExit() {
+                for (item of ['autobuyPion', 'autobuySpinor', 'forceTooltip'])
+                    player.abyss.skyrmion[item] = player.skyrmion[item]
+                for (item of ['autoInfinitesimal', 'autoProtoversal', 'autoQuantum', 'autoReform', 'autoSubplanck', 'autoSubspatial', 'forceTooltip', 'lastMilestone', 'unlocked'])
+                    player.abyss.fome[item] = player.fome[item]
+                for (item of ['forceTooltip', 'lastMilestone', 'unlockOrder', 'unlocked'])
+                    player.abyss.acceleron[item] = player.acceleron[item]
+                for (item of ['forceTooltip', 'unlocked'])
+                    player.abyss.timecube[item] = player.timecube[item]
+                for (item of ['autoBuild', 'autoResearch', 'forceTooltip', 'unlockOrder', 'unlocked'])
+                    player.abyss.inflaton[item] = player.inflaton[item]
+                
+                Object.keys(player.abyss).forEach(swapLayerData)
+            }
         }
+    },
+
+    resetsNothing() {
+        return inChallenge('skyrmion', 11)
     },
 
     microtabs: {
@@ -864,4 +937,8 @@ function createSkyrmionBuyable(symbol, id, data) {
             addBuyables('skyrmion', id, 1)
         }
     }
+}
+
+function swapLayerData(layer) {
+    [player[layer], player.abyss[layer]] = [player.abyss[layer], player[layer]]
 }
