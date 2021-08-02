@@ -100,7 +100,7 @@ addLayer("timecube", {
     tabFormat: [
         "main-display",
         "blank",
-        () => hasUpgrade('timecube', 31) ? ["microtabs", "stuff"] : "upgrades"
+        "upgrades"
     ],
 
     componentStyles: {
