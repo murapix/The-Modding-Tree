@@ -149,6 +149,35 @@ function fixSave() {
 					player.subtabs[layer][item] = Object.keys(layers[layer].microtabs[item])[0];
 		}
 	}
+	for (layer of ['skyrmion', 'fome', 'acceleron', 'timecube', 'inflaton']) {
+		wrapAsDecimal(player.abyss[layer], 'points')
+		wrapAsDecimal(player.abyss[layer], 'best')
+		wrapAsDecimal(player.abyss[layer], 'total')
+		Object.keys(player.abyss[layer].buyables).forEach(buyable => wrapAsDecimal(player.abyss[layer].buyables, buyable))
+	}
+	Object.keys(player.abyss.skyrmion.pion).forEach(key => wrapAsDecimal(player.abyss.skyrmion.pion, key))
+	Object.keys(player.abyss.skyrmion.spinor).forEach(key => wrapAsDecimal(player.abyss.skyrmion.spinor, key))
+	for (fome of fomeTypes) {
+		Object.keys(player.abyss.fome.fome[fome]).forEach(key => wrapAsDecimal(player.abyss.fome.fome[fome], key))
+		Object.keys(player.abyss.fome.boosts[fome]).forEach(key => {
+			for (i = 0; i < 5; i++)
+				wrapAsDecimal(player.abyss.fome.boosts[fome].boosts, i)
+		})
+	}
+	Object.keys(player.abyss.acceleron.loops).forEach(loop => {
+		Object.keys(player.abyss.acceleron.loops[loop]).forEach(key => {
+			wrapAsDecimal(player.abyss.acceleron.loops[loop], key)
+		})
+	})
+	for (key of ['entropy', 'time', 'fomeBoost', 'acceleronBoost', 'skyrmionBoost']) {
+		wrapAsDecimal(player.abyss.acceleron, key)
+	}
+	for (key of ['size', 'maxSize']) {
+		wrapAsDecimal(player.abyss.inflaton, key)
+	}
+}
+function wrapAsDecimal(object, id) {
+	object[id] = new Decimal(object[id])
 }
 function fixData(defaultData, newData) {
 	for (item in defaultData) {

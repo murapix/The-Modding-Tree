@@ -16,7 +16,7 @@ addLayer("entangled", {
         if (player.entangled.points.eq(1)) return { acceleron: new Decimal(1e29), inflaton: new Decimal("1e30000") }
 
         let numUpgrades = [13, 23, 31, 32, 33].map(id => hasUpgrade('inflaton', id)).reduce((a,b) => a+b)
-        if (player.entangled.points.lt(numUpgrades+1)) return { acceleron: Decimal.dInf, inflaton: Decimal.dInf }
+        if (player.entangled.points.gt(numUpgrades+1)) return { acceleron: Decimal.dInf, inflaton: Decimal.dInf }
 
         let points = (hasUpgrade('inflaton', 13) ? 1 : 0) + (hasUpgrade('inflaton', 23) ? 2 : 0) + (hasUpgrade('inflaton', 31) ? 4 : 0) + (hasUpgrade('inflaton', 32) ? 8 : 0) + (hasUpgrade('inflaton', 33) ? 16 : 0)
 

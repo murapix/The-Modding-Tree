@@ -6,6 +6,7 @@ let modInfo = {
 	modFiles: [
 		"tree.js",
 		"layers/help.js",
+		"layers/root/abyss.js",
 		"layers/root/skyrmion.js",
 		"layers/root/fome.js",
 		"layers/root/acceleron.js",
@@ -117,8 +118,7 @@ function getPointGen() {
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
-	universeTab: "none",
-	abyss: {}
+	universeTab: "none"
 }}
 
 // Display extra things at the top of the page

@@ -42,7 +42,7 @@ addLayer("timecube", {
             description: 'Each upgrade in this row gives a free level of every Foam Boost',
             cost: new Decimal(3),
             effect() { return [11,12,13,14,15].map(id => hasUpgrade('timecube', id) ? 1 : 0).reduce(Decimal.plus) },
-            effectDisplay() { `+${formatWhole(upgradeEffect('timecube', 13))} free levels` },
+            effectDisplay() { return `+${formatWhole(upgradeEffect('timecube', 13))} free levels` },
             unlocked() { return hasUpgrade('timecube', 12) || hasUpgrade('timecube', this.id) }
         },
         14: {
@@ -100,9 +100,7 @@ addLayer("timecube", {
     tabFormat: [
         "main-display",
         "blank",
-        "buyables",
-        "blank",
-        "upgrades"
+        () => hasUpgrade('timecube', 31) ? ["microtabs", "stuff"] : "upgrades"
     ],
 
     componentStyles: {

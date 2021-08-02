@@ -24,7 +24,19 @@ addLayer("skyrmion", {
             case "acceleron":
                 player.skyrmion.pion.points = decimalZero
                 player.skyrmion.spinor.points = decimalZero
+                let costs = {
+                    14: player.skyrmion.upgradeCosts[14],
+                    15: player.skyrmion.upgradeCosts[15],
+                    16: player.skyrmion.upgradeCosts[16],
+                    17: player.skyrmion.upgradeCosts[17]
+                }
                 layerDataReset("skyrmion", ["upgrades"])
+                player.skyrmion.upgradeCosts = {
+                    14: costs[14],
+                    15: costs[15],
+                    16: costs[16],
+                    17: costs[17]
+                }
                 player.skyrmion.points = hasMilestone('acceleron', 3) ? new Decimal(10) : decimalOne
                 break;
             case "skyrmion":
@@ -35,9 +47,21 @@ addLayer("skyrmion", {
                 break;
             case "entangled":
                 let keep = []
+                costs = {
+                    14: player.skyrmion.upgradeCosts[14],
+                    15: player.skyrmion.upgradeCosts[15],
+                    16: player.skyrmion.upgradeCosts[16],
+                    17: player.skyrmion.upgradeCosts[17]
+                }
                 if (hasMilestone('entangled', 1)) keep.push("upgrades", "autobuyPion", "autobuySpinor", "challenges")
                 layerDataReset('skyrmion', keep)
                 layerDataReset('skyrmion', keep)
+                player.skyrmion.upgradeCosts = {
+                    14: costs[14],
+                    15: costs[15],
+                    16: costs[16],
+                    17: costs[17]
+                }
                 player.skyrmion.points = hasMilestone('acceleron', 3) ? new Decimal(10) : decimalOne
                 break
             default:
@@ -71,18 +95,21 @@ addLayer("skyrmion", {
 
         let universalBoost = pion.alpha.times(fomeBoost).times(spinor.zeta).times(spinor.lambda).times(player.acceleron.skyrmionBoost)
 
+        let pionCount = player.skyrmion.pion.upgrades.minus(fomeCount)
+        let spinorCount = player.skyrmion.spinor.upgrades.minus(fomeCount)
+        if (inChallenge('abyss', 11))
+            [pionCount, spinorCount] = [pionCount.plus(spinorCount).times(0.75), spinorCount.plus(pionCount).times(0.75)]
+
         let eff = {
             pion: {
                 gen: skyrmions.times(0.01).times(universalBoost).times(spinor.gamma).times(spinor.mu).times(spinor.pi),
-                costNerf: Decimal.pow(player.skyrmion.spinor.upgrades.minus(fomeCount).times(nerfBase).times(spinor.beta).plus(1), player.skyrmion.spinor.upgrades.minus(fomeCount).times(nerfExp))
+                costNerf: Decimal.pow(spinorCount.times(nerfBase).times(spinor.beta).plus(1), spinorCount.times(nerfExp))
             },
             spinor: {
                 gen: skyrmions.times(0.01).times(universalBoost).times(pion.gamma).times(pion.mu).times(spinor.pi),
-                costNerf: Decimal.pow(player.skyrmion.pion.upgrades.minus(fomeCount).times(nerfBase).times(pion.beta).plus(1), player.skyrmion.pion.upgrades.minus(fomeCount).times(nerfExp))
+                costNerf: Decimal.pow(pionCount.times(nerfBase).times(pion.beta).plus(1), pionCount.times(nerfExp))
             }
         }
-        if (inChallenge('skyrmion', 11))
-            [eff.pion.costNerf, eff.spinor.costNerf] = [eff.pion.costNerf.times(eff.spinor.costNerf), eff.pion.costNerf.times(eff.spinor.costNerf)]
         return eff
     },
     effectDescription() {
@@ -125,7 +152,7 @@ addLayer("skyrmion", {
     },
 
     automate() {
-        if (inChallenge('skyrmion', 11)) return
+        if (inChallenge('abyss', 11)) return
         if (player.skyrmion.autobuyPion) {
             if (hasUpgrade('skyrmion', 2)) buyBuyable('skyrmion', 111)
             if (hasUpgrade('skyrmion', 3)) buyBuyable('skyrmion', 112)
@@ -278,56 +305,56 @@ addLayer("skyrmion", {
             pay() {}
         },
         14: {
-            unlocked() { return inChallenge('skyrmion', 11) || hasUpgrade('skyrmion', 14) },
+            unlocked() { return inChallenge('abyss', 11) || hasUpgrade('skyrmion', 14) },
             title: 'Neutralization',
             description: `Allow the autobuyers to buy <b>ν</b> upgrades. <b>ν</b> upgrades no longer consume Pions or Spinors`,
             cost: decimalZero,
             currencyDisplayName() { return `${fomeNames[player.skyrmion.upgradeCosts[14]]} Foam<sup>2</sup>` },
             canAfford() { return player.fome.fome[fomeTypes[player.skyrmion.upgradeCosts[14]]].expansion.gt(1) },
             pay() {
-                player.skyrmion.challenges[11]++
+                player.abyss.challenges[11]++
                 if (!hasUpgrade('skyrmion', 15)) player.skyrmion.upgradeCosts[15]++
                 if (!hasUpgrade('skyrmion', 16)) player.skyrmion.upgradeCosts[16]++
                 if (!hasUpgrade('skyrmion', 17)) player.skyrmion.upgradeCosts[17]++
             }
         },
         15: {
-            unlocked() { return inChallenge('skyrmion', 11) || hasUpgrade('skyrmion', 15) },
+            unlocked() { return inChallenge('abyss', 11) || hasUpgrade('skyrmion', 15) },
             title: 'Externalization',
             description: `Allow the autobuyers to buy <b>ξ</b> upgrades. <b>ξ</b> upgrades no longer consume Pions or Spinors`,
             cost: decimalZero,
             currencyDisplayName() { return `${fomeNames[player.skyrmion.upgradeCosts[15]]} Foam<sup>2</sup>` },
             canAfford() { return player.fome.fome[fomeTypes[player.skyrmion.upgradeCosts[15]]].expansion.gt(1) },
             pay() {
-                player.skyrmion.challenges[11]++
+                player.abyss.challenges[11]++
                 if (!hasUpgrade('skyrmion', 14)) player.skyrmion.upgradeCosts[14]++
                 if (!hasUpgrade('skyrmion', 16)) player.skyrmion.upgradeCosts[16]++
                 if (!hasUpgrade('skyrmion', 17)) player.skyrmion.upgradeCosts[17]++
             }
         },
         16: {
-            unlocked() { return inChallenge('skyrmion', 11) || hasUpgrade('skyrmion', 16) },
+            unlocked() { return inChallenge('abyss', 11) || hasUpgrade('skyrmion', 16) },
             title: 'Obfuscation',
             description: `Allow the autobuyers to buy <b>ο</b> upgrades. <b>ο</b> upgrades no longer consume Pions or Spinors`,
             cost: decimalZero,
             currencyDisplayName() { return `${fomeNames[player.skyrmion.upgradeCosts[16]]} Foam<sup>2</sup>` },
             canAfford() { return player.fome.fome[fomeTypes[player.skyrmion.upgradeCosts[16]]].expansion.gt(1) },
             pay() {
-                player.skyrmion.challenges[11]++
+                player.abyss.challenges[11]++
                 if (!hasUpgrade('skyrmion', 14)) player.skyrmion.upgradeCosts[14]++
                 if (!hasUpgrade('skyrmion', 15)) player.skyrmion.upgradeCosts[15]++
                 if (!hasUpgrade('skyrmion', 17)) player.skyrmion.upgradeCosts[17]++
             }
         },
         17: {
-            unlocked() { return inChallenge('skyrmion', 11) || hasUpgrade('skyrmion', 17) },
+            unlocked() { return inChallenge('abyss', 11) || hasUpgrade('skyrmion', 17) },
             title: 'Prioritization',
             description: `Allow the autobuyers to buy <b>π</b> upgrades. <b>π</b> upgrades no longer consume Pions or Spinors`,
             cost: decimalZero,
             currencyDisplayName() { return `${fomeNames[player.skyrmion.upgradeCosts[17]]} Foam<sup>2</sup>` },
             canAfford() { return player.fome.fome[fomeTypes[player.skyrmion.upgradeCosts[17]]].expansion.gt(1) },
             pay() {
-                player.skyrmion.challenges[11]++
+                player.abyss.challenges[11]++
                 if (!hasUpgrade('skyrmion', 14)) player.skyrmion.upgradeCosts[14]++
                 if (!hasUpgrade('skyrmion', 15)) player.skyrmion.upgradeCosts[15]++
                 if (!hasUpgrade('skyrmion', 16)) player.skyrmion.upgradeCosts[16]++
@@ -396,7 +423,7 @@ addLayer("skyrmion", {
             effectDisplay: (effect) => `${format(effect)}x`,
             effect: (amount) => Decimal.pow(1.7, amount),
             bonus: () => fomeEffect('subplanck', 1),
-            unlocked: () => inChallenge('skyrmion', 11) || hasMilestone('entangled', 1) || player.fome.boosts.protoversal.boosts[0].gte(1),
+            unlocked: () => inChallenge('abyss', 11) || hasMilestone('entangled', 1) || player.fome.boosts.protoversal.boosts[0].gte(1),
             free: () => hasUpgrade('skyrmion', 5)
         }),
         122: createSkyrmionBuyable('ε', 122, {
@@ -406,7 +433,7 @@ addLayer("skyrmion", {
             effectDisplay: (effect) => `${format(effect)}x`,
             effect: (amount) => player.fome.fome.infinitesimal.points.max(0).plus(1).log10().times(amount).times(0.5).plus(1),
             bonus: () => fomeEffect('subplanck', 2),
-            unlocked: () => inChallenge('skyrmion', 11) || hasMilestone('entangled', 1) || player.fome.fome.infinitesimal.expansion.gte(1),
+            unlocked: () => inChallenge('abyss', 11) || hasMilestone('entangled', 1) || player.fome.fome.infinitesimal.expansion.gte(1),
             free: () => hasUpgrade('skyrmion', 6)
         }),
         123: createSkyrmionBuyable('ζ', 123, {
@@ -416,7 +443,7 @@ addLayer("skyrmion", {
             effectDisplay: (effect) => `${format(effect)}x`,
             effect: (amount) => player.skyrmion.points.plus(fomeEffect('subspatial', 3)).times(amount).times(0.05).plus(1),
             bonus: () => fomeEffect('subplanck', 3),
-            unlocked: () => inChallenge('skyrmion', 11) || hasMilestone('entangled', 1) || player.fome.fome.subspatial.expansion.gte(1),
+            unlocked: () => inChallenge('abyss', 11) || hasMilestone('entangled', 1) || player.fome.fome.subspatial.expansion.gte(1),
             free: () => hasUpgrade('skyrmion', 7)
         }),
         124: createSkyrmionBuyable('η', 124, {
@@ -426,7 +453,7 @@ addLayer("skyrmion", {
             effectDisplay: (effect) => `${format(effect)} free levels`,
             effect: (amount) => amount,
             bonus: () => fomeEffect('subplanck', 4),
-            unlocked: () => inChallenge('skyrmion', 11) || hasMilestone('entangled', 1) || player.fome.fome.protoversal.expansion.gte(2),
+            unlocked: () => inChallenge('abyss', 11) || hasMilestone('entangled', 1) || player.fome.fome.protoversal.expansion.gte(2),
             free: () => hasUpgrade('skyrmion', 8)
         }),
         131: createSkyrmionBuyable('θ', 131, {
@@ -436,7 +463,7 @@ addLayer("skyrmion", {
             effectDisplay: (effect) => `${format(effect)}x`,
             effect: (amount) => player.fome.fome.subspatial.points.max(0).plus(1).log10().times(amount).plus(1),
             bonus: () => fomeEffect('quantum', 3),
-            unlocked: () => inChallenge('skyrmion', 11) || hasMilestone('entangled', 1) || player.fome.fome.subplanck.expansion.gte(1),
+            unlocked: () => inChallenge('abyss', 11) || hasMilestone('entangled', 1) || player.fome.fome.subplanck.expansion.gte(1),
             free: () => hasUpgrade('skyrmion', 9)
         }),
         132: createSkyrmionBuyable('ι', 132, {
@@ -446,7 +473,7 @@ addLayer("skyrmion", {
             effectDisplay: (effect) => `${format(effect)}x`,
             effect: (amount) => player.skyrmion.spinor.points.max(0).plus(1).log10().times(amount).times(0.02).plus(1),
             bonus: () => fomeEffect('quantum', 3),
-            unlocked: () => inChallenge('skyrmion', 11) || hasMilestone('entangled', 1) || player.fome.fome.protoversal.expansion.gte(3),
+            unlocked: () => inChallenge('abyss', 11) || hasMilestone('entangled', 1) || player.fome.fome.protoversal.expansion.gte(3),
             free: () => hasUpgrade('skyrmion', 10)
         }),
         133: createSkyrmionBuyable('κ', 133, {
@@ -456,7 +483,7 @@ addLayer("skyrmion", {
             effectDisplay: (effect) => `${format(effect)}x`,
             effect: (amount) => amount.times(temp.fome.boosts.protoversal[0].total).times(0.3).plus(1),
             bonus: () => fomeEffect('quantum', 3),
-            unlocked: () => inChallenge('skyrmion', 11) || hasMilestone('entangled', 1) || player.fome.fome.infinitesimal.expansion.gte(2),
+            unlocked: () => inChallenge('abyss', 11) || hasMilestone('entangled', 1) || player.fome.fome.infinitesimal.expansion.gte(2),
             free: () => hasUpgrade('skyrmion', 11)
         }),
         134: createSkyrmionBuyable('λ', 134, {
@@ -465,7 +492,7 @@ addLayer("skyrmion", {
             display: `Double the Infinitesimal Foam Boost 1 effect`,
             effectDisplay: (effect) => `${format(effect)}x`,
             effect: (amount) => Decimal.pow(2, amount),
-            unlocked: () => inChallenge('skyrmion', 11) || hasMilestone('entangled', 1) || hasUpgrade('acceleron', 13),
+            unlocked: () => inChallenge('abyss', 11) || hasMilestone('entangled', 1) || hasUpgrade('acceleron', 13),
             free: () => hasUpgrade('skyrmion', 12)
         }),
         114: createSkyrmionBuyable('μ', 114, {
@@ -474,7 +501,7 @@ addLayer("skyrmion", {
             display: `Gain 2% more Spinors per order of magnitude<sup>2</sup> of stored Inflatons`,
             effectDisplay: (effect) => `${format(effect)}x`,
             effect: (amount) =>  player.inflaton.points.clamp(1, temp.inflaton.storage).plus(9).log10().log10().times(0.02).plus(1).pow(amount),
-            unlocked: () => inChallenge('skyrmion', 11) || hasMilestone('entangled', 1) || hasUpgrade('inflaton', 22),
+            unlocked: () => inChallenge('abyss', 11) || hasMilestone('entangled', 1) || hasUpgrade('inflaton', 22),
             free: () => hasUpgrade('skyrmion', 13)
         }),
         141: createSkyrmionBuyable('ν', 141, {
@@ -549,7 +576,7 @@ addLayer("skyrmion", {
             effectDisplay: (effect) => `${format(effect)}x`,
             effect: (amount) => Decimal.pow(1.7, amount),
             bonus: () => fomeEffect('subplanck', 1),
-            unlocked: () => inChallenge('skyrmion', 11) || hasMilestone('entangled', 1) || player.fome.boosts.protoversal.boosts[0].gte(1),
+            unlocked: () => inChallenge('abyss', 11) || hasMilestone('entangled', 1) || player.fome.boosts.protoversal.boosts[0].gte(1),
             free: () => hasUpgrade('skyrmion', 5)
         }),
         222: createSkyrmionBuyable('ε', 222, {
@@ -559,7 +586,7 @@ addLayer("skyrmion", {
             effectDisplay: (effect) => `${format(effect)}x`,
             effect: (amount) => player.fome.fome.protoversal.points.max(0).plus(1).log10().times(amount).plus(1),
             bonus: () => fomeEffect('subplanck', 2).plus(buyableEffect('skyrmion', 124)),
-            unlocked: () => inChallenge('skyrmion', 11) || hasMilestone('entangled', 1) || player.fome.fome.infinitesimal.expansion.gte(1),
+            unlocked: () => inChallenge('abyss', 11) || hasMilestone('entangled', 1) || player.fome.fome.infinitesimal.expansion.gte(1),
             free: () => hasUpgrade('skyrmion', 6)
         }),
         223: createSkyrmionBuyable('ζ', 223, {
@@ -569,7 +596,7 @@ addLayer("skyrmion", {
             effectDisplay: (effect) => `${format(effect)}x`,
             effect: (amount) => player.fome.fome.subspatial.points.max(0).plus(1).log10().times(amount).times(0.3).plus(1),
             bonus: () => fomeEffect('subplanck', 3),
-            unlocked: () => inChallenge('skyrmion', 11) || hasMilestone('entangled', 1) || player.fome.fome.subspatial.expansion.gte(1),
+            unlocked: () => inChallenge('abyss', 11) || hasMilestone('entangled', 1) || player.fome.fome.subspatial.expansion.gte(1),
             free: () => hasUpgrade('skyrmion', 7)
         }),
         224: createSkyrmionBuyable('η', 224, {
@@ -579,7 +606,7 @@ addLayer("skyrmion", {
             effectDisplay: (effect) => `${format(effect)}x`,
             effect: (amount) => amount.times(1.2).plus(1),
             bonus: () => fomeEffect('subplanck', 4),
-            unlocked: () => inChallenge('skyrmion', 11) || hasMilestone('entangled', 1) || player.fome.fome.protoversal.expansion.gte(2),
+            unlocked: () => inChallenge('abyss', 11) || hasMilestone('entangled', 1) || player.fome.fome.protoversal.expansion.gte(2),
             free: () => hasUpgrade('skyrmion', 8)
         }),
         231: createSkyrmionBuyable('θ', 231, {
@@ -589,7 +616,7 @@ addLayer("skyrmion", {
             effectDisplay: (effect) => `${format(effect)}x`,
             effect: (amount) => player.fome.fome.protoversal.points.max(0).plus(1).log10().plus(player.fome.fome.infinitesimal.points.max(0).plus(1).log10()).times(amount).times(0.3).plus(1),
             bonus: () => fomeEffect('quantum', 3),
-            unlocked: () => inChallenge('skyrmion', 11) || hasMilestone('entangled', 1) || player.fome.fome.subplanck.expansion.gte(1),
+            unlocked: () => inChallenge('abyss', 11) || hasMilestone('entangled', 1) || player.fome.fome.subplanck.expansion.gte(1),
             free: () => hasUpgrade('skyrmion', 9)
         }),
         232: createSkyrmionBuyable('ι', 232, {
@@ -599,7 +626,7 @@ addLayer("skyrmion", {
             effectDisplay: (effect) => `${format(effect)}x`,
             effect: (amount) => player.skyrmion.pion.points.max(0).plus(1).log10().times(amount).times(0.02).plus(1),
             bonus: () => fomeEffect('quantum', 3),
-            unlocked: () => inChallenge('skyrmion', 11) || hasMilestone('entangled', 1) || player.fome.fome.protoversal.expansion.gte(3),
+            unlocked: () => inChallenge('abyss', 11) || hasMilestone('entangled', 1) || player.fome.fome.protoversal.expansion.gte(3),
             free: () => hasUpgrade('skyrmion', 10)
         }),
         233: createSkyrmionBuyable('κ', 233, {
@@ -609,7 +636,7 @@ addLayer("skyrmion", {
             effectDisplay: (effect) => `${format(effect)}x`,
             effect: (amount) => player.fome.fome.subplanck.points.max(0).plus(1).log10().times(amount).times(0.4).plus(1),
             bonus: () => fomeEffect('quantum', 3),
-            unlocked: () => inChallenge('skyrmion', 11) || hasMilestone('entangled', 1) || player.fome.fome.infinitesimal.expansion.gte(2),
+            unlocked: () => inChallenge('abyss', 11) || hasMilestone('entangled', 1) || player.fome.fome.infinitesimal.expansion.gte(2),
             free: () => hasUpgrade('skyrmion', 11)
         }),
         234: createSkyrmionBuyable('λ', 234, {
@@ -618,7 +645,7 @@ addLayer("skyrmion", {
             display: `ln(Best Accelerons) increases Pion and Spinor gain`,
             effectDisplay: (effect) => `${format(effect)}x`,
             effect: (amount) => amount.times(player.acceleron.best.max(0).plus(1).ln()).plus(1),
-            unlocked: () => inChallenge('skyrmion', 11) || hasMilestone('entangled', 1) || hasUpgrade('acceleron', 13),
+            unlocked: () => inChallenge('abyss', 11) || hasMilestone('entangled', 1) || hasUpgrade('acceleron', 13),
             free: () => hasUpgrade('skyrmion', 12)
         }),
         214: createSkyrmionBuyable('μ', 214, {
@@ -627,7 +654,7 @@ addLayer("skyrmion", {
             display: `Gain 2% more Pions per order of magnitude<sup>2</sup> of stored Inflatons`,
             effectDisplay: (effect) => `${format(effect)}x`,
             effect: (amount) => player.inflaton.points.clamp(1, temp.inflaton.storage).plus(9).log10().log10().times(0.02).plus(1).pow(amount),
-            unlocked: () => inChallenge('skyrmion', 11) || hasMilestone('entangled', 1) || hasUpgrade('inflaton', 22),
+            unlocked: () => inChallenge('abyss', 11) || hasMilestone('entangled', 1) || hasUpgrade('inflaton', 22),
             free: () => hasUpgrade('skyrmion', 13)
         }),
         241: createSkyrmionBuyable('ν', 241, {
@@ -667,7 +694,7 @@ addLayer("skyrmion", {
     clickables: {
         11: {
             title: "Buy All",
-            unlocked() { return inChallenge('skyrmion', 11) || hasMilestone('entangled', 1) || hasMilestone('fome', 0) || hasMilestone('entangled', 0) },
+            unlocked() { return inChallenge('abyss', 11) || hasMilestone('entangled', 1) || hasMilestone('fome', 0) || hasMilestone('entangled', 0) },
             canClick: true,
             onClick() {
                 for (let type = 100; type <= 200; type += 100)
@@ -683,7 +710,7 @@ addLayer("skyrmion", {
         },
         12: {
             title: "Sell All",
-            unlocked() { return inChallenge('skyrmion', 11) },
+            unlocked() { return inChallenge('abyss', 11) },
             canClick: true,
             onClick() {
                 for (let type = 100; type <= 200; type += 100)
@@ -698,59 +725,6 @@ addLayer("skyrmion", {
                 width: "100px"
             }
         }
-    },
-    
-    challenges: {
-        11: {
-            name: `Enter the Abyss`,
-            challengeDescription: `Disable Pion and Spinor upgrade autobuyers.<br>Pion and Spinor upgrades additionally increase their own costs.`,
-            goalDescription() { return `${formatWhole(Math.min(player.skyrmion.challenges[11]+1, 4))}/${formatWhole(temp.skyrmion.challenges[11].completionLimit)} automation upgrades purchased` },
-            completionLimit: 4,
-            canComplete() { return player.skyrmion.challenges[11] >= 4 || [14,15,16,17].map(id => hasUpgrade('skyrmion', id)).reduce((a,b) => a+b) > player.skyrmion.challenges[11] },
-            rewardDescription: `More Pion and Spinor upgrade autobuyers`,
-            unlocked() { return hasUpgrade('inflaton', 13) || temp.inflaton.deactivated },
-            onEnter() {
-                player.abyss = {
-                    skyrmion: getStartLayerData('skyrmion'),
-                    fome: getStartLayerData('fome'),
-                    acceleron: getStartLayerData('acceleron'),
-                    timecube: getStartLayerData('timecube'),
-                    inflaton: getStartLayerData('inflaton')
-                }
-                for (item of ['activeChallenge', 'autobuyPion', 'autobuySpinor', 'challenges', 'forceTooltip', 'upgradeCosts', 'upgrades'])
-                    player.abyss.skyrmion[item] = player.skyrmion[item]
-                for (item of ['autoInfinitesimal', 'autoProtoversal', 'autoQuantum', 'autoReform', 'autoSubplanck', 'autoSubspatial', 'forceTooltip', 'lastMilestone', 'milestones', 'unlocked'])
-                    player.abyss.fome[item] = player.fome[item]
-                for (item of ['forceTooltip', 'lastMilestone', 'milestones', 'unlockOrder', 'unlocked'])
-                    player.abyss.acceleron[item] = player.acceleron[item]
-                for (item of ['forceTooltip', 'unlocked'])
-                    player.abyss.timecube[item] = player.timecube[item]
-                for (item of ['autoBuild', 'autoResearch', 'forceTooltip', 'unlockOrder', 'unlocked', 'upgradeCosts', 'upgrades'])
-                    player.abyss.inflaton[item] = player.inflaton[item]
-                
-                Object.keys(player.abyss).forEach(swapLayerData)
-                for (let i = 0; i < 10; i++) // nasty hack, don't like this, but not sure of better option
-                    updateTemp()
-            },
-            onExit() {
-                for (item of ['autobuyPion', 'autobuySpinor', 'forceTooltip'])
-                    player.abyss.skyrmion[item] = player.skyrmion[item]
-                for (item of ['autoInfinitesimal', 'autoProtoversal', 'autoQuantum', 'autoReform', 'autoSubplanck', 'autoSubspatial', 'forceTooltip', 'lastMilestone', 'unlocked'])
-                    player.abyss.fome[item] = player.fome[item]
-                for (item of ['forceTooltip', 'lastMilestone', 'unlockOrder', 'unlocked'])
-                    player.abyss.acceleron[item] = player.acceleron[item]
-                for (item of ['forceTooltip', 'unlocked'])
-                    player.abyss.timecube[item] = player.timecube[item]
-                for (item of ['autoBuild', 'autoResearch', 'forceTooltip', 'unlockOrder', 'unlocked'])
-                    player.abyss.inflaton[item] = player.inflaton[item]
-                
-                Object.keys(player.abyss).forEach(swapLayerData)
-            }
-        }
-    },
-
-    resetsNothing() {
-        return inChallenge('skyrmion', 11)
     },
 
     microtabs: {
@@ -768,7 +742,7 @@ addLayer("skyrmion", {
                     () => hasMilestone('skyrmion', 0) ? "blank" : ``,
                     "clickables",
                     () => Object.keys(player.skyrmion.clickables).map(id => temp.skyrmion.clickables[id].unlocked).some(Boolean) ? "blank" : "",
-                    "challenges",
+                    ["layer-proxy", ["abyss", ["challenges"]]],
                     () => hasUpgrade('inflaton', 13) ? "blank" : "",
                     ["row", [
                         ["upgrade", 0], ["upgrade", 1]
@@ -881,8 +855,15 @@ addLayer("skyrmion", {
         },
         {
             key: "s",
-            description: "S: Condense some Pions and Spinors for another Skyrmion",
-            onPress() { if (canReset('skyrmion')) doReset('skyrmion') } 
+            description() {
+                if (inChallenge('abyss', 11)) return "S: Sell all Pion and Spinor upgrades"
+                else return "S: Condense some Pions and Spinors for another Skyrmion"
+            },
+            onPress() {
+                if (inChallenge('abyss', 11)) clickClickable('skyrmion', 12)
+                else if (canReset('skyrmion')) doReset('skyrmion')
+            },
+            unlocked() { return inChallenge('abyss', 11) || !hasUpgrade('skyrmion', 1) }
         }
     ]
 })
@@ -938,8 +919,4 @@ function createSkyrmionBuyable(symbol, id, data) {
             addBuyables('skyrmion', id, 1)
         }
     }
-}
-
-function swapLayerData(layer) {
-    [player[layer], player.abyss[layer]] = [player.abyss[layer], player[layer]]
 }

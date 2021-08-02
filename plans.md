@@ -1,24 +1,46 @@
 Bugfixes and TODO:
 
-Skyrmion Upgrades: (4 remaining)
-- ???
-- ???
+Rework Abyss challenge
+- Change goal -> # fourth row buyables (sum pion and spinor)
+- Change reward -> keep buyable if reached goal for said buyable
+- Fix weird loading issues with Decimals
 
-Upgrade Automation Challenges
-- Big softcap to Beta effect, maybe increase Foam formation costs too?
-    - Reach Foam milestones to buy remaining four Skyrmion autobuyers (Infinitesimal^2, Subspatial^2, Subplanck^2, Quantum^2)
+Time Cube Features
+- Two more rows of upgrades
+  - Unlock squares
+  - ???
+  - ???
+  - Unlock axes
+  - ???
+  - Unlock lines
+  - ???
+  - ???
+  - ???
+  - ???
+- Time Squares
+  - 6 flavors - top, bottom, left, right, front, back
+    - Loop build speed/cost | Subspatial Construction cost
+    -  
+  - Each flavor gives a decreasingly logarithmic (log^0.75?) bonus to some resource
+  - Uses a slowly growing static time cube cost formula
+- Axes
+  - Pick between top/bottom, left/right, and front/back
+  - Selected direction is buffed, opposite direction is nerfed
+- Time Lines
+  - 12 flavors, giving a decreasingly logarithmic bonus to adjacent Squares
+  - Uses a slowly growing static time square cost formula
 
 Need to figure out a decent reward structure for phase 2 completions
 
 Phase 1 Completion Steps:
 
 Inflaton Upgrades:        0/5
-- 1: Skyrmion             + 0/2
-  - Upgrades              | + 6/8
-  - Challenge             | + 0/3
+- 1: Skyrmion             + 1/2
+  - Upgrades              | + 8/8
+  - Challenge             | + 1/3
     - Effects             |   + 0/1
     - Goals               |   + 0/1
-    - Name                |   + 0/1
+    - Name                |   + 1/1
 - 2: Time Cubes           + 0/2
   - Upgrades              | + 0/10
   - Other Features        | + 0/1+

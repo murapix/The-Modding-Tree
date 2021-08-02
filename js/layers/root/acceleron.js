@@ -144,7 +144,7 @@ addLayer("acceleron", {
             max: new Decimal(60),
             duration: decimalOne,
             intervalEffect(intervals = decimalOne) { addPoints('acceleron', new Decimal(temp.acceleron.resetGain).times(Decimal.plus(0.001, defaultUpgradeEffect('acceleron', 123, 0))).times(intervals)) },
-            intervalDisplay() { return `Every second, gain ${format(Decimal.plus(0.001, defaultUpgradeEffect('acceleron', 123, 0)).times(100), 1)}% of your Acceleron prestige gain` },
+            intervalDisplay() { return `Every second, gain ${format(Decimal.plus(0.001, defaultUpgradeEffect('acceleron', 123, 0)).times(100), 1)}% of your Acceleron prestige gain. Currently: ${format(new Decimal(temp.acceleron.resetGain).times(Decimal.plus(0.001, defaultUpgradeEffect('acceleron', 123, 0))).times(temp.acceleron.effect))} Accelerons/s` },
             stroke: '#ff0000',
             width: 10
         },
@@ -162,7 +162,7 @@ addLayer("acceleron", {
                 player.skyrmion.spinor.points = player.skyrmion.spinor.points.plus(skyrmionEffect.spinor.gen.times(time))
                 fomeTypes.forEach(fome => player.fome.fome[fome].points = player.fome.fome[fome].points.plus(fomeEffect.gain.total[fome].times(time)))
             },
-            intervalDisplay() { return `Every minute, gain ${format(Decimal.plus(1, defaultUpgradeEffect('acceleron', 111, 0)))} minutes of Foam and Skyrmion production` },
+            intervalDisplay() { return `Every minute, gain ${format(Decimal.plus(1, defaultUpgradeEffect('acceleron', 111, 0)))} minutes of Foam and Skyrmion production. Currently: ${format(temp.acceleron.loops[1].duration.plus(defaultUpgradeEffect('acceleron', 111, 0)).times(temp.acceleron.effect))} minutes/s` },
             stroke: '#800080',
             width: 10
         },
@@ -171,7 +171,7 @@ addLayer("acceleron", {
             max: new Decimal(600),
             duration: new Decimal(3600),
             intervalEffect(intervals = decimalOne) { addPoints('timecube', intervals.times(defaultUpgradeEffect('timecube', 11)).times(defaultUpgradeEffect('acceleron', 22)).times(defaultUpgradeEffect('acceleron', 141))) },
-            intervalDisplay: 'Every hour, gain a Time Cube',
+            intervalDisplay() { return `Every hour, gain ${format(defaultUpgradeEffect('timecube', 11).times(defaultUpgradeEffect('acceleron', 22)).times(defaultUpgradeEffect('acceleron', 141)))} Time Cubes. Currently: ${format(defaultUpgradeEffect('timecube', 11).times(defaultUpgradeEffect('acceleron', 22)).times(defaultUpgradeEffect('acceleron', 141)).times(temp.acceleron.effect).div(3600))} Time Cubes/s` },
             stroke: '#0000FF',
             width: 10
         },
