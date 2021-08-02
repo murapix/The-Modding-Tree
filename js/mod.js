@@ -21,8 +21,6 @@ let modInfo = {
 	discordName: "Escapee",
 	discordLink: "",
 	initialStartPoints: new Decimal (0), // Used for hard resets and new players
-	
-	offlineLimit: 1,  // In hours
 }
 
 // Set your version in num and name
@@ -154,6 +152,4 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
-	delete player.skyrmion.clickables[0]
-	delete player.skyrmion.clickables[1]
 }

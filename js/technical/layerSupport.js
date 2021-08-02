@@ -298,7 +298,6 @@ addLayer("options-tab", {
                         <tr>
                             <td><button class="opt" onclick="exportSave()">Export to clipboard</button></td>
                             <td><button class="opt" onclick="importSave()">Import</button></td>
-                            <td><button class="opt" onclick="toggleOpt('offlineProd')">Offline Prod: ${options.offlineProd?"ENABLED":"DISABLED"}</button></td>
                         </tr>
                     `]
                 ]
