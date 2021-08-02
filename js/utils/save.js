@@ -150,30 +150,39 @@ function fixSave() {
 		}
 	}
 	for (layer of ['skyrmion', 'fome', 'acceleron', 'timecube', 'inflaton']) {
+		if (player.abyss[layer] === undefined) continue
 		wrapAsDecimal(player.abyss[layer], 'points')
 		wrapAsDecimal(player.abyss[layer], 'best')
 		wrapAsDecimal(player.abyss[layer], 'total')
 		Object.keys(player.abyss[layer].buyables).forEach(buyable => wrapAsDecimal(player.abyss[layer].buyables, buyable))
 	}
-	Object.keys(player.abyss.skyrmion.pion).forEach(key => wrapAsDecimal(player.abyss.skyrmion.pion, key))
-	Object.keys(player.abyss.skyrmion.spinor).forEach(key => wrapAsDecimal(player.abyss.skyrmion.spinor, key))
-	for (fome of fomeTypes) {
-		Object.keys(player.abyss.fome.fome[fome]).forEach(key => wrapAsDecimal(player.abyss.fome.fome[fome], key))
-		Object.keys(player.abyss.fome.boosts[fome]).forEach(key => {
-			for (i = 0; i < 5; i++)
-				wrapAsDecimal(player.abyss.fome.boosts[fome].boosts, i)
-		})
+	if (player.abyss.skyrmion !== undefined) {
+		Object.keys(player.abyss.skyrmion.pion).forEach(key => wrapAsDecimal(player.abyss.skyrmion.pion, key))
+		Object.keys(player.abyss.skyrmion.spinor).forEach(key => wrapAsDecimal(player.abyss.skyrmion.spinor, key))
 	}
-	Object.keys(player.abyss.acceleron.loops).forEach(loop => {
-		Object.keys(player.abyss.acceleron.loops[loop]).forEach(key => {
-			wrapAsDecimal(player.abyss.acceleron.loops[loop], key)
-		})
-	})
-	for (key of ['entropy', 'time', 'fomeBoost', 'acceleronBoost', 'skyrmionBoost']) {
-		wrapAsDecimal(player.abyss.acceleron, key)
+	if (player.abyss.fome !== undefined) {
+		for (fome of fomeTypes) {
+			Object.keys(player.abyss.fome.fome[fome]).forEach(key => wrapAsDecimal(player.abyss.fome.fome[fome], key))
+			Object.keys(player.abyss.fome.boosts[fome]).forEach(key => {
+				for (i = 0; i < 5; i++)
+					wrapAsDecimal(player.abyss.fome.boosts[fome].boosts, i)
+			})
+		}
 	}
-	for (key of ['size', 'maxSize']) {
-		wrapAsDecimal(player.abyss.inflaton, key)
+	if (player.abyss.acceleron !== undefined) {
+		Object.keys(player.abyss.acceleron.loops).forEach(loop => {
+			Object.keys(player.abyss.acceleron.loops[loop]).forEach(key => {
+				wrapAsDecimal(player.abyss.acceleron.loops[loop], key)
+			})
+		})
+		for (key of ['entropy', 'time', 'fomeBoost', 'acceleronBoost', 'skyrmionBoost']) {
+			wrapAsDecimal(player.abyss.acceleron, key)
+		}
+	}
+	if (player.abyss.inflaton !== undefined) {
+		for (key of ['size', 'maxSize']) {
+			wrapAsDecimal(player.abyss.inflaton, key)
+		}
 	}
 }
 function wrapAsDecimal(object, id) {

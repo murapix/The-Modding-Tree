@@ -1,5 +1,10 @@
 # Universal Reconstruction changelog:
 
+## v0.7.1
+- Lots of little bugfixes
+- Enter the Abyss challenge is now moved into its own row-3 layer, for proper reset handling (it's still living in Skyrmions though)
+- Added initialization checks to save loading to get the extra abyss layer data read correctly
+
 ## v0.7.0 - Prioritization
 - Update to TMT 2.6.5.1
 - Tons of backend changes, improvements, and future systems
