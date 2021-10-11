@@ -20,11 +20,12 @@ addLayer("skyrmion", {
         return buyableEffect('skyrmion', 211).times(fomeEffect('infinitesimal', 3)).recip().times(defaultUpgradeEffect('acceleron', 144))
     },
     doReset(layer) {
+        let costs = {}
         switch (layer) {
             case "acceleron":
                 player.skyrmion.pion.points = decimalZero
                 player.skyrmion.spinor.points = decimalZero
-                let costs = {
+                costs = {
                     14: player.skyrmion.upgradeCosts[14],
                     15: player.skyrmion.upgradeCosts[15],
                     16: player.skyrmion.upgradeCosts[16],
@@ -100,13 +101,14 @@ addLayer("skyrmion", {
         if (inChallenge('abyss', 11))
             [pionCount, spinorCount] = [pionCount.plus(spinorCount).times(0.75), spinorCount.plus(pionCount).times(0.75)]
 
+        let bottom = getTimelineEffect('bottom')
         let eff = {
             pion: {
-                gen: skyrmions.times(0.01).times(universalBoost).times(spinor.gamma).times(spinor.mu).times(spinor.pi),
+                gen: skyrmions.times(0.01).times(universalBoost).times(spinor.gamma).times(spinor.mu).times(spinor.pi).div(bottom),
                 costNerf: Decimal.pow(spinorCount.times(nerfBase).times(spinor.beta).plus(1), spinorCount.times(nerfExp))
             },
             spinor: {
-                gen: skyrmions.times(0.01).times(universalBoost).times(pion.gamma).times(pion.mu).times(spinor.pi),
+                gen: skyrmions.times(0.01).times(universalBoost).times(pion.gamma).times(pion.mu).times(spinor.pi).div(bottom),
                 costNerf: Decimal.pow(pionCount.times(nerfBase).times(pion.beta).plus(1), pionCount.times(nerfExp))
             }
         }
@@ -702,11 +704,7 @@ addLayer("skyrmion", {
                         for (let col = 1; col <= 4; col++)
                             if (temp.skyrmion.buyables[type+row+col] && temp.skyrmion.buyables[type+row+col].canAfford) buyBuyable('skyrmion', type+row+col)
             },
-            onHold() { layers.skyrmion.clickables[11].onClick() },
-            style: {
-                'min-height': "30px",
-                width: "100px"
-            }
+            onHold() { layers.skyrmion.clickables[11].onClick() }
         },
         12: {
             title: "Sell All",
@@ -719,11 +717,14 @@ addLayer("skyrmion", {
                             player.skyrmion.buyables[type+row+col] = decimalZero
                 player.skyrmion.pion.upgrades = decimalZero
                 player.skyrmion.spinor.upgrades = decimalZero
-            },
-            style: {
-                'min-height': "30px",
-                width: "100px"
             }
+        }
+    },
+
+    componentStyles: {
+        clickable: {
+            'min-height': "30px",
+            width: "100px"
         }
     },
 
@@ -775,11 +776,10 @@ addLayer("skyrmion", {
                     "blank",
                     "clickables",
                     () => Object.keys(player.skyrmion.clickables).map(id => temp.skyrmion.clickables[id].unlocked).some(Boolean) ? "blank" : "",
-                    ["row", [["buyable", 111], ["buyable", 112], ["buyable", 113], ["buyable", 114], ["buyable", 115]]],
-                    ["row", [["buyable", 121], ["buyable", 122], ["buyable", 123], ["buyable", 124], ["buyable", 125]]],
-                    ["row", [["buyable", 131], ["buyable", 132], ["buyable", 133], ["buyable", 134], ["buyable", 135]]],
-                    ["row", [["buyable", 141], ["buyable", 142], ["buyable", 143], ["buyable", 144], ["buyable", 145]]],
-                    ["row", [["buyable", 151], ["buyable", 152], ["buyable", 153], ["buyable", 154], ["buyable", 155]]],
+                    ["row", [["buyable", 111], ["buyable", 112], ["buyable", 113], ["buyable", 114]]],
+                    ["row", [["buyable", 121], ["buyable", 122], ["buyable", 123], ["buyable", 124]]],
+                    ["row", [["buyable", 131], ["buyable", 132], ["buyable", 133], ["buyable", 134]]],
+                    ["row", [["buyable", 141], ["buyable", 142], ["buyable", 143], ["buyable", 144]]],
                     "blank"
                 ]
             },
@@ -796,11 +796,10 @@ addLayer("skyrmion", {
                     "blank",
                     "clickables",
                     () => Object.keys(player.skyrmion.clickables).map(id => temp.skyrmion.clickables[id].unlocked).some(Boolean) ? "blank" : "",
-                    ["row", [["buyable", 211], ["buyable", 212], ["buyable", 213], ["buyable", 214], ["buyable", 215]]],
-                    ["row", [["buyable", 221], ["buyable", 222], ["buyable", 223], ["buyable", 224], ["buyable", 225]]],
-                    ["row", [["buyable", 231], ["buyable", 232], ["buyable", 233], ["buyable", 234], ["buyable", 235]]],
-                    ["row", [["buyable", 241], ["buyable", 242], ["buyable", 243], ["buyable", 244], ["buyable", 245]]],
-                    ["row", [["buyable", 251], ["buyable", 252], ["buyable", 253], ["buyable", 254], ["buyable", 255]]],
+                    ["row", [["buyable", 211], ["buyable", 212], ["buyable", 213], ["buyable", 214]]],
+                    ["row", [["buyable", 221], ["buyable", 222], ["buyable", 223], ["buyable", 224]]],
+                    ["row", [["buyable", 231], ["buyable", 232], ["buyable", 233], ["buyable", 234]]],
+                    ["row", [["buyable", 241], ["buyable", 242], ["buyable", 243], ["buyable", 244]]],
                     "blank"
                 ]
             }
@@ -818,10 +817,6 @@ addLayer("skyrmion", {
         "blank",
         ["microtabs", "stuff"],
     ],
-
-    componentStyles: {
-        "microtabs"() { return { "border-style": "none" } }
-    },
 
     hotkeys: [
         {

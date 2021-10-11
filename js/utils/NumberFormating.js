@@ -163,3 +163,7 @@ function invertOOM(x){
 
     return x
 }
+
+function formatShort(x) {
+    return x.gte(1e4) ? exponentialFormat(x, 0) : format(x, 0)
+}

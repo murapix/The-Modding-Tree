@@ -23,9 +23,5 @@ addLayer("gravitons", {
         "blank",
         "prestige-button",
         "blank",
-    ],
-
-    componentStyles: {
-        "microtabs"() { return { "border-style": "none" } },
-    },
+    ]
 })

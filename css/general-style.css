@@ -39,3 +39,7 @@ h1, h2, h3, b, input {
 	color: var(--points);
 	text-shadow: 0 0 10px var(--points);
 }
+
+.left-align {
+	text-align: left;
+}

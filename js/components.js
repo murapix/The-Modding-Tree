@@ -75,6 +75,23 @@ function loadVue() {
 		`
 	})
 
+	Vue.component('component-table', {
+		props: ['layer', 'data', 'tableStyle', 'trStyle', 'tdStyle'],
+		computed: {
+			key() { return this.$vnode.key }
+		},
+		template: `
+		<table :style="tableStyle">
+			<tr v-for="(row, rowIndex) in data" :style="trStyle">
+				<td v-for="(item, colIndex) in row" :style="[tmp[layer].componentStyles[item[0]], ((item.length >= 4 && item[3]) ? item[3] : {}), tdStyle]">
+					<div v-if="!Array.isArray(item)" v-bind:is="item" :layer= "layer" v-bind:style="tmp[layer].componentStyles[item]" :key="key + '-' + rowIndex + '-' + colIndex"></div>
+					<div v-else-if="item.length>=3" v-bind:style="[tmp[layer].componentStyles[item[0]], (item[2] ? item[2] : {})]" v-bind:is="item[0]" :layer= "layer" :data= "item[1]" :key="key + '-' + rowIndex + '-' + colIndex"></div>
+					<div v-else-if="item.length==2" v-bind:is="item[0]" :layer= "layer" :data= "item[1]" v-bind:style="tmp[layer].componentStyles[item[0]]" :key="key + '-' + rowIndex + '-' + colIndex"></div>
+				</td>
+			</tr>
+		`
+	})
+
 	// data [other layer, tabformat for within proxy]
 	Vue.component('layer-proxy', {
 		props: ['layer', 'data'],
@@ -255,12 +272,12 @@ function loadVue() {
 
 	// data = button size, in px
 	Vue.component('buyables', {
-		props: ['layer', 'data'],
+		props: ['layer', 'rows', 'style'],
 		template: `
 		<div v-if="tmp[layer].buyables" class="upgTable">
 			<respec-button v-if="tmp[layer].buyables.respec && !(tmp[layer].buyables.showRespec !== undefined && tmp[layer].buyables.showRespec == false)" :layer = "layer" v-bind:style="[{'margin-bottom': '12px'}, tmp[layer].componentStyles['respec-button']]"></respec-button>
-			<div v-for="row in (data === undefined ? tmp[layer].buyables.rows : data)" class="upgRow">
-				<div v-for="col in tmp[layer].buyables.cols"><div v-if="tmp[layer].buyables[row*10+col]!== undefined && tmp[layer].buyables[row*10+col].unlocked" class="upgAlign" v-bind:style="{'margin-left': '7px', 'margin-right': '7px',  'height': (data ? data : 'inherit'),}">
+			<div v-for="row in (rows === undefined ? tmp[layer].buyables.rows : rows)" class="upgRow">
+				<div v-for="col in tmp[layer].buyables.cols"><div v-if="tmp[layer].buyables[row*10+col]!== undefined && tmp[layer].buyables[row*10+col].unlocked" class="upgAlign" v-bind:style="[{'margin-left': '7px', 'margin-right': '7px', 'height': 'inherit'}, style]">
 					<buyable :layer = "layer" :data = "row*10+col"></buyable>
 				</div></div>
 				<br>
@@ -273,7 +290,7 @@ function loadVue() {
 		props: ['layer', 'data', 'size'],
 		template: `
 		<div v-if="tmp[layer].buyables && tmp[layer].buyables[data]!== undefined && tmp[layer].buyables[data].unlocked" style="display: grid">
-			<button v-bind:class="{ buyable: true, tooltipBox: true, can: tmp[layer].buyables[data].canBuy, locked: !tmp[layer].buyables[data].canBuy, bought: player[layer].buyables[data].gte(tmp[layer].buyables[data].purchaseLimit)}"
+			<button v-bind:class="{ buyable: true, tooltipBox: true, can: tmp[layer].buyables[data].canBuy, locked: !tmp[layer].buyables[data].canBuy, bought: getBuyableAmount(layer, data).gte(tmp[layer].buyables[data].purchaseLimit)}"
 			v-bind:style="[tmp[layer].buyables[data].canBuy ? {'background-color': tmp[layer].color} : {}, size ? {'height': size, 'width': size} : {}, tmp[layer].componentStyles.buyable, tmp[layer].buyables[data].style]"
 			v-on:click="if(!interval && !paused && !player.paused && !tmp[layer].paused) buyBuyable(layer, data)" :id='"buyable-" + layer + "-" + data' @mousedown="start" @mouseleave="stop" @mouseup="stop" @touchstart="start" @touchend="stop" @touchcancel="stop">
 				<span v-if= "tmp[layer].buyables[data].title"><h2 v-html="tmp[layer].buyables[data].title"></h2><br></span>
@@ -434,7 +451,7 @@ function loadVue() {
 			currentTab() {return player.subtabs[layer][data]}
 		},
 		template: `
-		<div v-if="tmp[layer].microtabs" :style="{'border-style': 'solid'}">
+		<div v-if="tmp[layer].microtabs">
 			<div class="upgTable instant">
 				<tab-buttons :layer="layer" :data="tmp[layer].microtabs[data]" :name="data" v-bind:style="tmp[layer].componentStyles['tab-buttons']"></tab-buttons>
 			</div>
@@ -560,10 +577,10 @@ function loadVue() {
 
 	// Updates the value in player[layer][data]
 	Vue.component('text-input', {
-		props: ['layer', 'data'],
+		props: ['layer', 'data', 'defaultValue'],
 		template: `
 			<input class="instant" :id="'input-' + layer + '-' + data" :value="player[layer][data].toString()" v-on:focus="focused(true)" v-on:blur="focused(false)"
-			v-on:change="player[layer][data] = toValue(document.getElementById('input-' + layer + '-' + data).value, player[layer][data])">
+			v-on:change="player[layer][data] = toValue(document.getElementById('input-' + layer + '-' + data).value, player[layer][data], defaultValue)">
 		`
 	})
 

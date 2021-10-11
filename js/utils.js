@@ -22,7 +22,7 @@ function canAffordUpgrade(layer, id) {
 
 function canBuyBuyable(layer, id) {
 	let b = temp[layer].buyables[id]
-	return (b.unlocked && run(b.canAfford, b) && player[layer].buyables[id].lt(b.purchaseLimit) && !tmp[layer].deactivated)
+	return (b.unlocked && run(b.canAfford, b) && getBuyableAmount(layer, id).lt(b.purchaseLimit) && !tmp[layer].deactivated)
 }
 
 
@@ -343,14 +343,14 @@ function isPlainObject(obj) {
 document.title = modInfo.name
 
 // Converts a string value to whatever it's supposed to be
-function toValue(value, oldValue) {
+function toValue(value, oldValue, defaultValue = decimalZero) {
 	if (oldValue instanceof Decimal) {
 		value = new Decimal (value)
-		if (value.eq(decimalNaN)) return decimalZero
+		if (isNaN(value.sign) || isNaN(value.mantissa) || isNaN(value.mag) || isNaN(value.layer) || isNaN(value.exponent)) return defaultValue
 		return value
 	}
 	if (!isNaN(oldValue)) 
-		return parseFloat(value) || 0
+		return parseFloat(value) || defaultValue.toNumber()
 	return value
 }
 

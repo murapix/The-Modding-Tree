@@ -23,9 +23,5 @@ addLayer("gluons", {
         "blank",
         "prestige-button",
         "blank",
-    ],
-
-    componentStyles: {
-        "microtabs"() { return { "border-style": "none" } },
-    },
+    ]
 })

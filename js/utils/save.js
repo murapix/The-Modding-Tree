@@ -149,6 +149,7 @@ function fixSave() {
 					player.subtabs[layer][item] = Object.keys(layers[layer].microtabs[item])[0];
 		}
 	}
+	Object.keys(player.timecube.buyables).forEach(id => wrapAsDecimal(player.timecube.buyables, id))
 	for (layer of ['skyrmion', 'fome', 'acceleron', 'timecube', 'inflaton']) {
 		if (player.abyss[layer] === undefined) continue
 		wrapAsDecimal(player.abyss[layer], 'points')

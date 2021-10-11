@@ -23,7 +23,7 @@ function challengeCompletions(layer, id) {
 }
 
 function getBuyableAmount(layer, id) {
-	return (player[layer].buyables[id])
+	return new Decimal(player[layer].buyables[id])
 }
 
 function setBuyableAmount(layer, id, amt) {
@@ -31,7 +31,7 @@ function setBuyableAmount(layer, id, amt) {
 }
 
 function addBuyables(layer, id, amt) {
-	player[layer].buyables[id] = player[layer].buyables[id].add(amt)
+	player[layer].buyables[id] = Decimal.add(player[layer].buyables[id], amt)
 }
 
 function getClickableState(layer, id) {

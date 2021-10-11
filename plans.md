@@ -17,12 +17,6 @@ Time Cube Features
   - ???
   - ???
   - ???
-- Time Squares
-  - 6 flavors - top, bottom, left, right, front, back
-    - Loop build speed/cost | Subspatial Construction cost
-    -  
-  - Each flavor gives a decreasingly logarithmic (log^0.75?) bonus to some resource
-  - Uses a slowly growing static time cube cost formula
 - Axes
   - Pick between top/bottom, left/right, and front/back
   - Selected direction is buffed, opposite direction is nerfed
@@ -34,16 +28,18 @@ Need to figure out a decent reward structure for phase 2 completions
 
 Phase 1 Completion Steps:
 
-Inflaton Upgrades:        0/5
-- 1: Skyrmion             + 1/2
+Inflaton Upgrades:        1/5
+- 1: Skyrmion             + 2/2
   - Upgrades              | + 8/8
-  - Challenge             | + 1/3
-    - Effects             |   + 0/1
-    - Goals               |   + 0/1
+  - Challenge             | + 3/3
+    - Effects             |   + 1/1
+    - Goals               |   + 1/1
     - Name                |   + 1/1
-- 2: Time Cubes           + 0/2
-  - Upgrades              | + 0/10
-  - Other Features        | + 0/1+
+- 2: Time Cubes           + 1/2
+  - Upgrades              | + 1/10
+  - Time Squares          | + 6/6
+  - Axes                  | + 0/1
+  - Time Lines            | + 0/12
 - 3: Research             + 0/2
   - Researches            | + 0/25+
   - Repeatables           | + 0/0-3+
@@ -64,3 +60,9 @@ Phases
     - Probably loosely base this around Shark Game structure
     - Similar prestige system to Shark Game's Climate, generated in Phase 3, with "universe type" being dictated by force selection
 - Phase 3 is a super-prestige layer, use what you learned from going through Phase 2 to unlock more forces and to speed up progression
+
+Universes:
+- Standard (all first row) (our universe)
+- Classical (all first row, except one switched to elemental?) (alchemy-based universe)
+
+

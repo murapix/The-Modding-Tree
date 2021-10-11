@@ -116,6 +116,12 @@ function setupLayer(layer){
     }
     if (layers[layer].buyables){
         layers[layer].buyables.layer = layer
+        if (layer === 'timecube') {
+            createSquareBuyables(layers[layer].buyables)
+            let buyables = player.timecube.buyables
+            player.timecube.buyables = getStartBuyables('timecube')
+            Object.keys(buyables).forEach(id => player.timecube.buyables[id] = buyables[id])
+        }
         setRowCol(layers[layer].buyables)
         for (thing in layers[layer].buyables){
             if (isPlainObject(layers[layer].buyables[thing])){
@@ -320,10 +326,7 @@ addLayer("options-tab", {
         }
     },
     tabFormat: [["microtabs", "stuff"]],
-    row: "otherside",
-    componentStyles: {
-        "microtabs"() { return { "border-style": "none" } }
-    }
+    row: "otherside"
 })
 
 addLayer("help-tab", {

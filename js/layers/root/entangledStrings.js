@@ -26,7 +26,7 @@ addLayer("entangled", {
         }
     },
     acceleronRequirements: [
-        new Decimal(1e29), new Decimal(1.5e41), Decimal.dInf, Decimal.dInf,
+        new Decimal(1e29), new Decimal(1.5e41), new Decimal(1e300), Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
@@ -36,7 +36,7 @@ addLayer("entangled", {
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf
     ],
     inflatonRequirements: [
-        new Decimal(3e4), new Decimal(8.5e12), Decimal.dInf, Decimal.dInf,
+        new Decimal(3e4), new Decimal(8.5e12), new Decimal(1e300), Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
@@ -100,10 +100,6 @@ addLayer("entangled", {
         "blank",
         "milestones"
     ],
-
-    componentStyles: {
-        "microtabs"() { return { "border-style": "none" } },
-    },
 
     hotkeys: [
         {

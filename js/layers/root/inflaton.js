@@ -110,7 +110,10 @@ addLayer("inflaton", {
     },
     gain() {
         let exp = player.inflaton.points.max(1).log10().plus(1).dividedBy(10)
-        return player.inflaton.points.times(Decimal.pow(2, exp))
+        let gain = player.inflaton.points.times(Decimal.pow(2, exp))
+        return gain.layer >= 3
+            ? Decimal.fromComponents(gain.sign, gain.layer, gain.mag * 1.000000000000001)
+            : gain
     },
     researchGain() {
         let researchGain = buyableEffect('inflaton', 12)
@@ -144,7 +147,12 @@ addLayer("inflaton", {
         if (hasResearch('inflaton', 2)) size = size.times(2)
         if (hasResearch('inflaton', 8)) size = size.times(2)
         size = size.times(repeatableEffect('inflaton', 111))
-        return softcap(size, new Decimal(6.187e10), 0.1)
+        size = softcap(size, new Decimal(6.187e10), 0.1)
+
+        size = size.times(buyableEffect('timecube', 'top'))
+
+        size = size.div(getTimelineEffect('top'))
+        return size
     },
     storage() {
         let base = decimalOne
@@ -242,6 +250,10 @@ addLayer("inflaton", {
             },
             onComplete() {
                 this.onExit()
+            },
+            style: {
+                width: "300px",
+                height: "225px"
             }
         }
     },
@@ -335,14 +347,14 @@ addLayer("inflaton", {
             }
         },
         23: {
-            title: 'Enigmatic Engineering (tbd)',
+            title: 'Enigmatic Engineering',
             description: 'Time Cubes seem helpful, but limited in power. Maybe your newfound mastery over space and time can reveal more of their secrets',
             cost() { return player.inflaton.upgradeCosts[23] },
             currencyDisplayName: 'Entangled Strings',
             currencyInternalName: 'points',
             currencyLayer: 'entangled',
             unlocked() { return hasUpgrade('inflaton', 23) || hasMilestone('entangled', 1) },
-            canAfford() { return false },//player.entangled.points.gte(temp.inflaton.upgrades[this.id].cost) },
+            canAfford() { return player.entangled.points.gte(temp.inflaton.upgrades[this.id].cost) },
             pay() {
                 if (!hasUpgrade('inflaton', 31)) player.inflaton.upgradeCosts[31] = player.inflaton.upgradeCosts[31].plus(1)
                 if (!hasUpgrade('inflaton', 32)) player.inflaton.upgradeCosts[32] = player.inflaton.upgradeCosts[32].plus(1)
@@ -707,7 +719,7 @@ addLayer("inflaton", {
         113: {
             title: 'Repeatable: Subspacial Construction',
             description: 'Increase subspace building size tenfold, and increase their effects by twice as much',
-            cost(amount) { return Decimal.gte(amount, 3998) ? Decimal.dInf : Decimal.pow(200, amount).times(150000).div(buyableEffect('skyrmion', 241)) },
+            cost(amount) { return Decimal.gte(amount, 3998) ? Decimal.dInf : Decimal.pow(200, amount).times(150000).div(buyableEffect('skyrmion', 241)).div(buyableEffect('timecube', 'left')) },
             effect(amount) { return { size: Decimal.pow(10, amount), gain: Decimal.pow(2, amount) } },
             effectDisplay(effect) { return `${formatWhole(effect.size)}x, ${formatWhole(effect.gain.times(effect.size))}x` },
             onComplete() { layers.inflaton.buyables.respec() },
@@ -992,7 +1004,6 @@ addLayer("inflaton", {
     ],
 
     componentStyles: {
-        "microtabs"() { return { "border-style": "none" } },
         "buyable"() { return { "height": "100px", "width": "300px" } },
         "upgrade"() { return { "min-height": "150px", "width": "150px" } }
     },

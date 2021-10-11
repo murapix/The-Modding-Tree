@@ -145,8 +145,10 @@ addLayer("fome", {
         enlargeGain.subplanck = buyableEffect('fome', 41).times(buyableEffect('fome', 42)).times(buyableEffect('fome', 43))
         enlargeGain.quantum = buyableEffect('fome', 51).times(buyableEffect('fome', 52)).times(buyableEffect('fome', 53))
         
+        let left = getTimelineEffect('left')
+
         fomeTypes.forEach(fome => expansionGain[fome] = player.fome.fome[fome].expansion.cbrt())
-        fomeTypes.forEach(fome => totalGain[fome] = baseGain[fome].times(boostGain[fome]).times(boostGain.quantum).times(boostGain.quantum2).times(enlargeGain[fome]).pow(expansionGain[fome]))
+        fomeTypes.forEach(fome => totalGain[fome] = baseGain[fome].times(boostGain[fome]).times(boostGain.quantum).times(boostGain.quantum2).times(enlargeGain[fome]).pow(expansionGain[fome]).div(left))
 
         return {
             inflaton: inflatonBonus,
@@ -653,31 +655,43 @@ addLayer("fome", {
                     "blank",
                     ["clickable", 0],
                     () => hasMilestone('inflaton', 1) || hasMilestone('acceleron', 0) ? "blank" : "",
-                    () => player.fome.fome.quantum.expansion.gte(1) ? ["row", [ ["column", [
+                    ["component-table", [
+                        () => player.fome.fome.quantum.expansion.gte(1) ? [
+                            ["column", [
                                 ["display-text", `You have ${format(player.fome.fome.quantum.points)} Quantum Foam${player.fome.fome.quantum.expansion.gt(1) ? `<sup>${formatWhole(player.fome.fome.quantum.expansion)}</sup>` : ``}`],
                                 ["display-text", `(${format(temp.fome.effect.gain.total.quantum)}/sec)`]
-                        ]], "blank", "blank", ["buyable", 51], ["buyable", 52], ["buyable", 53], ["buyable", 54]
-                    ]] : ``,
-                    () => player.fome.fome.subplanck.expansion.gte(1) ? ["row", [ ["column", [
-                            ["display-text", `You have ${format(player.fome.fome.subplanck.points)} Subplanck Foam${player.fome.fome.subplanck.expansion.gt(1) ? `<sup>${formatWhole(player.fome.fome.subplanck.expansion)}</sup>` : ``}`],
-                            ["display-text", `(${format(temp.fome.effect.gain.total.subplanck)}/sec)`]
-                        ]], "blank", "blank", ["buyable", 41], ["buyable", 42], ["buyable", 43], ["buyable", 44]
-                    ]] : ``,
-                    () => player.fome.fome.subspatial.expansion.gte(1) ? ["row", [ ["column", [
-                            ["display-text", `You have ${format(player.fome.fome.subspatial.points)} Subspatial Foam${player.fome.fome.subspatial.expansion.gt(1) ? `<sup>${formatWhole(player.fome.fome.subspatial.expansion)}</sup>` : ``}`],
-                            ["display-text", `(${format(temp.fome.effect.gain.total.subspatial)}/sec)`]
-                        ]], "blank", "blank", ["buyable", 31], ["buyable", 32], ["buyable", 33], ["buyable", 34]
-                    ]] : ``,
-                    () => player.fome.fome.infinitesimal.expansion.gte(1) ? ["row", [ ["column", [
-                            ["display-text", `You have ${format(player.fome.fome.infinitesimal.points)} Infinitesimal Foam${player.fome.fome.infinitesimal.expansion.gt(1) ? `<sup>${formatWhole(player.fome.fome.infinitesimal.expansion)}</sup>` : ``}`],
-                            ["display-text", `(${format(temp.fome.effect.gain.total.infinitesimal)}/sec)`]
-                        ]], "blank", "blank", ["buyable", 21], ["buyable", 22], ["buyable", 23], ["buyable", 24]
-                    ]] : ``,
-                    () => player.fome.fome.protoversal.expansion.gte(1) ? ["row", [ ["column", [
-                            ["display-text", `You have ${format(player.fome.fome.protoversal.points)} Protoversal Foam${player.fome.fome.protoversal.expansion.gt(1) ? `<sup>${formatWhole(player.fome.fome.protoversal.expansion)}</sup>` : ``}`],
-                            ["display-text", `(${format(temp.fome.effect.gain.total.protoversal)}/sec)`]
-                        ]], "blank", "blank",["buyable", 11], ["buyable", 12], ["buyable", 13], ["buyable", 14]
-                    ]] : ``
+                            ]],
+                            "blank", ["buyable", 51], ["buyable", 52], ["buyable", 53], ["buyable", 54]
+                        ] : ``,
+                        () => player.fome.fome.subplanck.expansion.gte(1) ? [
+                            ["column", [
+                                ["display-text", `You have ${format(player.fome.fome.subplanck.points)} Subplanck Foam${player.fome.fome.subplanck.expansion.gt(1) ? `<sup>${formatWhole(player.fome.fome.subplanck.expansion)}</sup>` : ``}`],
+                                ["display-text", `(${format(temp.fome.effect.gain.total.subplanck)}/sec)`]
+                            ]],
+                            "blank", ["buyable", 41], ["buyable", 42], ["buyable", 43], ["buyable", 44]
+                        ] : ``,
+                        () => player.fome.fome.subspatial.expansion.gte(1) ? [
+                            ["column", [
+                                ["display-text", `You have ${format(player.fome.fome.subspatial.points)} Subspatial Foam${player.fome.fome.subspatial.expansion.gt(1) ? `<sup>${formatWhole(player.fome.fome.subspatial.expansion)}</sup>` : ``}`],
+                                ["display-text", `(${format(temp.fome.effect.gain.total.subspatial)}/sec)`]
+                            ]],
+                            "blank", ["buyable", 31], ["buyable", 32], ["buyable", 33], ["buyable", 34]
+                        ] : ``,
+                        () => player.fome.fome.infinitesimal.expansion.gte(1) ? [
+                            ["column", [
+                                ["display-text", `You have ${format(player.fome.fome.infinitesimal.points)} Infinitesimal Foam${player.fome.fome.infinitesimal.expansion.gt(1) ? `<sup>${formatWhole(player.fome.fome.infinitesimal.expansion)}</sup>` : ``}`],
+                                ["display-text", `(${format(temp.fome.effect.gain.total.infinitesimal)}/sec)`]
+                            ]],
+                            "blank", ["buyable", 21], ["buyable", 22], ["buyable", 23], ["buyable", 24]
+                        ] : ``,
+                        () => player.fome.fome.protoversal.expansion.gte(1) ? [
+                            ["column", [
+                                ["display-text", `You have ${format(player.fome.fome.protoversal.points)} Protoversal Foam${player.fome.fome.protoversal.expansion.gt(1) ? `<sup>${formatWhole(player.fome.fome.protoversal.expansion)}</sup>` : ``}`],
+                                ["display-text", `(${format(temp.fome.effect.gain.total.protoversal)}/sec)`]
+                            ]],
+                            "blank",["buyable", 11], ["buyable", 12], ["buyable", 13], ["buyable", 14]
+                        ] : ``
+                    ]]
                 ]
             },
             "Boosts": {
@@ -739,8 +753,7 @@ addLayer("fome", {
     ],
 
     componentStyles: {
-        "buyable"() { return { "height": "100px", "width": "150px" } },
-        "microtabs"() { return { "border-style": "none" } },
+        "buyable"() { return { "height": "100px", "width": "150px" } }
     },
 
     hotkeys: [
