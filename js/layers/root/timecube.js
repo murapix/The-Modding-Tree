@@ -912,11 +912,11 @@ function getTimelineEffect(square, next = false) {
 
 function getTimelineBonus(square) {
     switch(square) {
-        case 'front': return [12,21,22,32].map(id => clickableEffect('timecube', id)).reduce(Decimal.add)
-        case 'left': return [11,21,23,31].map(id => clickableEffect('timecube', id)).reduce(Decimal.add)
+        case 'front': return [12,21,22,32].map(id => clickableEffect('timecube', id)).reduce(Decimal.add).times(100)
+        case 'left': return [11,21,23,31].map(id => clickableEffect('timecube', id)).reduce(Decimal.add).times(1000)
         case 'top': return [11,12,13,14].map(id => clickableEffect('timecube', id)).reduce(Decimal.add)
         case 'back': return [13,23,24,33].map(id => clickableEffect('timecube', id)).reduce(Decimal.add)
-        case 'right': return [14,22,24,34].map(id => clickableEffect('timecube', id)).reduce(Decimal.add)
+        case 'right': return [14,22,24,34].map(id => clickableEffect('timecube', id)).reduce(Decimal.add).div(100)
         case 'bottom': return [31,32,33,34].map(id => clickableEffect('timecube', id)).reduce(Decimal.add)
     }
 }
