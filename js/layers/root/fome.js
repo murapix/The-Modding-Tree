@@ -145,7 +145,7 @@ addLayer("fome", {
         enlargeGain.subplanck = buyableEffect('fome', 41).times(buyableEffect('fome', 42)).times(buyableEffect('fome', 43))
         enlargeGain.quantum = buyableEffect('fome', 51).times(buyableEffect('fome', 52)).times(buyableEffect('fome', 53))
         
-        let left = getTimelineEffect('left')
+        let left = getTimelineEffect('left').div(getTimelineBonus('left').plus(1))
 
         fomeTypes.forEach(fome => expansionGain[fome] = player.fome.fome[fome].expansion.cbrt())
         fomeTypes.forEach(fome => totalGain[fome] = baseGain[fome].times(boostGain[fome]).times(boostGain.quantum).times(boostGain.quantum2).times(enlargeGain[fome]).pow(expansionGain[fome]).div(left))

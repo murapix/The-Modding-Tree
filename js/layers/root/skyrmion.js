@@ -101,7 +101,7 @@ addLayer("skyrmion", {
         if (inChallenge('abyss', 11))
             [pionCount, spinorCount] = [pionCount.plus(spinorCount).times(0.75), spinorCount.plus(pionCount).times(0.75)]
 
-        let bottom = getTimelineEffect('bottom')
+        let bottom = getTimelineEffect('bottom').div(getTimelineBonus('bottom').plus(1))
         let eff = {
             pion: {
                 gen: skyrmions.times(0.01).times(universalBoost).times(spinor.gamma).times(spinor.mu).times(spinor.pi).div(bottom),

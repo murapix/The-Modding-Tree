@@ -23,6 +23,7 @@ addLayer("timecube", {
     paused() { return player.universeTab !== "none" },
     resource() { return player[this.layer].points.equals(1) ? "Time Cube" : "Time Cubes" },
     color: "#f037ea",
+    darker: "#bd04b7",
     type: "none",
 
     startData() {
@@ -325,9 +326,7 @@ addLayer("timecube", {
                 player.inflaton.upgrades = inflatonUpgrades
                 player.inflaton.upgradeCosts = inflatonCosts
                 player.inflaton.repeatables[113] = decimalZero
-                if (hasResearch('inflaton', 19))
-                    player.inflaton.research.splice(Math.max(player.inflaton.research.indexOf(19), player.inflaton.research.indexOf('19')), 1)
-
+                
                 let timecubeTimelines = {...player.timecube.timelines}
                 let timecubeScores = {...player.timecube.nextScores}
                 let timecubeSelectors = Object.fromEntries(Object.keys(player.timecube.scores).map(id => [id, getClickableState('timecube', id)]))
@@ -354,7 +353,7 @@ addLayer("timecube", {
         },
         11: {
             title: 'Top Left',
-            display() { return `Top Left Effect<br>Amount: ${format(player.timecube.scores[this.id])}<br>Effect: ${format(clickableEffect('timecube', this.id))}` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -368,13 +367,18 @@ addLayer("timecube", {
                     player.timecube.timelines.left++
                 }
             },
-            effect() { return player.timecube.scores[this.id].plus(1).log10() },
+            effect() { return player.timecube.scores[this.id].plus(1).log10().div(10) },
             onHold() {},
-            style() { return getClickableState('timecube', this.id) ? { "background-color": temp.timecube.color } : { "background-color": "#bf8f8f" } }
+            style() {
+                let style = {}
+                style["background-color"] = getClickableState('timecube', this.id) ? temp.timecube.color : "var(--locked)"
+                style["border-color"] = player.timecube.activeSelectors[this.id] ? temp.timecube.darker : "rgba(0,0,0,0.125)"
+                return style
+            }
         },
         12: {
             title: 'Top Front',
-            display() { return `Top Front Effect<br>Amount: ${format(player.timecube.scores[this.id])}<br>Effect: ${format(clickableEffect('timecube', this.id))}` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -388,13 +392,18 @@ addLayer("timecube", {
                     player.timecube.timelines.front++
                 }
             },
-            effect() { return player.timecube.scores[this.id].plus(1).log10() },
+            effect() { return player.timecube.scores[this.id].plus(1).log10().div(10) },
             onHold() {},
-            style() { return getClickableState('timecube', this.id) ? { "background-color": temp.timecube.color } : { "background-color": "#bf8f8f" } }
+            style() {
+                let style = {}
+                style["background-color"] = getClickableState('timecube', this.id) ? temp.timecube.color : "var(--locked)"
+                style["border-color"] = player.timecube.activeSelectors[this.id] ? temp.timecube.darker : "rgba(0,0,0,0.125)"
+                return style
+            }
         },
         13: {
             title: 'Top Back',
-            display() { return `Top Back Effect<br>Amount: ${format(player.timecube.scores[this.id])}<br>Effect: ${format(clickableEffect('timecube', this.id))}` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -408,13 +417,18 @@ addLayer("timecube", {
                     player.timecube.timelines.back++
                 }
             },
-            effect() { return player.timecube.scores[this.id].plus(1).log10() },
+            effect() { return player.timecube.scores[this.id].plus(1).log10().div(10) },
             onHold() {},
-            style() { return getClickableState('timecube', this.id) ? { "background-color": temp.timecube.color } : { "background-color": "#bf8f8f" } }
+            style() {
+                let style = {}
+                style["background-color"] = getClickableState('timecube', this.id) ? temp.timecube.color : "var(--locked)"
+                style["border-color"] = player.timecube.activeSelectors[this.id] ? temp.timecube.darker : "rgba(0,0,0,0.125)"
+                return style
+            }
         },
         14: {
             title: 'Top Right',
-            display() { return `Top Right Effect<br>Amount: ${format(player.timecube.scores[this.id])}<br>Effect: ${format(clickableEffect('timecube', this.id))}` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -428,13 +442,18 @@ addLayer("timecube", {
                     player.timecube.timelines.right++
                 }
             },
-            effect() { return player.timecube.scores[this.id].plus(1).log10() },
+            effect() { return player.timecube.scores[this.id].plus(1).log10().div(10) },
             onHold() {},
-            style() { return getClickableState('timecube', this.id) ? { "background-color": temp.timecube.color } : { "background-color": "#bf8f8f" } }
+            style() {
+                let style = {}
+                style["background-color"] = getClickableState('timecube', this.id) ? temp.timecube.color : "var(--locked)"
+                style["border-color"] = player.timecube.activeSelectors[this.id] ? temp.timecube.darker : "rgba(0,0,0,0.125)"
+                return style
+            }
         },
         21: {
             title: 'Front Left',
-            display() { return `Front Left Effect<br>Amount: ${format(player.timecube.scores[this.id])}<br>Effect: ${format(clickableEffect('timecube', this.id))}` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -448,13 +467,18 @@ addLayer("timecube", {
                     player.timecube.timelines.left++
                 }
             },
-            effect() { return player.timecube.scores[this.id].plus(1).log10() },
+            effect() { return player.timecube.scores[this.id].plus(1).log10().div(10) },
             onHold() {},
-            style() { return getClickableState('timecube', this.id) ? { "background-color": temp.timecube.color } : { "background-color": "#bf8f8f" } }
+            style() {
+                let style = {}
+                style["background-color"] = getClickableState('timecube', this.id) ? temp.timecube.color : "var(--locked)"
+                style["border-color"] = player.timecube.activeSelectors[this.id] ? temp.timecube.darker : "rgba(0,0,0,0.125)"
+                return style
+            }
         },
         22: {
             title: 'Front Right',
-            display() { return `Front Right Effect<br>Amount: ${format(player.timecube.scores[this.id])}<br>Effect: ${format(clickableEffect('timecube', this.id))}` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -468,13 +492,18 @@ addLayer("timecube", {
                     player.timecube.timelines.right++
                 }
             },
-            effect() { return player.timecube.scores[this.id].plus(1).log10() },
+            effect() { return player.timecube.scores[this.id].plus(1).log10().div(10) },
             onHold() {},
-            style() { return getClickableState('timecube', this.id) ? { "background-color": temp.timecube.color } : { "background-color": "#bf8f8f" } }
+            style() {
+                let style = {}
+                style["background-color"] = getClickableState('timecube', this.id) ? temp.timecube.color : "var(--locked)"
+                style["border-color"] = player.timecube.activeSelectors[this.id] ? temp.timecube.darker : "rgba(0,0,0,0.125)"
+                return style
+            }
         },
         23: {
             title: 'Back Left',
-            display() { return `Back Left Effect<br>Amount: ${format(player.timecube.scores[this.id])}<br>Effect: ${format(clickableEffect('timecube', this.id))}` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -488,13 +517,18 @@ addLayer("timecube", {
                     player.timecube.timelines.left++
                 }
             },
-            effect() { return player.timecube.scores[this.id].plus(1).log10() },
+            effect() { return player.timecube.scores[this.id].plus(1).log10().div(10) },
             onHold() {},
-            style() { return getClickableState('timecube', this.id) ? { "background-color": temp.timecube.color } : { "background-color": "#bf8f8f" } }
+            style() {
+                let style = {}
+                style["background-color"] = getClickableState('timecube', this.id) ? temp.timecube.color : "var(--locked)"
+                style["border-color"] = player.timecube.activeSelectors[this.id] ? temp.timecube.darker : "rgba(0,0,0,0.125)"
+                return style
+            }
         },
         24: {
             title: 'Back Right',
-            display() { return `Back Right Effect<br>Amount: ${format(player.timecube.scores[this.id])}<br>Effect: ${format(clickableEffect('timecube', this.id))}` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -508,13 +542,18 @@ addLayer("timecube", {
                     player.timecube.timelines.right++
                 }
             },
-            effect() { return player.timecube.scores[this.id].plus(1).log10() },
+            effect() { return player.timecube.scores[this.id].plus(1).log10().div(10) },
             onHold() {},
-            style() { return getClickableState('timecube', this.id) ? { "background-color": temp.timecube.color } : { "background-color": "#bf8f8f" } }
+            style() {
+                let style = {}
+                style["background-color"] = getClickableState('timecube', this.id) ? temp.timecube.color : "var(--locked)"
+                style["border-color"] = player.timecube.activeSelectors[this.id] ? temp.timecube.darker : "rgba(0,0,0,0.125)"
+                return style
+            }
         },
         31: {
             title: 'Bottom Left',
-            display() { return `Bottom Left Effect<br>Amount: ${format(player.timecube.scores[this.id])}<br>Effect: ${format(clickableEffect('timecube', this.id))}` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -528,13 +567,18 @@ addLayer("timecube", {
                     player.timecube.timelines.left++
                 }
             },
-            effect() { return player.timecube.scores[this.id].plus(1).log10() },
+            effect() { return player.timecube.scores[this.id].plus(1).log10().div(10) },
             onHold() {},
-            style() { return getClickableState('timecube', this.id) ? { "background-color": temp.timecube.color } : { "background-color": "#bf8f8f" } }
+            style() {
+                let style = {}
+                style["background-color"] = getClickableState('timecube', this.id) ? temp.timecube.color : "var(--locked)"
+                style["border-color"] = player.timecube.activeSelectors[this.id] ? temp.timecube.darker : "rgba(0,0,0,0.125)"
+                return style
+            }
         },
         32: {
             title: 'Bottom Front',
-            display() { return `Bottom Front Effect<br>Amount: ${format(player.timecube.scores[this.id])}<br>Effect: ${format(clickableEffect('timecube', this.id))}` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -548,13 +592,18 @@ addLayer("timecube", {
                     player.timecube.timelines.front++
                 }
             },
-            effect() { return player.timecube.scores[this.id].plus(1).log10() },
+            effect() { return player.timecube.scores[this.id].plus(1).log10().div(10) },
             onHold() {},
-            style() { return getClickableState('timecube', this.id) ? { "background-color": temp.timecube.color } : { "background-color": "#bf8f8f" } }
+            style() {
+                let style = {}
+                style["background-color"] = getClickableState('timecube', this.id) ? temp.timecube.color : "var(--locked)"
+                style["border-color"] = player.timecube.activeSelectors[this.id] ? temp.timecube.darker : "rgba(0,0,0,0.125)"
+                return style
+            }
         },
         33: {
             title: 'Bottom Back',
-            display() { return `Bottom Back Effect<br>Amount: ${format(player.timecube.scores[this.id])}<br>Effect: ${format(clickableEffect('timecube', this.id))}` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -568,13 +617,18 @@ addLayer("timecube", {
                     player.timecube.timelines.back++
                 }
             },
-            effect() { return player.timecube.scores[this.id].plus(1).log10() },
+            effect() { return player.timecube.scores[this.id].plus(1).log10().div(10) },
             onHold() {},
-            style() { return getClickableState('timecube', this.id) ? { "background-color": temp.timecube.color } : { "background-color": "#bf8f8f" } }
+            style() {
+                let style = {}
+                style["background-color"] = getClickableState('timecube', this.id) ? temp.timecube.color : "var(--locked)"
+                style["border-color"] = player.timecube.activeSelectors[this.id] ? temp.timecube.darker : "rgba(0,0,0,0.125)"
+                return style
+            }
         },
         34: {
             title: 'Bottom Right',
-            display() { return `Bottom Right Effect<br>Amount: ${format(player.timecube.scores[this.id])}<br>Effect: ${format(clickableEffect('timecube', this.id))}` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -588,21 +642,26 @@ addLayer("timecube", {
                     player.timecube.timelines.right++
                 }
             },
-            effect() { return player.timecube.scores[this.id].plus(1).log10() },
+            effect() { return player.timecube.scores[this.id].plus(1).log10().div(10) },
             onHold() {},
-            style() { return getClickableState('timecube', this.id) ? { "background-color": temp.timecube.color } : { "background-color": "#bf8f8f" } }
+            style() {
+                let style = {}
+                style["background-color"] = getClickableState('timecube', this.id) ? temp.timecube.color : "var(--locked)"
+                style["border-color"] = player.timecube.activeSelectors[this.id] ? temp.timecube.darker : "rgba(0,0,0,0.125)"
+                return style
+            }
         }
     },
     inTimeline() { return Object.values(player.timecube.activeTimelines).some(level => level>0) },
     timelineScore() {
-        let baseScore = Object.values(player.timecube.activeTimelines).reduce((a,b) => a+b)
+        let baseScore = Object.values(player.timecube.activeTimelines).reduce((a,b) => a+b)/2
         let skyrmionScore = ['pion', 'spinor'].map(type => player.skyrmion[type].points.plus(1).log10()).reduce((a,b) => a.plus(b)).div(10)
         let fomeScore = fomeTypes.map(type => player.fome.fome[type].points.plus(1).log10()).reduce((a,b) => a.plus(b)).div(50)
         let acceleronScore = player.acceleron.points.plus(1).log10()
         let inflatonScore = temp.inflaton.storage.plus(1).log10().div(10000)
         let timecubeScore = player.timecube.points.plus(1).log10()
 
-        return skyrmionScore.times(fomeScore).times(acceleronScore).times(inflatonScore).times(timecubeScore).times(baseScore)
+        return skyrmionScore.times(fomeScore).times(acceleronScore).times(inflatonScore).times(timecubeScore).div(1e6).pow(baseScore)
     },
 
     buyables: {},
@@ -866,7 +925,7 @@ const baseTimelineEffects = {
     'front': [decimalOne, new Decimal(1e8), new Decimal(1e12), new Decimal(1e16), new Decimal(1e20)], // timecube
     'left': [decimalOne, new Decimal(1e12), new Decimal(1e300), new Decimal('1e400'), new Decimal('1e500')], // foam
     'top': [decimalOne, new Decimal(1e6), new Decimal(1e9), new Decimal(1e12), new Decimal(1e15)], // universe
-    'back': [decimalOne, new Decimal(1e30), new Decimal(1e45), new Decimal(1e60), new Decimal(1e75), new Decimal(1e90)], // acceleron
+    'back': [decimalOne, new Decimal(1e6), new Decimal(1e45), new Decimal(1e60), new Decimal(1e75), new Decimal(1e90)], // acceleron
     'right': [decimalOne, new Decimal(1e2), new Decimal(1e3), new Decimal(1e4), new Decimal(1e5)], // loop
     'bottom': [decimalOne, new Decimal(1e5), new Decimal(1e150), new Decimal(1e200), new Decimal(1e300)] // skyrmion
 }

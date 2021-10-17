@@ -56,7 +56,7 @@ addLayer("acceleron", {
     effect() {
         let effect = player.acceleron.best.max(0).plus(1)
         effect = effect.gte(1e12) ? effect.log10().times(5e5/6) : effect.sqrt()
-        return effect.times(defaultUpgradeEffect('timecube', 12)).times(defaultUpgradeEffect('acceleron', 113)).times(buyableEffect('timecube', 'back')).times(defaultUpgradeEffect('timecube', 35)).div(getTimelineEffect('back')).max(1).times(getClickableState('acceleron', 0))
+        return effect.times(defaultUpgradeEffect('timecube', 12)).times(defaultUpgradeEffect('acceleron', 113)).times(buyableEffect('timecube', 'back')).times(defaultUpgradeEffect('timecube', 35)).div(getTimelineEffect('back')).times(getTimelineBonus('back').plus(1)).max(1).times(getClickableState('acceleron', 0))
     },
     effectDescription() {
         return `which ${player.acceleron.points.eq(1) ? `is` : `are`} causing time to go ${format(temp.acceleron.effect)}x faster<br>For every second in real time, ${formatSingleTime(temp.acceleron.effect)} passes`
@@ -143,7 +143,7 @@ addLayer("acceleron", {
             unlocked() { return hasUpgrade('acceleron', 14) || isLoopFinished(0) },
             max: new Decimal(60),
             duration: decimalOne,
-            multi() { return Decimal.plus(0.001, defaultUpgradeEffect('acceleron', 123, 0)).div(getTimelineEffect('right')) },
+            multi() { return Decimal.plus(0.001, defaultUpgradeEffect('acceleron', 123, 0)).div(getTimelineEffect('right')).times(getTimelineBonus('right').plus(1)) },
             intervalEffect(intervals = decimalOne) { addPoints('acceleron', new Decimal(temp.acceleron.resetGain).times(temp.acceleron.loops[0].multi).times(intervals)) },
             intervalDisplay() { return `Every second, gain ${formatSmall(temp.acceleron.loops[0].multi.times(100), 1)}% of your Acceleron prestige gain. Currently: ${format(new Decimal(temp.acceleron.resetGain).times(temp.acceleron.loops[0].multi).times(temp.acceleron.effect))} Accelerons/s` },
             stroke: '#ff0000',
@@ -153,7 +153,7 @@ addLayer("acceleron", {
             unlocked() { return isLoopFinished(0) || isLoopFinished(1) },
             max: new Decimal(360),
             duration: new Decimal(60),
-            multi() { return Decimal.plus(1, defaultUpgradeEffect('acceleron', 111, 0)).div(getTimelineEffect('right')) },
+            multi() { return Decimal.plus(1, defaultUpgradeEffect('acceleron', 111, 0)).div(getTimelineEffect('right')).times(getTimelineBonus('right').plus(1)) },
             intervalEffect(intervals = decimalOne) {
                 let skyrmionEffect = temp.skyrmion.effect
                 let fomeEffect = temp.fome.effect
@@ -172,7 +172,7 @@ addLayer("acceleron", {
             unlocked() { return isLoopFinished(1) || isLoopFinished(2) },
             max: new Decimal(600),
             duration: new Decimal(3600),
-            gain() { return defaultUpgradeEffect('timecube', 11).times(defaultUpgradeEffect('acceleron', 22)).times(defaultUpgradeEffect('acceleron', 141)).times(buyableEffect('timecube', 'front')).div(getTimelineEffect('right')).div(getTimelineEffect('front')) },
+            gain() { return defaultUpgradeEffect('timecube', 11).times(defaultUpgradeEffect('acceleron', 22)).times(defaultUpgradeEffect('acceleron', 141)).times(buyableEffect('timecube', 'front')).div(getTimelineEffect('right')).times(getTimelineBonus('right').plus(1)).div(getTimelineEffect('front')).times(getTimelineBonus('front').plus(1)) },
             intervalEffect(intervals = decimalOne) { addPoints('timecube', intervals.times(temp.acceleron.loops[2].gain)) },
             intervalDisplay() { return `Every hour, gain ${format(temp.acceleron.loops[2].gain)} Time Cubes. Currently: ${format(temp.acceleron.loops[2].gain.times(temp.acceleron.effect).div(3600))} Time Cubes/s` },
             stroke: '#0000FF',
@@ -182,7 +182,7 @@ addLayer("acceleron", {
             unlocked() { return hasUpgrade('timecube', 15) || isLoopFinished(3) },
             max: new Decimal(250000),
             duration: new Decimal(86400),
-            intervalEffect(intervals = decimalOne) { player.acceleron.fomeBoost = Decimal.times(Decimal.div(1e6, getTimelineEffect('right')), intervals) },
+            intervalEffect(intervals = decimalOne) { player.acceleron.fomeBoost = Decimal.times(Decimal.div(1e6, getTimelineEffect('right').div(getTimelineBonus('right').plus(1))), intervals) },
             intervalDisplay() { return `Every day, gain a decaying boost to Foam production. Currently: ${format(player.acceleron.fomeBoost)}x` },
             stroke: '#008080',
             width: 10
@@ -191,7 +191,7 @@ addLayer("acceleron", {
             unlocked() { return hasUpgrade('acceleron', 24) || isLoopFinished(4) },
             max: new Decimal(1e11),
             duration: new Decimal(31536000),
-            intervalEffect(intervals = decimalOne) { player.acceleron.acceleronBoost = Decimal.times(Decimal.div(1e3, getTimelineEffect('right')), intervals) },
+            intervalEffect(intervals = decimalOne) { player.acceleron.acceleronBoost = Decimal.times(Decimal.div(1e3, getTimelineEffect('right').div(getTimelineBonus('right').plus(1))), intervals) },
             intervalDisplay() { return `Every year, gain a decaying boost to Acceleron production. Currently: ${format(player.acceleron.acceleronBoost)}x` },
             stroke: '#00FF00',
             width: 10
@@ -200,7 +200,7 @@ addLayer("acceleron", {
             unlocked() { return isLoopFinished(4) || isLoopFinished(5) },
             max: new Decimal(4e17),
             duration: new Decimal(315360000),
-            intervalEffect(intervals = decimalOne) { player.acceleron.skyrmionBoost = Decimal.times(Decimal.div(1e9, getTimelineEffect('right')), intervals) },
+            intervalEffect(intervals = decimalOne) { player.acceleron.skyrmionBoost = Decimal.times(Decimal.div(1e9, getTimelineEffect('right').div(getTimelineBonus('right').plus(1))), intervals) },
             intervalDisplay() { return `Every decade, gain a decaying boost to Pion and Spinor production. Currently: ${format(player.acceleron.skyrmionBoost)}x` },
             stroke: '#808000',
             width: 10

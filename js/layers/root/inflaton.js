@@ -151,7 +151,7 @@ addLayer("inflaton", {
 
         size = size.times(buyableEffect('timecube', 'top'))
 
-        size = size.div(getTimelineEffect('top'))
+        size = size.div(getTimelineEffect('top')).times(getTimelineBonus('top').plus(1))
         return size
     },
     storage() {
