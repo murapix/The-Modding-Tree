@@ -10,7 +10,10 @@ addLayer("entangled", {
     resource() { return player.entangled.points.equals(1) ? "Entangled String" : "Entangled Strings" },
     color: "#9a4500",
     type: "custom",
-    getResetGain() { return (player.acceleron.points.gte(temp.entangled.nextAt.acceleron) && temp.inflaton.storage.gte(temp.entangled.nextAt.inflaton)) ? decimalOne : decimalZero },
+    getResetGain() { return (player.acceleron.points.gte(temp.entangled.nextAt.acceleron)
+                             && temp.inflaton.storage.gte(temp.entangled.nextAt.inflaton)
+                             && Object.values(player.timecube.scores).reduce(Decimal.max, decimalZero).gte(temp.entangled.nextAt.timecube))
+                             ? decimalOne : decimalZero },
     getNextAt() {
         if (player.entangled.points.eq(0)) return { acceleron: new Decimal(1e19), inflaton: new Decimal("1e12000") }
         if (player.entangled.points.eq(1)) return { acceleron: new Decimal(1e29), inflaton: new Decimal("1e30000") }
@@ -22,11 +25,12 @@ addLayer("entangled", {
 
         return {
             acceleron: temp.entangled.acceleronRequirements[points].times(buyableEffect('skyrmion', 142)),
-            inflaton: temp.entangled.inflatonRequirements[points].times(buyableEffect('skyrmion', 242)).pow10()
+            inflaton: temp.entangled.inflatonRequirements[points].times(buyableEffect('skyrmion', 242)).pow10(),
+            timecube: temp.entangled.timelineRequirements[points]
         }
     },
-    acceleronRequirements: [
-        new Decimal(1e29), new Decimal(1.5e41), new Decimal(1e300), Decimal.dInf,
+    acceleronRequirements: [ // 1 = skyrmion, 2 = timecube, 4 = loops, 8 = buildings, 16 = research
+        new Decimal(1e29), new Decimal(1.5e41), new Decimal(1e50), new Decimal(1e64),
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
@@ -35,8 +39,8 @@ addLayer("entangled", {
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf
     ],
-    inflatonRequirements: [
-        new Decimal(3e4), new Decimal(8.5e12), new Decimal(1e300), Decimal.dInf,
+    inflatonRequirements: [ // 1 = skyrmion, 2 = timecube, 4 = loops, 8 = buildings, 16 = research
+        new Decimal(3e4), new Decimal(8.5e12), new Decimal(1.6e8), new Decimal(4.5e17),
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
@@ -44,10 +48,20 @@ addLayer("entangled", {
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf
+    ],
+    timelineRequirements: [ // 1 = skyrmion, 2 = timecube, 4 = loops, 8 = buildings, 16 = research
+        decimalZero, decimalZero, new Decimal(5e9), new Decimal(5e20),
+        decimalZero, decimalZero, decimalZero, decimalZero,
+        decimalZero, decimalZero, decimalZero, decimalZero,
+        decimalZero, decimalZero, decimalZero, decimalZero,
+        decimalZero, decimalZero, decimalZero, decimalZero,
+        decimalZero, decimalZero, decimalZero, decimalZero,
+        decimalZero, decimalZero, decimalZero, decimalZero,
+        decimalZero, decimalZero, decimalZero, decimalZero
     ],
 
     prestigeButtonText() {
-        return `Extract ${formatWhole(temp.entangled.getResetGain)} Entangled String${temp.entangled.getResetGain.eq(1) ? `` : `s`}<br><br>Requires:<br>${format(temp.entangled.nextAt.acceleron)} Accelerons<br>${format(temp.entangled.nextAt.inflaton)} stored Inflatons`
+        return `Extract an Entangled String`
     },
     canReset() {
         return temp.entangled.getResetGain.gte(1)
@@ -97,6 +111,12 @@ addLayer("entangled", {
         "main-display",
         "blank",
         "prestige-button",
+        "blank",
+        ["display-text", "The next Entangled String requires:"],
+        "blank",
+        ["display-text", () => colored('acceleron', `Accelerons: ${format(player.acceleron.points)}/${format(temp.entangled.nextAt.acceleron)}`, 'span')],
+        ["display-text", () => colored('inflaton', `Stored Inflatons: ${format(temp.inflaton.storage)}/${format(temp.entangled.nextAt.inflaton)}`, 'span')],
+        () => hasUpgrade('inflaton', 23) ? ["display-text", colored('timecube', `Best Timeline Score: ${format(Object.values(player.timecube.scores).reduce(Decimal.max, decimalZero))}/${format(temp.entangled.nextAt.timecube)}`, 'span')] : '',
         "blank",
         "milestones"
     ],

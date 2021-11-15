@@ -144,7 +144,7 @@ addLayer("acceleron", {
             max: new Decimal(60),
             duration: decimalOne,
             multi() { return Decimal.plus(0.001, defaultUpgradeEffect('acceleron', 123, 0)).div(getTimelineEffect('right')).times(getTimelineBonus('right').plus(1)) },
-            intervalEffect(intervals = decimalOne) { addPoints('acceleron', new Decimal(temp.acceleron.resetGain).times(temp.acceleron.loops[0].multi).times(intervals)) },
+            intervalEffect(intervals = decimalOne) { addPoints('acceleron', new Decimal(temp.acceleron.resetGain).times(temp.acceleron.loops[0].multi).times(intervals).max(hasUpgrade('timecube', 44) ? 1 : 0)) },
             intervalDisplay() { return `Every second, gain ${formatSmall(temp.acceleron.loops[0].multi.times(100), 1)}% of your Acceleron prestige gain. Currently: ${format(new Decimal(temp.acceleron.resetGain).times(temp.acceleron.loops[0].multi).times(temp.acceleron.effect))} Accelerons/s` },
             stroke: '#ff0000',
             width: 10
@@ -572,7 +572,7 @@ function createEnhancement(id, data) {
     }
 
     if (data.cost === undefined)
-        data.cost = () => fibonacciNumber(player.acceleron.enhancements[0])
+        data.cost = () => fibonacciNumber(player.acceleron.enhancements[0]).round()
 
     if (data.unlocked === undefined) {
         let upgrade = id%10 === 4 ? ['timecube', 25] : ['acceleron', 21]

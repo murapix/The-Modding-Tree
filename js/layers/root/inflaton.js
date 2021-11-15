@@ -220,7 +220,7 @@ addLayer("inflaton", {
             let cost = temp.inflaton.research[id].repeatable ? layers.inflaton.research[id].cost(researchLevel('inflaton', id)) : temp.inflaton.research[id].cost
             if (player.inflaton.researchProgress.gte(cost)) {
                 player.inflaton.researchQueue.shift()
-                if (temp.inflaton.research[id].repeatable)
+                if (temp.inflaton.research[id].repeatable && temp.inflaton.research[id].canResearch)
                     player.inflaton.repeatables[id] = Decimal.add(player.inflaton.repeatables[id], 1)
                 else player.inflaton.research.push(id)
                 player.inflaton.researchProgress = decimalZero
@@ -701,6 +701,7 @@ addLayer("inflaton", {
             effect(amount) { return Decimal.pow(2, amount) },
             effectDisplay(effect) { return `${formatWhole(effect)}x` },
             unlocked() { return hasResearch('inflaton', 15) },
+            canResearch: true,
             repeatable: true,
             row: 0,
             pos: 1
@@ -712,6 +713,7 @@ addLayer("inflaton", {
             effect(amount) { return Decimal.times(amount, 6) },
             effectDisplay(effect) { return `+${formatLength(effect)}` },
             unlocked() { return hasResearch('inflaton', 15) },
+            canResearch: true,
             repeatable: true,
             row: 0,
             pos: 2
@@ -736,6 +738,7 @@ addLayer("inflaton", {
             effect(amount) { return Decimal.pow(1.5, amount) },
             effectDisplay(effect) { return `1/${format(effect)}x` },
             unlocked() { return hasResearch('inflaton', 22) },
+            canResearch: true,
             repeatable: true,
             row: 0,
             pos: 4
@@ -747,6 +750,7 @@ addLayer("inflaton", {
             effect(amount) { return Decimal.pow(1e6, amount) },
             effectDisplay(effect) { return `${formatWhole(effect)}x` },
             unlocked() { return hasResearch('inflaton', 22) },
+            canResearch: true,
             repeatable: true,
             row: 0,
             pos: 5

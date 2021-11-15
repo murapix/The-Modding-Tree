@@ -149,6 +149,8 @@ addLayer("fome", {
 
         fomeTypes.forEach(fome => expansionGain[fome] = player.fome.fome[fome].expansion.cbrt())
         fomeTypes.forEach(fome => totalGain[fome] = baseGain[fome].times(boostGain[fome]).times(boostGain.quantum).times(boostGain.quantum2).times(enlargeGain[fome]).pow(expansionGain[fome]).div(left))
+        if (hasUpgrade('timecube', 45))
+            fomeTypes.forEach(fome => totalGain[fome] = totalGain[fome].times(upgradeEffect('timecube', 45)[fome]))
 
         return {
             inflaton: inflatonBonus,

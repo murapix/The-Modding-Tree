@@ -414,4 +414,4 @@ function gridRun(layer, func, data, id) {
 // Mod-specific functions
 function defaultUpgradeEffect(layer, id, def = decimalOne) { return hasUpgrade(layer, id) ? upgradeEffect(layer, id) : def }
 
-function colored(layer, text) { return `<h2 style='color:${temp[layer].color};text-shadow:${temp[layer].color} 0px 0px 10px;'>${text}</h2>` }
+function colored(layer, text, tag='h2') { return `<${tag} style='color:${temp[layer].color};text-shadow:${temp[layer].color} 0px 0px 10px;'>${text}</${tag}>` }

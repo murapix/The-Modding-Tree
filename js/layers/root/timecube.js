@@ -11,6 +11,7 @@ let timelineMiddleStyle = {
 let timelineRightStyle = {
     'padding-left': '8px'
 }
+let offset45 = Math.E/Math.PI
 
 addLayer("timecube", {
     name: "Time Cubes",
@@ -70,8 +71,6 @@ addLayer("timecube", {
     },
 
     upgrades: {
-        rows: 20,
-        cols: 5,
         11: {
             title: 'Tile',
             description: 'log10(Accelerons) increases Time Cube gain',
@@ -188,27 +187,41 @@ addLayer("timecube", {
             unlocked() { return hasUpgrade('timecube', 35) || hasUpgrade('timecube', this.id) }
         },
         42: {
-            title: '',
-            description: '',
-            cost: new Decimal(1e10000),
+            title: 'Tower',
+            description: 'While in at least one Top timeline, stored Inflatons grant 256x more score',
+            cost: new Decimal(1e17),
+            effect() { return player.timecube.activeTimelines.top ? 256 : 1 },
             unlocked() { return hasUpgrade('timecube', 35) || hasUpgrade('timecube', this.id) }
         },
         43: {
-            title: '',
-            description: '',
-            cost: new Decimal(1e10000),
+            title: 'Title',
+            description: 'Best timeline scores also increase their corresponding Time Square gain',
+            cost: new Decimal(1e20),
             unlocked() { return hasUpgrade('timecube', 35) || hasUpgrade('timecube', this.id) }
         },
         44: {
-            title: '',
-            description: '',
-            cost: new Decimal(1e10000),
+            title: 'Tempo',
+            description: 'The first entropic loop always gives at least one Acceleron',
+            cost: new Decimal(1e21),
             unlocked() { return hasUpgrade('timecube', 35) || hasUpgrade('timecube', this.id) }
         },
         45: {
-            title: '',
-            description: '',
-            cost: new Decimal(1e10000),
+            title: 'Toil',
+            description: 'While in at least one Left timeline, Foam gain is massively increased based on how little Foam you have',
+            cost: new Decimal(1e23),
+            effect() {
+                if (player.timecube.activeTimelines.left) {
+                    let limits = {
+                        quantum: 1e16,
+                        subplanck: 3e23,
+                        subspatial: 1e31,
+                        infinitesimal: 3e38,
+                        protoversal: 1e46
+                    }
+                    return Object.fromEntries(fomeTypes.map(type => [type, Decimal.minus(offset45, player.fome.fome[type].points.div(limits[type])).pow10().times(15).plus(1)]))
+                }
+                return Object.fromEntries(fomeTypes.map(type => [type, 1]))
+            },
             unlocked() { return hasUpgrade('timecube', 35) || hasUpgrade('timecube', this.id) }
         },
         51: {
@@ -320,7 +333,7 @@ addLayer("timecube", {
                 acceleronProgress.forEach((loop, index) => player.acceleron.loops[index].progress = loop)
                 player.acceleron.enhancements = acceleronEnhancements
 
-                let inflatonUpgrades = player.inflaton.upgrades.filter(id => [13,22,23,31,32,33].includes(id))
+                let inflatonUpgrades = player.inflaton.upgrades.filter(id => [11,12,13,22,23,31,32,33].includes(id))
                 let inflatonCosts = {...player.inflaton.upgradeCosts}
                 layerDataReset('inflaton', ['autoBuild', 'autoResearch', 'repeatables', 'research', 'researchProgress', 'researchQueue', 'upgradeCosts'])
                 player.inflaton.upgrades = inflatonUpgrades
@@ -653,15 +666,31 @@ addLayer("timecube", {
         }
     },
     inTimeline() { return Object.values(player.timecube.activeTimelines).some(level => level>0) },
+    baseScore() { return Object.values(player.timecube.activeTimelines).reduce((a,b) => a+b)/2 },
+    skyrmionScore() { return ['pion', 'spinor'].map(type => player.skyrmion[type].points.plus(1).log10()).reduce((a,b) => a.plus(b)).div(10) },
+    fomeScore() { return fomeTypes.map(type => player.fome.fome[type].points.plus(1).log10()).reduce((a,b) => a.plus(b)).div(50) },
+    acceleronScore() { return player.acceleron.points.plus(1).log10() },
+    inflatonScore() { return temp.inflaton.storage.plus(1).log10().div(10000).times(defaultUpgradeEffect('timecube', 42)) },
+    timecubeScore() { return player.timecube.points.plus(1).log10() },
     timelineScore() {
-        let baseScore = Object.values(player.timecube.activeTimelines).reduce((a,b) => a+b)/2
-        let skyrmionScore = ['pion', 'spinor'].map(type => player.skyrmion[type].points.plus(1).log10()).reduce((a,b) => a.plus(b)).div(10)
-        let fomeScore = fomeTypes.map(type => player.fome.fome[type].points.plus(1).log10()).reduce((a,b) => a.plus(b)).div(50)
-        let acceleronScore = player.acceleron.points.plus(1).log10()
-        let inflatonScore = temp.inflaton.storage.plus(1).log10().div(10000)
-        let timecubeScore = player.timecube.points.plus(1).log10()
+        let baseScore = temp.timecube.baseScore
+        let skyrmionScore = temp.timecube.skyrmionScore
+        let fomeScore = temp.timecube.fomeScore
+        let acceleronScore = temp.timecube.acceleronScore
+        let inflatonScore = temp.timecube.inflatonScore
+        let timecubeScore = temp.timecube.timecubeScore
 
         return skyrmionScore.times(fomeScore).times(acceleronScore).times(inflatonScore).times(timecubeScore).div(1e6).pow(baseScore)
+    },
+    timelineBonus() {
+        return {
+            front: [12,21,22,32].map(id => clickableEffect('timecube', id)).reduce(Decimal.add),
+            left: [11,21,23,31].map(id => clickableEffect('timecube', id)).reduce(Decimal.add),
+            top: [11,12,13,14].map(id => clickableEffect('timecube', id)).reduce(Decimal.add),
+            back: [13,23,24,33].map(id => clickableEffect('timecube', id)).reduce(Decimal.add),
+            right: [14,22,24,34].map(id => clickableEffect('timecube', id)).reduce(Decimal.add),
+            bottom: [31,32,33,34].map(id => clickableEffect('timecube', id)).reduce(Decimal.add)
+        }
     },
 
     buyables: {},
@@ -736,6 +765,12 @@ addLayer("timecube", {
                 unlocked() { return hasUpgrade('timecube', 31) }
             },
             "Time Lines": {
+                content: [["microtabs", "timeline"]],
+                unlocked() { return hasUpgrade('timecube', 41) }
+            }
+        },
+        timeline: {
+            "Selectors": {
                 content: [
                     "blank",
                     ["component-table", [
@@ -758,8 +793,30 @@ addLayer("timecube", {
                     ]],
                     "blank",
                     ["clickable", "enterTimeline"]
-                ],
-                unlocked() { return hasUpgrade('timecube', 41) }
+                ]
+            },
+            "Info": {
+                content: [
+                    "blank",
+                    ["display-text", "Each active Timeline Selector grants a level in two alternate timelines, i.e. the Top Left selector grants a level in the Top timeline and the Left timeline."],
+                    ["display-text", "Timeline levels divide the production their corresponding resources by a flat amount, based on their level, while they're active."],
+                    ["display-text", "Progress in these alternate timelines will give you increased scores in those timelines, granting permanent cumulative bonuses to the timeline resources based on how far you go."],
+                    ["display-text", "Each active timeline will grant greater and greater rewards, but be warned, their strength may be beyond your abilities."],
+                    "blank",
+                    ["display-text", '<b>Timeline Score Calculation</b>'],
+                    "blank",
+                    ["component-table", [
+                        [["display-text", "<b>Layer</b>"], ["display-text", "<b>Formula</b>"], ["display-text", "<b>Current Score</b>"]],
+                        ["blank"],
+                        [["display-text", "Skyrmion", {}, timelineLeftStyle], ["display-text", "[log10(pions) + log10(spinors)] / 10", {}, timelineMiddleStyle], ["display-text", () => `${format(temp.timecube.skyrmionScore)}`, {}, timelineRightStyle]],
+                        [["display-text", "Foam", {}, timelineLeftStyle], ["display-text", "sum(log10(foam amounts)) / 50", {}, timelineMiddleStyle], ["display-text", () => `${format(temp.timecube.fomeScore)}`, {}, timelineRightStyle]],
+                        [["display-text", "Acceleron", {}, timelineLeftStyle], ["display-text", "log10(accelerons)", {}, timelineMiddleStyle], ["display-text", () => `${format(temp.timecube.acceleronScore)}`, {}, timelineRightStyle]],
+                        [["display-text", "Inflaton", {}, timelineLeftStyle], ["display-text", () => `log10(stored inflatons)/10000${hasUpgrade('timecube', 42) ? `*${upgradeEffect('timecube', 42)}` : ''}`, {}, timelineMiddleStyle], ["display-text", () => `${format(temp.timecube.inflatonScore)}`, {}, timelineRightStyle]],
+                        [["display-text", "Timecube", {}, timelineLeftStyle], ["display-text", "log10(timecubes)", {}, timelineMiddleStyle], ["display-text", () => `${format(temp.timecube.timecubeScore)}`, {}, timelineRightStyle]],
+                        [["display-text", "Timelines", {}, timelineLeftStyle], ["display-text", "active timeline count", {}, timelineMiddleStyle], ["display-text", () => `${Object.values(player.timecube.activeTimelines).reduce((a,b) => a+b)}`, {}, timelineRightStyle]],
+                        [["display-text", "Total Score", {}, timelineLeftStyle], ["display-text", "(product of other scores / 1e6)^(active timeline count)", {}, timelineMiddleStyle], ["display-text", () => `${format(temp.timecube.timelineScore)}`, {}, timelineRightStyle]]
+                    ]],
+                ]
             }
         }
     },
@@ -782,7 +839,7 @@ function totalExponential(num) {
     return Decimal.gt(num, 1) ? exponentialFormat(num, 0) : formatSmall(num, 0)
 }
 
-let baseSquareCost = 1e6
+let baseSquareCost = new Decimal(1e6)
 function createSquareBuyables(buyables) {
     let baseSize = 60
     let border = 25
@@ -812,7 +869,7 @@ function createSquareBuyables(buyables) {
                 let totalAmount = amount.plus(buyAmount)
                 let totalCost = totalAmount.plus(1).times(totalAmount).div(2)
                 let currentCost = amount.plus(1).times(amount).div(2)
-                return totalCost.minus(currentCost).times(baseSquareCost)
+                return totalCost.minus(currentCost).times(baseSquareCost.div(decimalOne.plus(temp.timecube.timelineBonus[id])))
             },
             effect() {},
             title: 'Buy',
@@ -845,7 +902,7 @@ function createSquareBuyables(buyables) {
                 let totalAmount = amount.plus(buyAmount)
                 let totalCost = totalAmount.plus(1).times(totalAmount).div(2)
                 let currentCost = amount.plus(1).times(amount).div(2)
-                return totalCost.minus(currentCost).times(baseSquareCost)
+                return totalCost.minus(currentCost).times(baseSquareCost.div(decimalOne.plus(hasUpgrade('timecube', 43) ? temp.timecube.timelineBonus[id] : 0)))
             },
             effect() {},
             title: 'Buy Next',
@@ -866,8 +923,8 @@ function createSquareBuyables(buyables) {
         buyables[buyMaxId] = {
             amount() {
                 let amount = getBuyableAmount('timecube', id)
-                let currentCost = amount.plus(1).times(amount).div(2).times(baseSquareCost)
-                let total = player.timecube.points.min(1).plus(currentCost).div(baseSquareCost).times(8).plus(1).sqrt().minus(1).div(2).floor()
+                let currentCost = amount.plus(1).times(amount).div(2).times(baseSquareCost.div(decimalOne.plus(hasUpgrade('timecube', 43) ? temp.timecube.timelineBonus[id] : 0)))
+                let total = player.timecube.points.max(1).plus(currentCost).div(baseSquareCost.div(decimalOne.plus(hasUpgrade('timecube', 43) ? temp.timecube.timelineBonus[id] : 0))).times(8).plus(1).sqrt().minus(1).div(2).floor()
                 return total.minus(amount).max(1)
             },
             cost() {
@@ -876,7 +933,7 @@ function createSquareBuyables(buyables) {
                 let totalAmount = amount.plus(buyAmount)
                 let totalCost = totalAmount.plus(1).times(totalAmount).div(2)
                 let currentCost = amount.plus(1).times(amount).div(2)
-                return totalCost.minus(currentCost).times(baseSquareCost)
+                return totalCost.minus(currentCost).times(baseSquareCost.div(decimalOne.plus(hasUpgrade('timecube', 43) ? temp.timecube.timelineBonus[id] : 0)))
             },
             effect() {},
             title: 'Buy Max',
@@ -912,20 +969,18 @@ function getTimelineEffect(square, next = false) {
 
 function getTimelineBonus(square) {
     switch(square) {
-        case 'front': return [12,21,22,32].map(id => clickableEffect('timecube', id)).reduce(Decimal.add).times(100)
-        case 'left': return [11,21,23,31].map(id => clickableEffect('timecube', id)).reduce(Decimal.add).times(1000)
-        case 'top': return [11,12,13,14].map(id => clickableEffect('timecube', id)).reduce(Decimal.add)
-        case 'back': return [13,23,24,33].map(id => clickableEffect('timecube', id)).reduce(Decimal.add)
-        case 'right': return [14,22,24,34].map(id => clickableEffect('timecube', id)).reduce(Decimal.add).div(100)
-        case 'bottom': return [31,32,33,34].map(id => clickableEffect('timecube', id)).reduce(Decimal.add)
+        case 'front': return Decimal.times(temp.timecube.timelineBonus[square], 100)
+        case 'left': return Decimal.times(temp.timecube.timelineBonus[square], 1000)
+        case 'right': return Decimal.div(temp.timecube.timelineBonus[square], 100)
+        default: return new Decimal(temp.timecube.timelineBonus[square])
     }
 }
 
 const baseTimelineEffects = {
-    'front': [decimalOne, new Decimal(1e8), new Decimal(1e12), new Decimal(1e16), new Decimal(1e20)], // timecube
-    'left': [decimalOne, new Decimal(1e12), new Decimal(1e300), new Decimal('1e400'), new Decimal('1e500')], // foam
-    'top': [decimalOne, new Decimal(1e6), new Decimal(1e9), new Decimal(1e12), new Decimal(1e15)], // universe
-    'back': [decimalOne, new Decimal(1e6), new Decimal(1e45), new Decimal(1e60), new Decimal(1e75), new Decimal(1e90)], // acceleron
-    'right': [decimalOne, new Decimal(1e2), new Decimal(1e3), new Decimal(1e4), new Decimal(1e5)], // loop
-    'bottom': [decimalOne, new Decimal(1e5), new Decimal(1e150), new Decimal(1e200), new Decimal(1e300)] // skyrmion
+    'front': [decimalOne, new Decimal(1e8), new Decimal(1e80), new Decimal('1e800'), new Decimal('1e8000')], // timecube
+    'left': [decimalOne, new Decimal(1e12), new Decimal(1e120), new Decimal('1e1200'), new Decimal('1e12000')], // foam
+    'top': [decimalOne, new Decimal(1e6), new Decimal(1e60), new Decimal('1e600'), new Decimal('1e6000')], // universe
+    'back': [decimalOne, new Decimal(1e6), new Decimal(1e60), new Decimal('1e600'), new Decimal('1e6000')], // acceleron
+    'right': [decimalOne, new Decimal(1e2), new Decimal(1e20), new Decimal(1e200), new Decimal('1e2000')], // loop
+    'bottom': [decimalOne, new Decimal(1e5), new Decimal(1e50), new Decimal('1e500'), new Decimal('1e5000')] // skyrmion
 }
