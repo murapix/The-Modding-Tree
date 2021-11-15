@@ -20,19 +20,23 @@ let modInfo = {
 	],
 
 	discordName: "Escapee",
-	discordLink: "",
-	initialStartPoints: new Decimal (0), // Used for hard resets and new players
+	discordLink: ""
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.7.1",
-	name: "Prioritization",
+	num: "0.8.0",
+	name: "Fragmentation",
 }
 
 let changelog = `
 	<h1>Changelog:</h1>
 	<br><br>
+    <h3>v0.8.0 - Fragmentation</h3>
+    <br>- Graphical changes to many features
+    <br>- A few more bugfixes
+    <br>- Timecube layer expanded to a full layer's worth of content after purchasing the relevant Inflaton upgrade
+    <br><br>
 	<h3>v0.7.1</h3>
 	<br>- Lots of little bugfixes
 	<br>- Enter the Abyss challenge is now moved into its own row-3 layer, for proper reset handling (it's still living in Skyrmions though)
@@ -103,24 +107,6 @@ let winText = `Congratulations! You have reached the end and beaten this game, f
 // (The ones here are examples, all official functions are already taken care of)
 var doNotCallTheseFunctionsEveryTick = ['displayBoost', 'buyBuyable', 'getTotalBoost', 'buyableAmount', 'createBuyable', 'progressEffect', 'intervalEffect', 'finishEffect', 'hoverDisplay']
 
-function getStartPoints(){
-    return new Decimal(modInfo.initialStartPoints)
-}
-
-// Determines if it should show points/sec
-function canGenPoints(){
-	return false
-}
-
-// Calculate points/sec!
-function getPointGen() {
-	if(!canGenPoints())
-		return decimalZero
-
-	let gain = new Decimal(1)
-	return gain
-}
-
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
 	universeTab: "none"
@@ -134,12 +120,12 @@ var displayThings = [
 			? `You have completed <h2 class="overlayThing" id="points">${formatWhole(player.points)}</h2> Universes`
 			: `You have completed <h2 class="overlayThing" id="points">${formatWhole(player.points)}</h2> Universe`
 		: `You have <h2 class="overlayThing" id="points">0</h2> ??`,
-	"Current Endgame: 3 Entangled Strings"
+	"Current Endgame: 4 Entangled Strings"
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.entangled.points.gte(3)
+	return player.entangled.points.gte(4)
 }
 
 // Less important things beyond this point!

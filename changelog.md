@@ -1,5 +1,10 @@
 # Universal Reconstruction changelog:
 
+## v0.8.0 - Fragmentation
+- Graphical changes to many features
+- A few more bugfixes
+- Timecube layer expanded to a full layer's worth of content after purchasing the relevant Inflaton upgrade
+
 ## v0.7.1
 - Lots of little bugfixes
 - Enter the Abyss challenge is now moved into its own row-3 layer, for proper reset handling (it's still living in Skyrmions though)

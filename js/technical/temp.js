@@ -26,7 +26,6 @@ function setupTemp() {
 	tmp = {}
 	tmp.helpTab = NaN;
 	tmp.helpData = {};
-	tmp.pointGen = {}
 	tmp.backgroundStyle = {}
 	tmp.displayThings = []
 	tmp.scrolled = 0
@@ -114,7 +113,6 @@ function updateTemp() {
 		if (tmp[layer].passiveGeneration === true) tmp[layer].passiveGeneration = 1 // new Decimal(true) = decimalZero
 	}
 
-	tmp.pointGen = getPointGen()
 	tmp.backgroundStyle = readData(backgroundStyle)
 
 	tmp.displayThings = []

@@ -215,8 +215,6 @@ function doReset(layer, force=false) {
 		if (row >= layers[layerResetting].row && (!force || layerResetting != layer)) completeChallenge(layerResetting)
 	}
 
-	player.points = (row == 0 ? decimalZero : getStartPoints())
-
 	for (let x = row; x >= 0; x--) rowReset(x, layer)
 	for (r in OTHER_LAYERS){
 		rowReset(r, layer)
@@ -239,7 +237,6 @@ function resetRow(row) {
 		player[layer].unlocked = false
 		if (player[layer].unlockOrder) player[layer].unlockOrder = 0
 	}
-	player.points = getStartPoints()
 	updateTemp();
 	resizeCanvas();
 }
@@ -338,7 +335,6 @@ function gameLoop(diff) {
 			diff = limit
 	}
 	addTime(diff)
-	player.points = player.points.add(tmp.pointGen.times(diff)).max(0)
 
 	for (let x = 0; x <= maxRow; x++){
 		for (item in TREE_LAYERS[x]) {
