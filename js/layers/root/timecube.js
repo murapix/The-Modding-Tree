@@ -196,19 +196,19 @@ addLayer("timecube", {
         43: {
             title: 'Title',
             description: 'Best timeline scores also increase their corresponding Time Square gain',
-            cost: new Decimal(1e20),
+            cost: new Decimal(1e19),
             unlocked() { return hasUpgrade('timecube', 35) || hasUpgrade('timecube', this.id) }
         },
         44: {
             title: 'Tempo',
             description: 'The first entropic loop always gives at least one Acceleron',
-            cost: new Decimal(1e21),
+            cost: new Decimal(1e20),
             unlocked() { return hasUpgrade('timecube', 35) || hasUpgrade('timecube', this.id) }
         },
         45: {
             title: 'Toil',
             description: 'While in at least one Left timeline, Foam gain is massively increased based on how little Foam you have',
-            cost: new Decimal(1e23),
+            cost: new Decimal(1e21),
             effect() {
                 if (player.timecube.activeTimelines.left) {
                     let limits = {

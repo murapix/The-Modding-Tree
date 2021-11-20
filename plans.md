@@ -1,28 +1,18 @@
 Bugfixes and TODO:
 
-Rework Abyss challenge
-- Change goal -> # fourth row buyables (sum pion and spinor)
-- Change reward -> keep buyable if reached goal for said buyable
-- Fix weird loading issues with Decimals
+- Add new timecube features to Abyss save data
+- Split timeline selector "effect" value into two bits
+- Let player know subspace building size repeatable was reset
+- Priority access for size repeatable in research queue?
+- Entropic Enhancement presets
 
-Time Cube Features
-- Two more rows of upgrades
-  - Unlock squares
-  - ???
-  - ???
-  - Unlock axes
-  - ???
-  - Unlock lines
+Time Cube Features:
+- Last row of upgrades
+  - Autobuy time squares
+  - Subspace Building max-buy? (maybe Entangled milestone)
   - ???
   - ???
   - ???
-  - ???
-- Axes
-  - Pick between top/bottom, left/right, and front/back
-  - Selected direction is buffed, opposite direction is nerfed
-- Time Lines
-  - 12 flavors, giving a decreasingly logarithmic bonus to adjacent Squares
-  - Uses a slowly growing static time square cost formula
 
 Need to figure out a decent reward structure for phase 2 completions
 
@@ -35,18 +25,18 @@ Inflaton Upgrades:        1/5
     - Effects             |   + 1/1
     - Goals               |   + 1/1
     - Name                |   + 1/1
-- 2: Time Cubes           + 1/2
-  - Upgrades              | + 1/10
+- 2: Time Cubes           + 2/3
+  - Upgrades              | + 5/10
   - Time Squares          | + 6/6
-  - Axes                  | + 0/1
-  - Time Lines            | + 0/12
+  - Time Lines            | + 12/12
 - 3: Research             + 0/2
   - Researches            | + 0/25+
   - Repeatables           | + 0/0-3+
 - 4: Hyperspace Buildings + 0/2
   - Buildings             | + 0/6
   - Other Features        | + 0/1+
-- 5: Acceleron            + 0/2
+- 5: Acceleron            + 0/3
+  - Upgrades                + 0/5+
   - Loops                   + 0/3
   - Infinite Cycle          + 0/1
 
