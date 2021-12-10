@@ -86,7 +86,7 @@ addLayer("inflaton", {
         if (player.inflaton.autoBuild && hasResearch('inflaton', 24))
             Object.keys(player.inflaton.buyables).forEach(id => buyBuyable('inflaton', id))
         if (player.inflaton.autoResearch && Object.keys(player.inflaton.repeatables).length > 0) {
-            if (temp.inflaton.research[113].canResearch && player.inflaton.researchQueue.length < temp.inflaton.queueSize && !player.inflaton.researchQueue.includes('113') && temp.inflaton.research[player.inflaton.researchQueue[0]].repeatable) {
+            if (temp.inflaton.research[113].canResearch && player.inflaton.researchQueue.length < temp.inflaton.queueSize && !player.inflaton.researchQueue.includes('113') && (player.inflaton.researchQueue.length === 0 || temp.inflaton.research[player.inflaton.researchQueue[0]].repeatable)) {
                 if (Object.keys(player.inflaton.repeatables).map(key => [key, layers.inflaton.research[key].cost(researchLevel('inflaton', key))]).reduce((a,b) => a[1].lt(b[1]) ? a : b)[0] == '113') {
                     player.inflaton.researchQueue.unshift('113')
                 }
