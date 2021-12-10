@@ -158,20 +158,20 @@ function fixSave() {
 		Object.keys(player.abyss[layer].buyables).forEach(buyable => wrapAsDecimal(player.abyss[layer].buyables, buyable))
 	}
 	if (player.abyss.skyrmion !== undefined) {
-		Object.keys(player.abyss.skyrmion.pion).forEach(key => wrapAsDecimal(player.abyss.skyrmion.pion, key))
-		Object.keys(player.abyss.skyrmion.spinor).forEach(key => wrapAsDecimal(player.abyss.skyrmion.spinor, key))
+		Object.keys(player.abyss.skyrmion.pion || {}).forEach(key => wrapAsDecimal(player.abyss.skyrmion.pion, key))
+		Object.keys(player.abyss.skyrmion.spinor || {}).forEach(key => wrapAsDecimal(player.abyss.skyrmion.spinor, key))
 	}
 	if (player.abyss.fome !== undefined) {
 		for (fome of fomeTypes) {
-			Object.keys(player.abyss.fome.fome[fome]).forEach(key => wrapAsDecimal(player.abyss.fome.fome[fome], key))
-			Object.keys(player.abyss.fome.boosts[fome].boosts).forEach(key => {
+			Object.keys(player.abyss.fome.fome[fome] || {}).forEach(key => wrapAsDecimal(player.abyss.fome.fome[fome], key))
+			Object.keys(player.abyss.fome.boosts[fome].boosts || {}).forEach(key => {
 				wrapAsDecimal(player.abyss.fome.boosts[fome].boosts, key)
 			})
 		}
 	}
 	if (player.abyss.acceleron !== undefined) {
-		Object.keys(player.abyss.acceleron.loops).forEach(loop => {
-			Object.keys(player.abyss.acceleron.loops[loop]).forEach(key => {
+		Object.keys(player.abyss.acceleron.loops || {}).forEach(loop => {
+			Object.keys(player.abyss.acceleron.loops[loop] || {}).forEach(key => {
 				wrapAsDecimal(player.abyss.acceleron.loops[loop], key)
 			})
 		})
@@ -180,15 +180,15 @@ function fixSave() {
 		}
 	}
     if (player.abyss.timecube !== undefined) {
-        Object.keys(player.abyss.timecube.nextScores).forEach(key => {
+        Object.keys(player.abyss.timecube.nextScores || {}).forEach(key => {
             wrapAsDecimal(player.abyss.timecube.nextScores, key)
         })
-        Object.keys(player.abyss.timecube.scores).forEach(key => {
+        Object.keys(player.abyss.timecube.scores || {}).forEach(key => {
             wrapAsDecimal(player.abyss.timecube.scores, key)
         })
     }
 	if (player.abyss.inflaton !== undefined) {
-        Object.keys(player.inflaton.repeatables).forEach(key => {
+        Object.keys(player.inflaton.repeatables || {}).forEach(key => {
             wrapAsDecimal(player.inflaton.repeatables, key)
         })
 		for (key of ['size', 'maxSize', 'researchProgress']) {
