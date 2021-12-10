@@ -366,7 +366,7 @@ addLayer("timecube", {
         },
         11: {
             title: 'Top Left',
-            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Top: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.top))}%<br>Left: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.left))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -391,7 +391,7 @@ addLayer("timecube", {
         },
         12: {
             title: 'Top Front',
-            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Top: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.top))}%<br>Front: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.front))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -416,7 +416,7 @@ addLayer("timecube", {
         },
         13: {
             title: 'Top Back',
-            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Top: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.top))}%<br>Back: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.back))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -441,7 +441,7 @@ addLayer("timecube", {
         },
         14: {
             title: 'Top Right',
-            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Top: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.top))}%<br>Right: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.right))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -466,7 +466,7 @@ addLayer("timecube", {
         },
         21: {
             title: 'Front Left',
-            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Front: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.front))}%<br>Left: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.left))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -491,7 +491,7 @@ addLayer("timecube", {
         },
         22: {
             title: 'Front Right',
-            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Front: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.front))}%<br>Right: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.right))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -516,7 +516,7 @@ addLayer("timecube", {
         },
         23: {
             title: 'Back Left',
-            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Back: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.back))}%<br>Left: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.left))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -541,7 +541,7 @@ addLayer("timecube", {
         },
         24: {
             title: 'Back Right',
-            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Back: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.back))}%<br>Right: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.right))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -566,7 +566,7 @@ addLayer("timecube", {
         },
         31: {
             title: 'Bottom Left',
-            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Bottom: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.bottom))}%<br>Left: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.left))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -591,7 +591,7 @@ addLayer("timecube", {
         },
         32: {
             title: 'Bottom Front',
-            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Bottom: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.bottom))}%<br>Front: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.front))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -616,7 +616,7 @@ addLayer("timecube", {
         },
         33: {
             title: 'Bottom Back',
-            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Bottom: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.bottom))}%<br>Back: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.back))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -641,7 +641,7 @@ addLayer("timecube", {
         },
         34: {
             title: 'Bottom Right',
-            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Effect: +${format(clickableEffect('timecube', this.id).times(100))}%` },
+            display() { return `Amount: ${format(player.timecube.scores[this.id])}<br>Bottom: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.bottom))}%<br>Right: +${format(clickableEffect('timecube', this.id).times(100).times(timelineBonusMultiplier.right))}%` },
             canClick: true,
             onClick() {
                 if (getClickableState('timecube', this.id)) {
@@ -798,10 +798,10 @@ addLayer("timecube", {
             "Info": {
                 content: [
                     "blank",
-                    ["display-text", "Each active Timeline Selector grants a level in two alternate timelines, i.e. the Top Left selector grants a level in the Top timeline and the Left timeline."],
-                    ["display-text", "Timeline levels divide the production their corresponding resources by a flat amount, based on their level, while they're active."],
-                    ["display-text", "Progress in these alternate timelines will give you increased scores in those timelines, granting permanent cumulative bonuses to the timeline resources based on how far you go."],
-                    ["display-text", "Each active timeline will grant greater and greater rewards, but be warned, their strength may be beyond your abilities."],
+                    ["styled-text", "Each active Timeline Selector grants a level in two alternate timelines, i.e. the Top Left selector grants a level in the Top timeline and the Left timeline.", {"max-width": "600px", "margin-bottom": "5px"}],
+                    ["styled-text", "Timeline levels divide the production their corresponding resources by a flat amount, based on their level, while they're active.", {"max-width": "600px", "margin-bottom": "5px"}],
+                    ["styled-text", "Progress in these alternate timelines will give you increased scores in those timelines, granting permanent cumulative bonuses to the timeline resources based on how far you go.", {"max-width": "600px", "margin-bottom": "5px"}],
+                    ["styled-text", "Each active timeline will grant greater and greater rewards, but be warned, their strength may be beyond your abilities.", {"max-width": "600px"}],
                     "blank",
                     ["display-text", '<b>Timeline Score Calculation</b>'],
                     "blank",
@@ -967,13 +967,17 @@ function getTimelineEffect(square, next = false) {
     }
 }
 
+const timelineBonusMultiplier = {
+    'front': 100,
+    'left': 1000,
+    'right': 0.01,
+    'back': 1,
+    'top': 1,
+    'bottom': 1
+}
+
 function getTimelineBonus(square) {
-    switch(square) {
-        case 'front': return Decimal.times(temp.timecube.timelineBonus[square], 100)
-        case 'left': return Decimal.times(temp.timecube.timelineBonus[square], 1000)
-        case 'right': return Decimal.div(temp.timecube.timelineBonus[square], 100)
-        default: return new Decimal(temp.timecube.timelineBonus[square])
-    }
+    return Decimal.times(temp.timecube.timelineBonus[square], timelineBonusMultiplier[square])
 }
 
 const baseTimelineEffects = {

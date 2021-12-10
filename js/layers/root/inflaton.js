@@ -50,13 +50,7 @@ addLayer("inflaton", {
             default:
         }
 
-        if (inChallenge('inflaton', 11)) {
-            
-        }
-        else if (player.inflaton.inflating) {
-            
-        }
-        else {
+        if (!player.inflaton.inflating && !inChallenge('inflaton', 11)) {
             if (!hasMilestone('entangled', 0) && player.acceleron.unlockOrder === 0 && player.inflaton.unlockOrder === 0)
                 player.acceleron.unlockOrder = 1
         }
@@ -91,15 +85,26 @@ addLayer("inflaton", {
     automate() {
         if (player.inflaton.autoBuild && hasResearch('inflaton', 24))
             Object.keys(player.inflaton.buyables).forEach(id => buyBuyable('inflaton', id))
-        if (player.inflaton.autoResearch && player.inflaton.researchQueue.length == 0 && Object.keys(player.inflaton.repeatables).length !== 0) {
-            let availableResearch = Object.keys(player.inflaton.repeatables)
-                                          .filter(id => temp.inflaton.research[id].canResearch === undefined || temp.inflaton.research[id].canResearch)
-                                          .filter(id => layers.inflaton.research[id].cost(researchLevel('inflaton', id)).lt(Decimal.dInf))
-            if (availableResearch.length > 0)
-                player.inflaton.researchQueue.push(
-                    availableResearch.map(id => [id, layers.inflaton.research[id].cost(researchLevel('inflaton', id))])
-                                     .reduce((a,b) => a[1].gt(b[1]) ? b : a)[0]
-                )
+        if (player.inflaton.autoResearch && Object.keys(player.inflaton.repeatables).length > 0) {
+            if (temp.inflaton.research[113].canResearch && player.inflaton.researchQueue.length < temp.inflaton.queueSize && !player.inflaton.researchQueue.includes('113') && temp.inflaton.research[player.inflaton.researchQueue[0]].repeatable) {
+                if (Object.keys(player.inflaton.repeatables).map(key => [key, layers.inflaton.research[key].cost(researchLevel('inflaton', key))]).reduce((a,b) => a[1].lt(b[1]) ? a : b)[0] == '113') {
+                    player.inflaton.researchQueue.unshift('113')
+                }
+            }
+            if (player.inflaton.researchQueue.length == 0) {
+                let availableResearch = Object.keys(player.inflaton.repeatables)
+                                            .filter(id => temp.inflaton.research[id].canResearch === undefined || temp.inflaton.research[id].canResearch)
+                                            .filter(id => layers.inflaton.research[id].cost(researchLevel('inflaton', id)).lt(Decimal.dInf))
+                if (availableResearch.length > 0)
+                    player.inflaton.researchQueue.push(
+                        availableResearch.map(id => [id, layers.inflaton.research[id].cost(researchLevel('inflaton', id))])
+                                        .reduce((a,b) => a[1].gt(b[1]) ? b : a)[0]
+                    )
+            }
+        }
+        if (player.inflaton.researchQueue[0] === '113' && !temp.inflaton.clickables[3].canClick) {
+            player.inflaton.researchQueue.shift()
+            player.inflaton.researchProgress = decimalZero
         }
     },
 
@@ -988,7 +993,10 @@ addLayer("inflaton", {
                     () => hasResearch('inflaton', 15) ? ["row", [["display-text", "Enable Auto-Repeatable Research"], "blank", ["toggle", ["inflaton", "autoResearch"]]]] : '',
                     () => hasResearch('inflaton', 15) ? "blank" : '',
                     "clickables"
-                ]
+                ],
+                shouldNotify() {
+                    return temp.inflaton.clickables[3].canClick && !player.inflaton.researchQueue.includes('113')
+                }
             }
         }
     },
@@ -1109,6 +1117,13 @@ function createResearchClickable(id, research, index) {
                 }
             }
             return temp.inflaton.clickables[index].cost.lt(Decimal.dInf)
+        }
+        if (id == '113') {
+            clickable.style = () => {
+                if (temp.inflaton.clickables[3].canClick && !player.inflaton.researchQueue.includes('113')) {
+                    return {'box-shadow': `var(--hqProperty2a), 0 0 20px ${temp.inflaton.trueGlowColor}`}
+                }
+            }
         }
     }
     else {

@@ -164,9 +164,8 @@ function fixSave() {
 	if (player.abyss.fome !== undefined) {
 		for (fome of fomeTypes) {
 			Object.keys(player.abyss.fome.fome[fome]).forEach(key => wrapAsDecimal(player.abyss.fome.fome[fome], key))
-			Object.keys(player.abyss.fome.boosts[fome]).forEach(key => {
-				for (i = 0; i < 5; i++)
-					wrapAsDecimal(player.abyss.fome.boosts[fome].boosts, i)
+			Object.keys(player.abyss.fome.boosts[fome].boosts).forEach(key => {
+				wrapAsDecimal(player.abyss.fome.boosts[fome].boosts, key)
 			})
 		}
 	}
@@ -180,8 +179,19 @@ function fixSave() {
 			wrapAsDecimal(player.abyss.acceleron, key)
 		}
 	}
+    if (player.abyss.timecube !== undefined) {
+        Object.keys(player.abyss.timecube.nextScores).forEach(key => {
+            wrapAsDecimal(player.abyss.timecube.nextScores, key)
+        })
+        Object.keys(player.abyss.timecube.scores).forEach(key => {
+            wrapAsDecimal(player.abyss.timecube.scores, key)
+        })
+    }
 	if (player.abyss.inflaton !== undefined) {
-		for (key of ['size', 'maxSize']) {
+        Object.keys(player.inflaton.repeatables).forEach(key => {
+            wrapAsDecimal(player.inflaton.repeatables, key)
+        })
+		for (key of ['size', 'maxSize', 'researchProgress']) {
 			wrapAsDecimal(player.abyss.inflaton, key)
 		}
 	}

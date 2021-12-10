@@ -24,22 +24,22 @@ addLayer("abyss", {
             color: "#37d7ff",
             onEnter() {
                 ['skyrmion', 'fome', 'acceleron', 'timecube', 'inflaton'].forEach(layer => player.abyss[layer] = getStartLayerData(layer))
-                for (item of ['autobuyPion', 'autobuySpinor', 'forceTooltip', 'upgradeCosts', 'upgrades']) player.abyss.skyrmion[item] = player.skyrmion[item]
-                for (item of ['autoInfinitesimal', 'autoProtoversal', 'autoQuantum', 'autoReform', 'autoSubplanck', 'autoSubspatial', 'forceTooltip', 'lastMilestone', 'milestones', 'unlocked']) player.abyss.fome[item] = player.fome[item]
-                for (item of ['forceTooltip', 'lastMilestone', 'milestones', 'unlockOrder', 'unlocked']) player.abyss.acceleron[item] = player.acceleron[item]
-                for (item of ['forceTooltip', 'unlocked']) player.abyss.timecube[item] = player.timecube[item]
-                for (item of ['autoBuild', 'autoResearch', 'forceTooltip', 'unlockOrder', 'unlocked', 'upgradeCosts', 'upgrades']) player.abyss.inflaton[item] = player.inflaton[item]
+                for (item of abyssSavedData.skyrmion) player.abyss.skyrmion[item] = player.skyrmion[item]
+                for (item of abyssSavedData.fome) player.abyss.fome[item] = player.fome[item]
+                for (item of abyssSavedData.acceleron) player.abyss.acceleron[item] = player.acceleron[item]
+                for (item of abyssSavedData.timecube) player.abyss.timecube[item] = player.timecube[item]
+                for (item of abyssSavedData.inflaton) player.abyss.inflaton[item] = player.inflaton[item]
                 
                 for (layer of ['skyrmion', 'fome', 'acceleron', 'timecube', 'inflaton']) swapLayerData(layer)
                 for (let i = 0; i < 10; i++) // nasty hack, don't like this, but not sure of better option
                     updateTemp()
             },
             onExit() {
-                for (item of ['autobuyPion', 'autobuySpinor', 'forceTooltip', 'upgradeCosts', 'upgrades']) player.abyss.skyrmion[item] = player.skyrmion[item]
-                for (item of ['autoInfinitesimal', 'autoProtoversal', 'autoQuantum', 'autoReform', 'autoSubplanck', 'autoSubspatial', 'forceTooltip', 'lastMilestone', 'unlocked']) player.abyss.fome[item] = player.fome[item]
-                for (item of ['forceTooltip', 'lastMilestone', 'unlockOrder', 'unlocked']) player.abyss.acceleron[item] = player.acceleron[item]
-                for (item of ['forceTooltip', 'unlocked']) player.abyss.timecube[item] = player.timecube[item]
-                for (item of ['autoBuild', 'autoResearch', 'forceTooltip', 'unlockOrder', 'unlocked']) player.abyss.inflaton[item] = player.inflaton[item]
+                for (item of abyssSavedData.skyrmion) player.abyss.skyrmion[item] = player.skyrmion[item]
+                for (item of abyssSavedData.fome) player.abyss.fome[item] = player.fome[item]
+                for (item of abyssSavedData.acceleron) player.abyss.acceleron[item] = player.acceleron[item]
+                for (item of abyssSavedData.timecube) player.abyss.timecube[item] = player.timecube[item]
+                for (item of abyssSavedData.inflaton) player.abyss.inflaton[item] = player.inflaton[item]
                 
                 for (layer of ['skyrmion', 'fome', 'acceleron', 'timecube', 'inflaton']) swapLayerData(layer)
             }
@@ -49,4 +49,12 @@ addLayer("abyss", {
 
 function swapLayerData(layer) {
     [player[layer], player.abyss[layer]] = [player.abyss[layer], player[layer]]
+}
+
+const abyssSavedData = {
+    skyrmion: ['autobuyPion', 'autobuySpinor', 'forceTooltip', 'upgradeCosts', 'upgrades'],
+    fome: ['autoInfinitesimal', 'autoProtoversal', 'autoQuantum', 'autoReform', 'autoSubplanck', 'autoSubspatial', 'forceTooltip', 'lastMilestone', 'milestones', 'unlocked'],
+    acceleron: ['forceTooltip', 'lastMilestone', 'milestones', 'unlockOrder', 'unlocked', 'presets'],
+    timecube: ['buySquareAmount', 'forceTooltip', 'unlocked'],
+    inflaton: ['autoBuild', 'autoResearch', 'forceTooltip', 'unlockOrder', 'unlocked', 'upgradeCosts', 'upgrades']
 }

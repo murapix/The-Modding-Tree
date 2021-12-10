@@ -113,7 +113,15 @@ addLayer("acceleron", {
             skyrmionBoost: decimalOne,
             entropy: decimalZero,
             enhancements: [0,0,0,0,0,0,0],
-            clickables: [1]
+            clickables: [1],
+            presets: [
+                { name: "", upgrades: [] },
+                { name: "", upgrades: [] },
+                { name: "", upgrades: [] }
+            ],
+            presetNameZero: "",
+            presetNameOne: "",
+            presetNameTwo: ""
         }
 
         Object.keys(layers.acceleron.loops)
@@ -452,6 +460,84 @@ addLayer("acceleron", {
                 'min-height': "30px",
                 width: "100px"
             }
+        },
+        savePreset0: {
+            display: `Save`,
+            canClick: true,
+            onClick() {
+                player.acceleron.presets[0] = { name: player.acceleron.presetNameZero, upgrades: player.acceleron.upgrades.filter(id => id > 100) }
+            },
+            style: {
+                'min-height': "30px",
+                width: "100px"
+            }
+        },
+        savePreset1: {
+            display: `Save`,
+            canClick: true,
+            onClick() {
+                player.acceleron.presets[1] = { name: player.acceleron.presetNameOne, upgrades: player.acceleron.upgrades.filter(id => id > 100) }
+            },
+            style: {
+                'min-height': "30px",
+                width: "100px"
+            }
+        },
+        savePreset2: {
+            display: `Save`,
+            canClick: true,
+            onClick() {
+                player.acceleron.presets[2] = { name: player.acceleron.presetNameTwo, upgrades: player.acceleron.upgrades.filter(id => id > 100) }
+            },
+            style: {
+                'min-height': "30px",
+                width: "100px"
+            }
+        },
+        loadPreset0: {
+            display: `Load`,
+            canClick() { return player.acceleron.presets[0].upgrades.length > 0 },
+            onClick() {
+                clickClickable('acceleron', 1)
+                for (key of player.acceleron.presets[0].upgrades) {
+                    updateTemp()
+                    buyUpgrade('acceleron', key)
+                }
+            },
+            style: {
+                'min-height': "30px",
+                width: "100px"
+            }
+        },
+        loadPreset1: {
+            display: `Load`,
+            canClick() { return player.acceleron.presets[1].upgrades.length > 0 },
+            onClick() {
+                clickClickable('acceleron', 1)
+                for (key of player.acceleron.presets[1].upgrades) {
+                    updateTemp()
+                    buyUpgrade('acceleron', key)
+                }
+            },
+            style: {
+                'min-height': "30px",
+                width: "100px"
+            }
+        },
+        loadPreset2: {
+            display: `Load`,
+            canClick() { return player.acceleron.presets[2].upgrades.length > 0 },
+            onClick() {
+                clickClickable('acceleron', 1)
+                for (key of player.acceleron.presets[2].upgrades) {
+                    updateTemp()
+                    buyUpgrade('acceleron', key)
+                }
+            },
+            style: {
+                'min-height': "30px",
+                width: "100px"
+            }
         }
     },
 
@@ -494,18 +580,7 @@ addLayer("acceleron", {
                     ["display-text", () => isLoopFinished(4) ? temp.acceleron.loops[4].intervalDisplay : ''],
                     ["display-text", () => isLoopFinished(5) ? temp.acceleron.loops[5].intervalDisplay : ''],
                     "blank",
-                    () => hasUpgrade('acceleron', 21) ? ["clickable", 1] : '',
-                    "blank",
-                    () => hasUpgrade('acceleron', 21) ? ["display-text", `You have ${formatWhole(player.acceleron.entropy)} Entropy`] : '',
-                    () => hasUpgrade('acceleron', 21) ? ["display-text", `Select one upgrade from each row. Certain upgrades may allow you to select more`] : '',
-                    () => hasUpgrade('acceleron', 21) ? ["display-text", `Each purchased Enhancement increases the cost of the others`] : '',
-                    "blank",
-                    () => hasUpgrade('acceleron', 21) ? ["column", [
-                        ["row", [["upgrade", 111], ["upgrade", 112], ["upgrade", 113], ["upgrade", 114]]],
-                        ["row", [["upgrade", 121], ["upgrade", 122], ["upgrade", 123], ["upgrade", 124]]],
-                        ["row", [["upgrade", 131], ["upgrade", 132], ["upgrade", 133], ["upgrade", 134]]],
-                        ["row", [["upgrade", 141], ["upgrade", 142], ["upgrade", 143], ["upgrade", 144]]],
-                    ]] : '',
+                    () => hasUpgrade('acceleron', 21) ? ["microtabs", "enhancements"] : '',
                     "blank"
                 ]
             },
@@ -513,6 +588,60 @@ addLayer("acceleron", {
                 content: [
                     "blank",
                     "upgrades"
+                ]
+            }
+        },
+        enhancements: {
+            "Enhancements": {
+                content: [
+                    "blank",
+                    ["clickable", 1],
+                    "blank",
+                    ["display-text", () => `You have ${formatWhole(player.acceleron.entropy)} Entropy`],
+                    ["display-text", `Select one upgrade from each row. Certain upgrades may allow you to select more`],
+                    ["display-text", `Each purchased Enhancement increases the cost of the others`],
+                    "blank",
+                    ["column", [
+                        ["row", [["upgrade", 111], ["upgrade", 112], ["upgrade", 113], ["upgrade", 114]]],
+                        ["row", [["upgrade", 121], ["upgrade", 122], ["upgrade", 123], ["upgrade", 124]]],
+                        ["row", [["upgrade", 131], ["upgrade", 132], ["upgrade", 133], ["upgrade", 134]]],
+                        ["row", [["upgrade", 141], ["upgrade", 142], ["upgrade", 143], ["upgrade", 144]]],
+                    ]]
+                ]
+            },
+            "Presets": {
+                content: [
+                    "blank",
+                    ["component-table", [
+                        [
+                            ["column", [
+                                ["strict-text-input", "presetNameZero"],
+                                ["row", [["clickable", "savePreset0"], ["clickable", "loadPreset0"]]]
+                            ]],
+                            ["blank", ["30px", "8px"]],
+                            ["column", [
+                                ["strict-text-input", "presetNameOne"],
+                                ["row", [["clickable", "savePreset1"], ["clickable", "loadPreset1"]]]
+                            ]],
+                            ["blank", ["30px", "8px"]],
+                            ["column", [
+                                ["strict-text-input", "presetNameTwo"],
+                                ["row", [["clickable", "savePreset2"], ["clickable", "loadPreset2"]]]
+                            ]]
+                        ],
+                        [
+                            ["display-text", () => `Preset One: ${player.acceleron.presets[0].upgrades.length > 0 ? 'Saved' : 'Empty'}`], '',
+                            ["display-text", () => `Preset One: ${player.acceleron.presets[1].upgrades.length > 0 ? 'Saved' : 'Empty'}`], '',
+                            ["display-text", () => `Preset One: ${player.acceleron.presets[2].upgrades.length > 0 ? 'Saved' : 'Empty'}`],
+                        ],
+                        [
+                            ["display-text", () => `<b>${player.acceleron.presets[0].name}</b>`], '',
+                            ["display-text", () => `<b>${player.acceleron.presets[1].name}</b>`], '',
+                            ["display-text", () => `<b>${player.acceleron.presets[2].name}</b>`]
+                        ]
+                    ]],
+                    ["blank", "500px"],
+                    "blank"
                 ]
             }
         }

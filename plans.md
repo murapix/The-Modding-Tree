@@ -1,10 +1,8 @@
 Bugfixes and TODO:
 
-- Add new timecube features to Abyss save data
-- Split timeline selector "effect" value into two bits
-- Let player know subspace building size repeatable was reset
-- Priority access for size repeatable in research queue?
-- Entropic Enhancement presets
+Improve Entropic Enhancement Preset interface (after TMT-X release)
+
+---------------------------------------------------------------------
 
 Time Cube Features:
 - Last row of upgrades

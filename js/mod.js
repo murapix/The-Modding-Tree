@@ -36,6 +36,8 @@ let changelog = `
     <br>- Graphical changes to many features
     <br>- A few more bugfixes
     <br>- Timecube layer expanded to a full layer's worth of content after purchasing the relevant Inflaton upgrade
+    <br>- Subspatial Construction now takes priority over other repeatables, if it is the cheapest available
+    <br>- Added three slots for entropic enhancement presets
     <br><br>
 	<h3>v0.7.1</h3>
 	<br>- Lots of little bugfixes

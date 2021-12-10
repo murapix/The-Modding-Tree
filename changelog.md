@@ -4,6 +4,8 @@
 - Graphical changes to many features
 - A few more bugfixes
 - Timecube layer expanded to a full layer's worth of content after purchasing the relevant Inflaton upgrade
+- Subspatial Construction now takes priority over other repeatables, if it is the cheapest available
+- Added three slots for entropic enhancement presets
 
 ## v0.7.1
 - Lots of little bugfixes
