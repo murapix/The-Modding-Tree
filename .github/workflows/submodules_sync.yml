@@ -10,8 +10,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  notify:
-    name: 'Submodule Notify Parent'
+  update:
+    name: 'Submodule Update Parent'
     runs-on: ubuntu-latest
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -20,11 +20,19 @@ jobs:
         shell: bash
 
     steps:
-    - name: Github REST API Call
-      env:
-        CI_TOKEN: ${{ secrets.CI_TOKEN }}
-        PARENT_REPO: murapix/murapix.github.io
-        PARENT_BRANCH: master
-        WORKFLOW_ID: 16164413
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        repository: murapix/murapix.github.io
+        token: ${{ secrets.CI_TOKEN }}
+    - name: Pull & Update Submodules Recursively
       run: |
-        curl -fL --retry 3 -X POST -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ env.CI_TOKEN }}" https://api.github.com/repos/${{ env.PARENT_REPO }}/actions/workflows/${{ env.WORKFLOW_ID }}/dispatches -d '{"ref":"${{ env.PARENT_BRANCH }}"}'
+        git submodule update --init --recursive
+        git submodule update --recursive --remote
+    - name: Commit
+      run: |
+        git config --global user.name 'Git bot'
+        git config --global user.email 'bot@noreply.github.com'
+        git add --all
+        git commit -am "Auto updated submodule references" && git push || echo "No changes to commit"
+    
