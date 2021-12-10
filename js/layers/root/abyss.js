@@ -54,7 +54,7 @@ function swapLayerData(layer) {
 const abyssSavedData = {
     skyrmion: ['autobuyPion', 'autobuySpinor', 'forceTooltip', 'upgradeCosts', 'upgrades'],
     fome: ['autoInfinitesimal', 'autoProtoversal', 'autoQuantum', 'autoReform', 'autoSubplanck', 'autoSubspatial', 'forceTooltip', 'lastMilestone', 'milestones', 'unlocked'],
-    acceleron: ['forceTooltip', 'lastMilestone', 'milestones', 'unlockOrder', 'unlocked', 'presets'],
+    acceleron: ['forceTooltip', 'lastMilestone', 'milestones', 'unlockOrder', 'unlocked', 'presets', 'presetNameZero', 'presetNameOne', 'presetNameTwo'],
     timecube: ['buySquareAmount', 'forceTooltip', 'unlocked'],
     inflaton: ['autoBuild', 'autoResearch', 'forceTooltip', 'unlockOrder', 'unlocked', 'upgradeCosts', 'upgrades']
 }

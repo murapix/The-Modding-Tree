@@ -24,7 +24,9 @@ addLayer("acceleron", {
     doReset(layer) {
         switch (layer) {
             case "entangled":
-                layerDataReset('acceleron', ['milestones'])
+                let presetNames = Object.values(player.acceleron.presets).map(preset => preset.name)
+                layerDataReset('acceleron', ['milestones', 'presets', 'presetNameZero', 'presetNameOne', 'presetNameTwo'])
+                Object.values(player.acceleron.presets).forEach((preset, index) => preset.name = presetNames[index])
                 break
             default:
         }
@@ -267,7 +269,7 @@ addLayer("acceleron", {
             cost: decimalOne,
             effect() { return temp.acceleron.effect.abs().sqrt().times(1000) },
             effectDisplay() { return `${format(upgradeEffect('acceleron', 11))}x` },
-            unlocked() { return player.acceleron.total.gte(4) || hasUpgrade('acceleron', this.id) }
+            unlocked() { return player.entangled.points.gte(1) || player.acceleron.total.gte(4) || hasUpgrade('acceleron', this.id) }
         },
         12: {
             title: 'Quantum Translation',
@@ -275,19 +277,19 @@ addLayer("acceleron", {
             cost: new Decimal(5),
             effect() { return fomeTypes.map(type => player.fome.fome[type].expansion).reduce((a,b) => Decimal.plus(a,b)).minus(5).max(1) },
             effectDisplay() { return `${formatWhole(upgradeEffect('acceleron', 12))}x` },
-            unlocked() { return hasUpgrade('acceleron', 11) || hasUpgrade('acceleron', this.id) }
+            unlocked() { return player.entangled.points.gte(1) || hasUpgrade('acceleron', 11) || hasUpgrade('acceleron', this.id) }
         },
         13: {
             title: 'Superpositional Acceleration',
             description: 'Gain a new Pion and Spinor Upgrade',
             cost: new Decimal(25),
-            unlocked() { return hasUpgrade('acceleron', 12) || hasUpgrade('acceleron', this.id) }
+            unlocked() { return player.entangled.points.gte(1) || hasUpgrade('acceleron', 12) || hasUpgrade('acceleron', this.id) }
         },
         14: {
             title: 'Quasi-temporal Superstructures',
             description: 'Consume the past to build the future',
             cost: new Decimal(50),
-            unlocked() { return hasUpgrade('acceleron', 13) || hasUpgrade('acceleron', this.id) }
+            unlocked() { return player.entangled.points.gte(1) || hasUpgrade('acceleron', 13) || hasUpgrade('acceleron', this.id) }
         },
         15: {
             title: 'Temporal Fluctuation',
@@ -295,13 +297,13 @@ addLayer("acceleron", {
             effect() { return temp.acceleron.numFinishedLoops.plus(1) },
             effectDisplay() { return `${formatWhole(upgradeEffect('acceleron', 15))}x`},
             cost: new Decimal(100),
-            unlocked() { return isLoopFinished(0) || hasUpgrade('acceleron', this.id) },
+            unlocked() { return player.entangled.points.gte(1) || isLoopFinished(0) || hasUpgrade('acceleron', this.id) },
         },
         21: {
             title: 'Unstable Expansion',
             description: 'Unlock Entropic Enhancements',
             cost: new Decimal(300),
-            unlocked() { return isLoopFinished(1) || hasUpgrade('acceleron', this.id) }
+            unlocked() { return player.entangled.points.gte(1) || isLoopFinished(1) || hasUpgrade('acceleron', this.id) }
         },
         22: {
             title: 'Stability Conversion',
@@ -319,26 +321,26 @@ addLayer("acceleron", {
                 return new Decimal(count)
             },
             effectDisplay() { return `${formatWhole(upgradeEffect('acceleron', 22))}x`},
-            unlocked() { return isLoopFinished(2) || hasUpgrade('acceleron', this.id) }
+            unlocked() { return player.entangled.points.gte(1) || isLoopFinished(2) || hasUpgrade('acceleron', this.id) }
         },
         23: {
             title: 'Subspatial Alacrity',
             description: `Increase Subspatial Foam gain by ${format(1e4)}x`,
             cost: new Decimal(2e6),
             effect: new Decimal(1e4),
-            unlocked() { return hasUpgrade('acceleron', 22) || hasUpgrade('acceleron', this.id) }
+            unlocked() { return player.entangled.points.gte(1) || hasUpgrade('acceleron', 22) || hasUpgrade('acceleron', this.id) }
         },
         24: {
             title: 'Cubic Tetration',
             description: 'Remove the ability to Acceleron reset and gain access to an additional two Entropic Loops',
             cost: new Decimal(1e8),
-            unlocked() { return hasUpgrade('acceleron', 23) || hasUpgrade('acceleron', this.id) }
+            unlocked() { return player.entangled.points.gte(1) || hasUpgrade('acceleron', 23) || hasUpgrade('acceleron', this.id) }
         },
         25: {
             title: 'Temporal Mastery',
             description: 'Unlock Inflatons',
             cost: new Decimal(1e19),
-            unlocked() { return hasUpgrade('acceleron', 24) || hasUpgrade('acceleron', this.id) },
+            unlocked() { return player.entangled.points.gte(1) || hasUpgrade('acceleron', 24) || hasUpgrade('acceleron', this.id) },
             onPurchase() { if (hasResearch('inflaton', 25)) player.entangled.unlocked = true }
         },
 
@@ -631,8 +633,8 @@ addLayer("acceleron", {
                         ],
                         [
                             ["display-text", () => `Preset One: ${player.acceleron.presets[0].upgrades.length > 0 ? 'Saved' : 'Empty'}`], '',
-                            ["display-text", () => `Preset One: ${player.acceleron.presets[1].upgrades.length > 0 ? 'Saved' : 'Empty'}`], '',
-                            ["display-text", () => `Preset One: ${player.acceleron.presets[2].upgrades.length > 0 ? 'Saved' : 'Empty'}`],
+                            ["display-text", () => `Preset Two: ${player.acceleron.presets[1].upgrades.length > 0 ? 'Saved' : 'Empty'}`], '',
+                            ["display-text", () => `Preset Three: ${player.acceleron.presets[2].upgrades.length > 0 ? 'Saved' : 'Empty'}`],
                         ],
                         [
                             ["display-text", () => `<b>${player.acceleron.presets[0].name}</b>`], '',

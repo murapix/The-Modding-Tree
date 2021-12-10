@@ -25,13 +25,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.8.0",
+	num: "0.8.1",
 	name: "Fragmentation",
 }
 
 let changelog = `
 	<h1>Changelog:</h1>
-	<br><br>
+	<br><br>    
+    <h3>v0.8.1</h3>
+    <br>- Fix a few more bugs
+    <br>- Acceleron upgrades are now always visible after entangling
+    <br><br>
     <h3>v0.8.0 - Fragmentation</h3>
     <br>- Graphical changes to many features
     <br>- A few more bugfixes

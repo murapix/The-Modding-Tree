@@ -1,5 +1,9 @@
 # Universal Reconstruction changelog:
 
+## v0.8.1
+- Fix a few more bugs
+- Acceleron upgrades are now always visible after entangling
+
 ## v0.8.0 - Fragmentation
 - Graphical changes to many features
 - A few more bugfixes
