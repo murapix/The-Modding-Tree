@@ -12,11 +12,10 @@ addLayer("entangled", {
     type: "custom",
     getResetGain() { return (player.acceleron.points.gte(temp.entangled.nextAt.acceleron)
                              && temp.inflaton.storage.gte(temp.entangled.nextAt.inflaton)
-                             && Object.values(player.timecube.scores).reduce(Decimal.max, decimalZero).gte(temp.entangled.nextAt.timecube))
+                             && Object.values(player.timecube.scores).reduce(Decimal.add, decimalZero).gte(temp.entangled.nextAt.timecube))
                              ? decimalOne : decimalZero },
     getNextAt() {
-        if (player.entangled.points.eq(0)) return { acceleron: new Decimal(1e19), inflaton: new Decimal("1e12000") }
-        if (player.entangled.points.eq(1)) return { acceleron: new Decimal(1e29), inflaton: new Decimal("1e30000") }
+        if (player.entangled.points.eq(0)) return { acceleron: new Decimal(1e19), inflaton: new Decimal("1e8000") }
 
         let numUpgrades = [13, 23, 31, 32, 33].map(id => hasUpgrade('inflaton', id)).reduce((a,b) => a+b)
         if (player.entangled.points.gt(numUpgrades+1)) return { acceleron: Decimal.dInf, inflaton: Decimal.dInf }
@@ -30,7 +29,7 @@ addLayer("entangled", {
         }
     },
     acceleronRequirements: [ // 1 = skyrmion, 2 = timecube, 4 = loops, 8 = buildings, 16 = research
-        new Decimal(1e29), new Decimal(1.5e41), new Decimal(1e50), new Decimal(1e64),
+        new Decimal(1e29), new Decimal(1.5e41), new Decimal(2.5e41), new Decimal(1e64),
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
@@ -40,7 +39,7 @@ addLayer("entangled", {
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf
     ],
     inflatonRequirements: [ // 1 = skyrmion, 2 = timecube, 4 = loops, 8 = buildings, 16 = research
-        new Decimal(3e4), new Decimal(8.5e12), new Decimal(1.6e8), new Decimal(4.5e17),
+        new Decimal(1.8e4), new Decimal(8.5e12), new Decimal(3.7e5), new Decimal(4.5e17),
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf,
@@ -50,7 +49,7 @@ addLayer("entangled", {
         Decimal.dInf, Decimal.dInf, Decimal.dInf, Decimal.dInf
     ],
     timelineRequirements: [ // 1 = skyrmion, 2 = timecube, 4 = loops, 8 = buildings, 16 = research
-        decimalZero, decimalZero, new Decimal(5e9), new Decimal(5e20),
+        decimalZero, decimalZero, new Decimal(1e4), new Decimal(5e6),
         decimalZero, decimalZero, decimalZero, decimalZero,
         decimalZero, decimalZero, decimalZero, decimalZero,
         decimalZero, decimalZero, decimalZero, decimalZero,
@@ -116,7 +115,7 @@ addLayer("entangled", {
         "blank",
         ["display-text", () => colored('acceleron', `Accelerons: ${format(player.acceleron.points)}/${format(temp.entangled.nextAt.acceleron)}`, 'span')],
         ["display-text", () => colored('inflaton', `Stored Inflatons: ${format(temp.inflaton.storage)}/${format(temp.entangled.nextAt.inflaton)}`, 'span')],
-        () => hasUpgrade('inflaton', 23) ? ["display-text", colored('timecube', `Best Timeline Score: ${format(Object.values(player.timecube.scores).reduce(Decimal.max, decimalZero))}/${format(temp.entangled.nextAt.timecube)}`, 'span')] : '',
+        () => hasUpgrade('inflaton', 23) ? ["display-text", colored('timecube', `Total Timeline Score: ${format(Object.values(player.timecube.scores).reduce(Decimal.add, decimalZero))}/${format(temp.entangled.nextAt.timecube)}`, 'span')] : '',
         "blank",
         "milestones"
     ],

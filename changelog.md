@@ -1,5 +1,14 @@
 # Universal Reconstruction changelog:
 
+## v0.8.2
+- BIG TIMELINE REBALANCE
+- Top score now scales similarly to the other resources - this is a buff at low amounts, but a nerf later
+- Level 1 Top timeline nerfed from /1e6 -> /1e3
+- 'Tower' timecube upgrade reworked, now provides Foam retainment to Skyrmion resources
+- Base timeline score divisor reduced from /1e6 -> /1e4
+- Fourth row timecube upgrades reduced in price
+- Entanglement requirements reduced to compensate for reduced scores
+
 ## v0.8.1
 - Fix a few more bugs
 - Acceleron upgrades are now always visible after entangling

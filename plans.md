@@ -11,6 +11,9 @@ Time Cube Features:
   - ???
   - ???
   - ???
+Inflaton Building Features:
+- Hyperstructural Assembly Yards
+  - Unlocks the factory grid
 
 Need to figure out a decent reward structure for phase 2 completions
 
@@ -37,6 +40,7 @@ Inflaton Upgrades:        1/5
   - Upgrades                + 0/5+
   - Loops                   + 0/3
   - Infinite Cycle          + 0/1
+  - Enhancements            + 0/9
 
 -----
 
@@ -52,5 +56,3 @@ Phases
 Universes:
 - Standard (all first row) (our universe)
 - Classical (all first row, except one switched to elemental?) (alchemy-based universe)
-
-

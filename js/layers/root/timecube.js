@@ -47,7 +47,8 @@ addLayer("timecube", {
                 32: decimalZero,
                 33: decimalZero,
                 34: decimalZero
-            }
+            },
+            enteredTimeline: false
         }
         data.activeTimelines = {...data.timelines}
         data.nextScores = {...data.scores}
@@ -188,27 +189,27 @@ addLayer("timecube", {
         },
         42: {
             title: 'Tower',
-            description: 'While in at least one Top timeline, stored Inflatons grant 256x more score',
-            cost: new Decimal(1e17),
-            effect() { return player.timecube.activeTimelines.top ? 256 : 1 },
+            description: 'While in at least one Top timeline, Foam retainment applies to Pions and Spinors as well',
+            cost: new Decimal(1e16),
+            effect() { return player.timecube.activeTimelines.top ? repeatableEffect('inflaton', 115) : decimalOne },
             unlocked() { return hasUpgrade('timecube', 35) || hasUpgrade('timecube', this.id) }
         },
         43: {
             title: 'Title',
             description: 'Best timeline scores also increase their corresponding Time Square gain',
-            cost: new Decimal(1e19),
+            cost: new Decimal(1e17),
             unlocked() { return hasUpgrade('timecube', 35) || hasUpgrade('timecube', this.id) }
         },
         44: {
             title: 'Tempo',
             description: 'The first entropic loop always gives at least one Acceleron',
-            cost: new Decimal(1e20),
+            cost: new Decimal(1e18),
             unlocked() { return hasUpgrade('timecube', 35) || hasUpgrade('timecube', this.id) }
         },
         45: {
             title: 'Toil',
             description: 'While in at least one Left timeline, Foam gain is massively increased based on how little Foam you have',
-            cost: new Decimal(1e21),
+            cost: new Decimal(1e19),
             effect() {
                 if (player.timecube.activeTimelines.left) {
                     let limits = {
@@ -322,16 +323,26 @@ addLayer("timecube", {
             style: { 'min-height': '30px', 'width': '50px' },
         },
         enterTimeline: {
-            display: 'Enter selected timelines',
+            display: () => {
+                let inTimeline = Object.values(player.timecube.activeTimelines).filter(depth => depth > 0).length > 0
+                let enteringTimeline = Object.keys(player.timecube.scores).map(id => getClickableState('timecube', id)).filter(state => state).length > 0
+                return enteringTimeline ? 'Enter selected timelines' : (inTimeline ? 'Exit timelines' : 'Perform timeline reset')
+            },
             canClick: true,
             onClick() {
+                if (!player.timecube.enteredTimeline)
+                    if (!confirm("Warning: Entering a Timeline will reset your currencies in all layers before Entangled Strings, as well as any Acceleron and Inflaton upgrades that provide production bonuses. Additionally, the Subspacial Construction repeatable will be reset to 0. Are you sure you want to enter?\n\nThis warning will not be shown again."))
+                        return
+
                 let acceleronUpgrades = player.acceleron.upgrades.filter(id => id >= 100 || [13,14,21,24,25].includes(id))
                 let acceleronProgress = Object.values(player.acceleron.loops).map(loop => loop.progress)
                 let acceleronEnhancements = [...player.acceleron.enhancements]
-                layerDataReset('acceleron', ['enhancements', 'entropy', 'loops', 'milestones'])
+                let presetNames = Object.values(player.acceleron.presets).map(preset => preset.name)
+                layerDataReset('acceleron', ['enhancements', 'entropy', 'loops', 'milestones', 'presets'])
                 player.acceleron.upgrades = acceleronUpgrades
                 acceleronProgress.forEach((loop, index) => player.acceleron.loops[index].progress = loop)
                 player.acceleron.enhancements = acceleronEnhancements
+                Object.keys(player.acceleron.presets).forEach(id => player.acceleron.presets[id].name = presetNames[id])
 
                 let inflatonUpgrades = player.inflaton.upgrades.filter(id => [11,12,13,22,23,31,32,33].includes(id))
                 let inflatonCosts = {...player.inflaton.upgradeCosts}
@@ -358,6 +369,8 @@ addLayer("timecube", {
 
                 for (let i = 0; i < 10; i++)
                     updateTemp()
+
+                player.timecube.enteredTimeline = true
             },
             style: {
                 "min-height": "50px",
@@ -670,7 +683,7 @@ addLayer("timecube", {
     skyrmionScore() { return ['pion', 'spinor'].map(type => player.skyrmion[type].points.plus(1).log10()).reduce((a,b) => a.plus(b)).div(10) },
     fomeScore() { return fomeTypes.map(type => player.fome.fome[type].points.plus(1).log10()).reduce((a,b) => a.plus(b)).div(50) },
     acceleronScore() { return player.acceleron.points.plus(1).log10() },
-    inflatonScore() { return temp.inflaton.storage.plus(1).log10().div(10000).times(defaultUpgradeEffect('timecube', 42)) },
+    inflatonScore() { return temp.inflaton.storage.plus(10).log10().log10().times(5) },
     timecubeScore() { return player.timecube.points.plus(1).log10() },
     timelineScore() {
         let baseScore = temp.timecube.baseScore
@@ -680,7 +693,7 @@ addLayer("timecube", {
         let inflatonScore = temp.timecube.inflatonScore
         let timecubeScore = temp.timecube.timecubeScore
 
-        return skyrmionScore.times(fomeScore).times(acceleronScore).times(inflatonScore).times(timecubeScore).div(1e6).pow(baseScore)
+        return skyrmionScore.times(fomeScore).times(acceleronScore).times(inflatonScore).times(timecubeScore).div(1e4).pow(baseScore)
     },
     timelineBonus() {
         return {
@@ -801,7 +814,8 @@ addLayer("timecube", {
                     ["styled-text", "Each active Timeline Selector grants a level in two alternate timelines, i.e. the Top Left selector grants a level in the Top timeline and the Left timeline.", {"max-width": "600px", "margin-bottom": "5px"}],
                     ["styled-text", "Timeline levels divide the production their corresponding resources by a flat amount, based on their level, while they're active.", {"max-width": "600px", "margin-bottom": "5px"}],
                     ["styled-text", "Progress in these alternate timelines will give you increased scores in those timelines, granting permanent cumulative bonuses to the timeline resources based on how far you go.", {"max-width": "600px", "margin-bottom": "5px"}],
-                    ["styled-text", "Each active timeline will grant greater and greater rewards, but be warned, their strength may be beyond your abilities.", {"max-width": "600px"}],
+                    ["styled-text", "Each active timeline will grant greater and greater rewards, but be warned, their strength may be beyond your abilities.", {"max-width": "600px", "margin-bottom": "5px"}],
+                    ["styled-text", "Entering a Timeline will reset your currencies in all layers before Entangled Strings, as well as any Acceleron and Inflaton upgrades that provide production bonuses. Additionally, the Subspacial Construction repeatable is be reset to 0.", {"max-width": "600px"}],
                     "blank",
                     ["display-text", '<b>Timeline Score Calculation</b>'],
                     "blank",
@@ -811,10 +825,10 @@ addLayer("timecube", {
                         [["display-text", "Skyrmion", {}, timelineLeftStyle], ["display-text", "[log10(pions) + log10(spinors)] / 10", {}, timelineMiddleStyle], ["display-text", () => `${format(temp.timecube.skyrmionScore)}`, {}, timelineRightStyle]],
                         [["display-text", "Foam", {}, timelineLeftStyle], ["display-text", "sum(log10(foam amounts)) / 50", {}, timelineMiddleStyle], ["display-text", () => `${format(temp.timecube.fomeScore)}`, {}, timelineRightStyle]],
                         [["display-text", "Acceleron", {}, timelineLeftStyle], ["display-text", "log10(accelerons)", {}, timelineMiddleStyle], ["display-text", () => `${format(temp.timecube.acceleronScore)}`, {}, timelineRightStyle]],
-                        [["display-text", "Inflaton", {}, timelineLeftStyle], ["display-text", () => `log10(stored inflatons)/10000${hasUpgrade('timecube', 42) ? `*${upgradeEffect('timecube', 42)}` : ''}`, {}, timelineMiddleStyle], ["display-text", () => `${format(temp.timecube.inflatonScore)}`, {}, timelineRightStyle]],
+                        [["display-text", "Inflaton", {}, timelineLeftStyle], ["display-text", "log10(log10(stored inflatons)) * 5", {}, timelineMiddleStyle], ["display-text", () => `${format(temp.timecube.inflatonScore)}`, {}, timelineRightStyle]],
                         [["display-text", "Timecube", {}, timelineLeftStyle], ["display-text", "log10(timecubes)", {}, timelineMiddleStyle], ["display-text", () => `${format(temp.timecube.timecubeScore)}`, {}, timelineRightStyle]],
-                        [["display-text", "Timelines", {}, timelineLeftStyle], ["display-text", "active timeline count", {}, timelineMiddleStyle], ["display-text", () => `${Object.values(player.timecube.activeTimelines).reduce((a,b) => a+b)}`, {}, timelineRightStyle]],
-                        [["display-text", "Total Score", {}, timelineLeftStyle], ["display-text", "(product of other scores / 1e6)^(active timeline count)", {}, timelineMiddleStyle], ["display-text", () => `${format(temp.timecube.timelineScore)}`, {}, timelineRightStyle]]
+                        [["display-text", "Timelines", {}, timelineLeftStyle], ["display-text", "active timeline selector count", {}, timelineMiddleStyle], ["display-text", () => `${Object.values(player.timecube.activeTimelines).reduce((a,b) => a+b)/2}`, {}, timelineRightStyle]],
+                        [["display-text", "Total Score", {}, timelineLeftStyle], ["display-text", "(product of other scores / 1e4)^(active timeline count)", {}, timelineMiddleStyle], ["display-text", () => `${format(temp.timecube.timelineScore)}`, {}, timelineRightStyle]]
                     ]],
                 ]
             }
@@ -983,7 +997,7 @@ function getTimelineBonus(square) {
 const baseTimelineEffects = {
     'front': [decimalOne, new Decimal(1e8), new Decimal(1e80), new Decimal('1e800'), new Decimal('1e8000')], // timecube
     'left': [decimalOne, new Decimal(1e12), new Decimal(1e120), new Decimal('1e1200'), new Decimal('1e12000')], // foam
-    'top': [decimalOne, new Decimal(1e6), new Decimal(1e60), new Decimal('1e600'), new Decimal('1e6000')], // universe
+    'top': [decimalOne, new Decimal(1e3), new Decimal(1e30), new Decimal('1e300'), new Decimal('1e3000')], // universe
     'back': [decimalOne, new Decimal(1e6), new Decimal(1e60), new Decimal('1e600'), new Decimal('1e6000')], // acceleron
     'right': [decimalOne, new Decimal(1e2), new Decimal(1e20), new Decimal(1e200), new Decimal('1e2000')], // loop
     'bottom': [decimalOne, new Decimal(1e5), new Decimal(1e50), new Decimal('1e500'), new Decimal('1e5000')] // skyrmion

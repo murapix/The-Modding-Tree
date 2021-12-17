@@ -176,7 +176,7 @@ addLayer("inflaton", {
         if (player.inflaton.points.gt(player.inflaton.best)) player.inflaton.best = player.inflaton.points
 
         if (inChallenge('inflaton', 11)) {
-            let individualNerfs = { pion: decimalOne, spinor: decimalOne }
+            let individualNerfs = { pion: defaultUpgradeEffect('timecube', 42, decimalOne).reciprocate(), spinor: defaultUpgradeEffect('timecube', 42, decimalOne).reciprocate() }
             for (fomeType of fomeTypes) individualNerfs[fomeType] = decimalOne
             if (hasResearch('inflaton', 7)) individualNerfs.quantum = individualNerfs.quantum.times(researchEffect('inflaton', 7))
             if (hasResearch('inflaton', 14)) individualNerfs.quantum = individualNerfs.quantum.times(researchEffect('inflaton', 14))
@@ -521,10 +521,10 @@ addLayer("inflaton", {
         },
         5: {
             title: 'Distributed Analysis Framework',
-            description: 'The first 6 Quantum Flux Analyzers increase Research Point gain by 10%',
+            description: () => `Increase Research Point gain by 10% per ℓ<sub>P</sub> of Quantum Flux Analyzers, up to a cap of ${format(temp.inflaton.research[5].limit)}x`,
             cost: new Decimal(1500),
-            effect() { return Decimal.pow(1.1, getBuyableAmount('inflaton', 12).min(temp.inflaton.research[5].limit)) },
-            limit() { return new Decimal(6).plus(repeatableEffect('inflaton', 112)) },
+            effect() { return Decimal.pow(1.1, getBuyableAmount('inflaton', 12)).min(temp.inflaton.research[5].limit) },
+            limit() { return repeatableEffect('inflaton', 112).times(1.8) },
             requires: [2, 3],
             row: 3,
             pos: 2
@@ -713,10 +713,10 @@ addLayer("inflaton", {
         },
         112: {
             title: 'Repeatable: Perpetual Testing',
-            description: `Increase Distributed Analysis Framework's maximum Analyzer limit by ${formatLength(6)}`,
+            description: "Increase Distributed Analysis Framework's maximum Analyzer limit by 80%",
             cost(amount) { return Decimal.gte(amount, 3998) ? Decimal.dInf : Decimal.pow(8, amount).times(15000).div(buyableEffect('skyrmion', 241)) },
-            effect(amount) { return Decimal.times(amount, 6) },
-            effectDisplay(effect) { return `+${formatLength(effect)}` },
+            effect(amount) { return Decimal.pow(1.8, amount) },
+            effectDisplay(effect) { return `*${formatLength(effect)}` },
             unlocked() { return hasResearch('inflaton', 15) },
             canResearch: true,
             repeatable: true,
@@ -730,7 +730,7 @@ addLayer("inflaton", {
             effect(amount) { return { size: Decimal.pow(10, amount), gain: Decimal.pow(2, amount) } },
             effectDisplay(effect) { return `${formatWhole(effect.size)}x, ${formatWhole(effect.gain.times(effect.size))}x` },
             onComplete() { layers.inflaton.buyables.respec() },
-            canResearch() { return Object.keys(player.inflaton.buyables).map(id => player.inflaton.buyables[id].div(temp.inflaton.buyables[id].size).gt(10)).reduce((a,b) => a && b) },
+            canResearch() { return Object.keys(player.inflaton.buyables).map(id => player.inflaton.buyables[id].div(temp.inflaton.buyables[id].size).gte(10)).reduce((a,b) => a && b) },
             unlocked() { return hasResearch('inflaton', 22) },
             repeatable: true,
             row: 0,
@@ -995,7 +995,7 @@ addLayer("inflaton", {
                     "clickables"
                 ],
                 shouldNotify() {
-                    return temp.inflaton.clickables[3].canClick && !player.inflaton.researchQueue.includes('113')
+                    return temp.inflaton.clickables[3].canClick && !player.inflaton.researchQueue.includes('113') && Object.keys(player.inflaton.repeatables).map(key => [key, layers.inflaton.research[key].cost(researchLevel('inflaton', key))]).reduce((a,b) => a[1].lt(b[1]) ? a : b, [0, Decimal.dInf])[0] == '113'
                 }
             }
         }
@@ -1120,10 +1120,11 @@ function createResearchClickable(id, research, index) {
         }
         if (id == '113') {
             clickable.style = () => {
-                if (temp.inflaton.clickables[3].canClick && !player.inflaton.researchQueue.includes('113')) {
+                if (temp.inflaton.clickables[3].canClick && !player.inflaton.researchQueue.includes('113') && Object.keys(player.inflaton.repeatables).map(key => [key, layers.inflaton.research[key].cost(researchLevel('inflaton', key))]).reduce((a,b) => a[1].lt(b[1]) ? a : b, [0, Decimal.dInf])[0] == '113') {
                     return {'box-shadow': `var(--hqProperty2a), 0 0 20px ${temp.inflaton.trueGlowColor}`}
                 }
             }
+            clickable.tooltip = "Requires 10 of each Subspace Building to be researched"
         }
     }
     else {
@@ -1132,7 +1133,7 @@ function createResearchClickable(id, research, index) {
             if (hasResearch('inflaton', id)) style["background-color"] = "#77bf5f"
             return style
         }
-        clickable.display = () => `<h3>${research.title}</h3><br>${research.description}<br><b>Cost:</b> ${formatWhole(research.cost)} Research Points`
+        clickable.display = () => `<h3>${research.title}</h3><br>${run(research.description)}<br><b>Cost:</b> ${formatWhole(research.cost)} Research Points`
         clickable.onClick = () => {
             if (player.inflaton.researchQueue.length >= temp.inflaton.queueSize) return
             if (player.inflaton.researchQueue.includes(id)) return

@@ -25,13 +25,23 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.8.1",
+	num: "0.8.2",
 	name: "Fragmentation",
 }
 
 let changelog = `
 	<h1>Changelog:</h1>
-	<br><br>    
+	<br><br>
+    <h3>v0.8.2</h3>
+    <br>- BIG TIMELINE REBALANCE
+    <br>- Top score now scales similarly to the other resources - this is a buff at low amounts, but a nerf later
+    <br>- Level 1 Top timeline nerfed from /1e6 -> /1e3
+    <br>- 'Tower' timecube upgrade reworked, now provides Foam retainment to Skyrmion resources
+    <br>- Base timeline score divisor reduced from /1e6 -> /1e4
+    <br>- Fourth row timecube upgrades reduced in price
+    <br>- Entanglement requirements reduced to compensate for reduced scores
+    <br>- Several other small changes and bug fixes
+    <br><br>
     <h3>v0.8.1</h3>
     <br>- Fix a few more bugs
     <br>- Acceleron upgrades are now always visible after entangling
