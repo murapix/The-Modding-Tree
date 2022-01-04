@@ -16,10 +16,6 @@ Here's a breakdown of what's in it:
 
         "discordName" is the text on the link, and "discordLink" is the url of an invite. If you're using a Discord invite, please make sure it's set to never expire.
 
-    - offlineLimit: The maximum amount of offline time that the player can accumulate, in hours. Any extra time is lost. (a number)
-
-        This is useful because most of these mods are fast-paced enough that too much offline time ruins the balance, such as the time in between updates. That is why I suggest developers disable offline time on their own savefile.
-
     - initialStartPoints: A Decimal for the amount of points a new player should start with.
 
 - VERSION is used to describe the current version of your mod. It contains:
@@ -34,10 +30,6 @@ Here's a breakdown of what's in it:
 // (The ones here are examples, all official functions are already taken care of)
 var doNotCallTheseFunctionsEveryTick = ["doReset", "buy", "onPurchase", "blowUpEverything"]
 ```
-
-- getStartPoints(): A function to determine the amount of points the player starts with after a reset. (returns a Decimal value)
-
-- canGenPoints(): A function returning a boolean for if points should be generated. Use this if you want an upgrade to unlock generating points. 
 
 - getPointGen(): A function that calculates your points per second. Anything that affects your point gain should go into the calculation here.
 

@@ -11,7 +11,7 @@ var activeFunctions = [
 	"effectDescription", "display", "fullDisplay", "effectDisplay", "rewardDisplay",
 	"tabFormat", "content",
 	"onComplete", "onPurchase", "onEnter", "onExit", "done",
-	"getUnlocked", "getStyle", "getCanClick", "getTitle", "getDisplay"
+	"getStartData", "getUnlocked", "getTitle", "getDisplay", "getStyle", "getCanClick", "getEffect", "getTooltip"
 ]
 
 var noCall = doNotCallTheseFunctionsEveryTick
@@ -84,7 +84,7 @@ function setupTempData(layerData, tmpData, funcsData) {
 			if (boolNames.includes(item))
 				tmpData[item] = false
 			else
-				tmpData[item] = decimalOne // The safest thing to put probably?
+				tmpData[item] = 0 // The safest thing to put probably?
 		} else {
 			tmpData[item] = layerData[item]
 		}

@@ -47,9 +47,27 @@ function loadVue() {
 		<div class="upgTable instant">
 			<div class="upgRow">
 				<div v-for="(item, index) in data">
-				<div v-if="!Array.isArray(item)" v-bind:is="item" :layer= "layer" v-bind:style="tmp[layer].componentStyles[item]" :key="key + '-' + index"></div>
-				<div v-else-if="item.length==3" v-bind:style="[tmp[layer].componentStyles[item[0]], (item[2] ? item[2] : {})]" v-bind:is="item[0]" :layer= "layer" :data= "item[1]" :key="key + '-' + index"></div>
-				<div v-else-if="item.length==2" v-bind:is="item[0]" :layer= "layer" :data= "item[1]" v-bind:style="tmp[layer].componentStyles[item[0]]" :key="key + '-' + index"></div>
+                    <div v-if="!Array.isArray(item)" v-bind:is="item" :layer= "layer" v-bind:style="tmp[layer].componentStyles[item]" :key="key + '-' + index"></div>
+                    <div v-else-if="item.length==3" v-bind:style="[tmp[layer].componentStyles[item[0]], (item[2] ? item[2] : {})]" v-bind:is="item[0]" :layer= "layer" :data= "item[1]" :key="key + '-' + index"></div>
+                    <div v-else-if="item.length==2" v-bind:is="item[0]" :layer= "layer" :data= "item[1]" v-bind:style="tmp[layer].componentStyles[item[0]]" :key="key + '-' + index"></div>
+				</div>
+			</div>
+		</div>
+		`
+	})
+
+    Vue.component('oasis-row', {
+		props: ['layer', 'data'],
+		computed: {
+			key() {return this.$vnode.key}
+		},
+		template: `
+		<div class="upgTable instant">
+			<div class="upgRow">
+				<div v-for="(item, index) in data" style="margin-top: 0">
+                    <div v-if="!Array.isArray(item)" v-bind:is="item" :layer= "layer" v-bind:style="tmp[layer].componentStyles[item]" :key="key + '-' + index"></div>
+                    <div v-else-if="item.length==3" v-bind:style="[tmp[layer].componentStyles[item[0]], (item[2] ? item[2] : {})]" v-bind:is="item[0]" :layer= "layer" :data= "item[1]" :key="key + '-' + index"></div>
+                    <div v-else-if="item.length==2" v-bind:is="item[0]" :layer= "layer" :data= "item[1]" v-bind:style="tmp[layer].componentStyles[item[0]]" :key="key + '-' + index"></div>
 				</div>
 			</div>
 		</div>
@@ -74,6 +92,50 @@ function loadVue() {
 		</div>
 		`
 	})
+
+    Vue.component('resource-grid', {
+        props: ['layer', 'data'],
+        computed: {
+            key() { return this.$vnode.key },
+            unlocked() { return this.data.filter(resource => player.oasis.resources[resource].unlocked) }
+        },
+        template: `
+        <table>
+            <tr v-for="resource in unlocked">
+                <td style='text-align: left'><display-text :layer="layer" :data="temp.oasis.resources[resource].name"></display-text></td>
+                <td><blank :layer="layer" :data="['20px', '17px']"></blank></td>
+                <td><bar :layer="layer" :data="resource"></bar></td>
+                <td><blank :layer="layer" :data="['20px', '17px']"></blank></td>
+                <td style='text-align: right'><display-text :layer="layer" :data="(temp.oasis.production[resource] ?? 0) + '/day'"></display-text></td>
+            </tr>
+        </table>
+        `
+    })
+
+    Vue.component('job-grid', {
+        props: ['layer', 'data'],
+        computed: {
+            key() { return this.$vnode.key },
+            unlocked() { return this.data.filter(job => player.oasis.jobs[job].unlocked) }
+        },
+        template: `
+        <table>
+            <tr>
+                <td style='text-align: left'><display-text :layer="layer" :data="'Unemployed'"></display-text></td>
+                <td><blank :layer="layer" :data="['20px', '17px']"></blank></td>
+                <td><blank :layer="layer" :data="['20px', '17px']"></blank></td>
+                <td style='text-align: right'><display-text :layer="layer" :data="formatWhole(player.oasis.unemployed)+'/'+formatWhole(player.oasis.resources.people.amount)"></display-text></td>
+            </tr>
+            <tr v-for="job in unlocked">
+                <td style='text-align: left'><display-text :layer="layer" :data="temp.oasis.jobs[job].name"></display-text></td>
+                <td><blank :layer="layer" :data="['20px', '17px']"></blank></td>
+                <td><clickable :layer="layer" :data="job+'-up'"></clickable></td>
+                <td style='text-align: right'><display-text :layer="layer" :data="formatWhole(player.oasis.jobs[job].amount)+'/'+formatWhole(temp.oasis.jobs[job].max)"></display-text></td>
+                <td><clickable :layer="layer" :data="job+'-down'"></clickable></td>
+            </tr>
+        </table>
+        `
+    })
 
 	// data [other layer, tabformat for within proxy]
 	Vue.component('layer-proxy', {
@@ -336,7 +398,7 @@ function loadVue() {
 		template: `
 		<button 
 			v-if="tmp[layer].clickables && tmp[layer].clickables[data]!== undefined && tmp[layer].clickables[data].unlocked" 
-			v-bind:class="{ upg: true, tooltipBox: true, can: tmp[layer].clickables[data].canClick, locked: !tmp[layer].clickables[data].canClick}"
+			v-bind:class="{ upg: true, tooltipBox: true, can: tmp[layer].clickables[data].canClick, locked: !tmp[layer].clickables[data].canClick, clickable: true }"
 			v-bind:style="[tmp[layer].clickables[data].canClick ? {'background-color': tmp[layer].color} : {}, tmp[layer].clickables[data].style]"
 			v-on:click="if(!interval) clickClickable(layer, data)" :id='"clickable-" + layer + "-" + data' @mousedown="start" @mouseleave="stop" @mouseup="stop" @touchstart="start" @touchend="stop" @touchcancel="stop">
 			<span v-if= "tmp[layer].clickables[data].title"><h2 v-html="tmp[layer].clickables[data].title"></h2><br></span>
@@ -382,7 +444,7 @@ function loadVue() {
 		<div v-if="tmp[layer].grid" class="upgTable">
 			<div v-for="row in (data === undefined ? tmp[layer].grid.rows : data)" class="upgRow">
 				<div v-for="col in tmp[layer].grid.cols"><div v-if="run(layers[layer].grid.getUnlocked, layers[layer].grid, row*100+col)"
-					class="upgAlign" v-bind:style="{'margin': '1px',  'height': 'inherit',}">
+					class="upgAlign" v-bind:style="{'height': 'inherit',}">
 					<gridable :layer = "layer" :data = "row*100+col" v-bind:style="tmp[layer].componentStyles.gridable"></gridable>
 				</div></div>
 				<br>
@@ -397,7 +459,7 @@ function loadVue() {
 		<button 
 		v-if="tmp[layer].grid && player[layer].grid[data]!== undefined && run(layers[layer].grid.getUnlocked, layers[layer].grid, data)" 
 		v-bind:class="{ tile: true, can: canClick, locked: !canClick, tooltipBox: true,}"
-		v-bind:style="[canClick ? {'background-color': tmp[layer].color} : {}, gridRun(layer, 'getStyle', player[this.layer].grid[this.data], this.data)]"
+		v-bind:style="[gridRun(layer, 'getStyle', player[this.layer].grid[this.data], this.data)]"
 		v-on:click="clickGrid(layer, data)"  @mousedown="start" @mouseleave="stop" @mouseup="stop" @touchstart="start" @touchend="stop" @touchcancel="stop">
 			<span v-if= "layers[layer].grid.getTitle"><h3 v-html="gridRun(this.layer, 'getTitle', player[this.layer].grid[this.data], this.data)"></h3><br></span>
 			<span v-bind:style="{'white-space': 'pre-line'}" v-html="gridRun(this.layer, 'getDisplay', player[this.layer].grid[this.data], this.data)"></span>
@@ -434,7 +496,7 @@ function loadVue() {
 			currentTab() {return player.subtabs[layer][data]}
 		},
 		template: `
-		<div v-if="tmp[layer].microtabs" :style="{'border-style': 'solid'}">
+		<div v-if="tmp[layer].microtabs">
 			<div class="upgTable instant">
 				<tab-buttons :layer="layer" :data="tmp[layer].microtabs[data]" :name="data" v-bind:style="tmp[layer].componentStyles['tab-buttons']"></tab-buttons>
 			</div>

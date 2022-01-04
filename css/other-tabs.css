@@ -60,7 +60,7 @@
 #version {
 	position: absolute;
 	right: 4px;
-	top: 4px;
+	top: 36px;
 	text-align: right;
 	color: var(--points);
 	text-shadow: 0 0 10px var(--points);

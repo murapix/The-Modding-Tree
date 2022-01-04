@@ -3,7 +3,6 @@
 .reset {
 	height: 120px;
 	width: 180px;
-	border-radius: 25%;
 	border: 4px solid;
 	border-color: rgba(0, 0, 0, 0.125);
 }
@@ -15,7 +14,6 @@
 	cursor: pointer;
 	padding: 5px 20px;
 	margin: 5px;
-	border-radius: 10px;
 	border: 2px solid;
 	color: var(--color);
 

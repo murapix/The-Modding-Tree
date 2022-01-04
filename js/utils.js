@@ -223,7 +223,7 @@ function subtabShouldNotify(layer, family, id) {
     if (family == "mainTabs") subtab = tmp[layer].tabFormat[id]
     else subtab = tmp[layer].microtabs[family][id]
 	if (!subtab.unlocked) return false
-    if (subtab.embedLayer) return tmp[subtab.embedLayer].notify
+    if (subtab.embedLayer) return tmp[subtab.embedLayer]?.notify ?? false
     else return subtab.shouldNotify
 }
 
@@ -231,7 +231,7 @@ function subtabResetNotify(layer, family, id) {
 	let subtab = {}
 	if (family == "mainTabs") subtab = tmp[layer].tabFormat[id]
 	else subtab = tmp[layer].microtabs[family][id]
-	if (subtab.embedLayer) return tmp[subtab.embedLayer].prestigeNotify
+	if (subtab.embedLayer) return tmp[subtab.embedLayer]?.prestigeNotify ?? false
 	else return subtab.prestigeNotify
 }
 
@@ -409,4 +409,12 @@ function gridRun(layer, func, data, id) {
 	}
 	else
 		return layers[layer].grid[func];
+}
+
+function colored(text, color, tag='h2') {
+    return `<${tag} style="color: ${color}">${text}</${tag}>`
+}
+
+function clamp(amount, min, max) {
+    return Math.min(Math.max(amount, min), max);
 }

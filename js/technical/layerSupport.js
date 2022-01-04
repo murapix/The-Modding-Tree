@@ -133,6 +133,10 @@ function setupLayer(layer){
 
     if (layers[layer].clickables){
         layers[layer].clickables.layer = layer
+        if (layer === 'oasis') {
+            createJobButtons(layers[layer].clickables)
+            createActionButtons(layers[layer].clickables)
+        }
         setRowCol(layers[layer].clickables)
         for (thing in layers[layer].clickables){
             if (isPlainObject(layers[layer].clickables[thing])){
@@ -146,6 +150,9 @@ function setupLayer(layer){
 
     if (layers[layer].bars){
         layers[layer].bars.layer = layer
+        if (layer === 'oasis') {
+            createResourceBars(layers[layer].bars)
+        }
         for (thing in layers[layer].bars){
             layers[layer].bars[thing].id = thing
             layers[layer].bars[thing].layer = layer

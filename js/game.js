@@ -215,7 +215,7 @@ function doReset(layer, force=false) {
 		if (row >= layers[layerResetting].row && (!force || layerResetting != layer)) completeChallenge(layerResetting)
 	}
 
-	player.points = (row == 0 ? decimalZero : getStartPoints())
+	player.points = decimalZero
 
 	for (let x = row; x >= 0; x--) rowReset(x, layer)
 	for (r in OTHER_LAYERS){
@@ -239,7 +239,7 @@ function resetRow(row) {
 		player[layer].unlocked = false
 		if (player[layer].unlockOrder) player[layer].unlockOrder = 0
 	}
-	player.points = getStartPoints()
+	player.points = decimalZero
 	updateTemp();
 	resizeCanvas();
 }
@@ -401,15 +401,6 @@ var interval = setInterval(function() {
 	let now = Date.now()
 	let diff = (now - player.time) / 1e3
 	let trueDiff = diff
-	if (player.offTime !== undefined) {
-		if (player.offTime.remain > modInfo.offlineLimit * 3600) player.offTime.remain = modInfo.offlineLimit * 3600
-		if (player.offTime.remain > 0) {
-			let offlineDiff = Math.max(player.offTime.remain / 10, diff)
-			player.offTime.remain -= offlineDiff
-			diff += offlineDiff
-		}
-		if (!options.offlineProd || player.offTime.remain <= 0) player.offTime = undefined
-	}
 	if (player.devSpeed) diff *= player.devSpeed
 	player.time = now
 	if (needCanvasUpdate){ resizeCanvas();

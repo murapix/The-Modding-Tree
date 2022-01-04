@@ -1,14 +1,19 @@
 let modInfo = {
-	name: "The ??? Tree",
-	id: "mymod",
-	author: "nobody",
-	pointsName: "points",
-	modFiles: ["layers.js", "tree.js"],
+	name: "Oasis",
+	id: "igm-2022-oasis",
+	author: "Escapee",
+	modFiles: ["other/resource.js",
+               "other/job.js",
+               "other/action.js",
+               "other/building.js",
 
-	discordName: "",
+               "tree.js",
+               "layers/oasis.js",
+    ],
+
+	discordName: "Escapee",
 	discordLink: "",
-	initialStartPoints: new Decimal (10), // Used for hard resets and new players
-	offlineLimit: 1,  // In hours
+	initialStartPoints: new Decimal (0) // Used for hard resets and new players
 }
 
 // Set your version in num and name
@@ -28,30 +33,20 @@ let winText = `Congratulations! You have reached the end and beaten this game, b
 // (The ones here are examples, all official functions are already taken care of)
 var doNotCallTheseFunctionsEveryTick = ["blowUpEverything"]
 
-function getStartPoints(){
-    return new Decimal(modInfo.initialStartPoints)
-}
-
-// Determines if it should show points/sec
-function canGenPoints(){
-	return true
-}
-
 // Calculate points/sec!
 function getPointGen() {
-	if(!canGenPoints())
-		return new Decimal(0)
-
 	let gain = new Decimal(1)
 	return gain
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
+    gameSpeed: 0
 }}
 
 // Display extra things at the top of the page
 var displayThings = [
+    () => `<h2  class="overlayThing" id="points">${formatTime(player.points)} have passed</h2>`
 ]
 
 // Determines when the game "ends"
