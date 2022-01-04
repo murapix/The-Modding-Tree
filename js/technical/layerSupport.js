@@ -24,7 +24,7 @@ function updateHotkeys()
         hk = layers[layer].hotkeys
         if (hk){
             for (id in hk){
-				hotkeys[hk[id].key] = hk[id]
+                hotkeys[hk[id].key] = hk[id]
                 hotkeys[hk[id].key].layer = layer
                 hotkeys[hk[id].key].id = id
                 if (hk[id].unlocked === undefined)
@@ -250,10 +250,10 @@ function addNode(layerName, layerData){ // Does the same thing, but for non-laye
 
 // If data is a function, return the result of calling it. Otherwise, return the data.
 function readData(data, args=null){
-	if ((!!data && data.constructor && data.call && data.apply))
-		return data(args);
-	else
-		return data;
+    if ((!!data && data.constructor && data.call && data.apply))
+        return data(args);
+    else
+        return data;
 }
 
 function setRowCol(upgrades) {

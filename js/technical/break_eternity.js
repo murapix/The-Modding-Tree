@@ -463,10 +463,10 @@
       return D(value).cmp(other);
     };
 
-	Decimal.cmpabs = function (value, other) {
+    Decimal.cmpabs = function (value, other) {
       return D(value).cmpabs(other);
     };
-	
+    
     Decimal.compare = function (value, other) {
       return D(value).cmp(other);
     };
@@ -514,7 +514,7 @@
     Decimal.minabs = function (value, other) {
       return D(value).minabs(other);
     };
-	
+    
     Decimal.maxabs = function (value, other) {
       return D(value).maxabs(other);
     };
@@ -1565,8 +1565,8 @@
       if (this.sign < decimal.sign) { return -1; }
       return this.sign*this.cmpabs(value);
     };
-	
-	Decimal.prototype.cmpabs = function (value) {
+    
+    Decimal.prototype.cmpabs = function (value) {
       var decimal = D(value);
       var layera = this.mag > 0 ? this.layer : -this.layer;
       var layerb = decimal.mag > 0 ? decimal.layer : -decimal.layer;
@@ -1625,8 +1625,8 @@
       var decimal = D(value);
       return this.gt(decimal) ? decimal : this;
     };
-	
-	Decimal.prototype.maxabs = function (value) {
+    
+    Decimal.prototype.maxabs = function (value) {
       var decimal = D(value);
       return this.cmpabs(decimal) < 0 ? decimal : this;
     };
@@ -2465,40 +2465,40 @@ for (var i = 0; i < 1000; ++i)
 
 for (var i = 0; i < 1000; ++i)
 {
-	var first = Math.round((Math.random()*30))/10;
-	var both = Math.round((Math.random()*30))/10;
-	var tetrateonly = Decimal.tetrate(10, first);
-	var tetrateandlog = Decimal.tetrate(10, first+both).iteratedlog(10, both);
-	if (!Decimal.eq_tolerance(tetrateonly, tetrateandlog))
-	{
-		console.log(first + ", " + both);
-	}
+    var first = Math.round((Math.random()*30))/10;
+    var both = Math.round((Math.random()*30))/10;
+    var tetrateonly = Decimal.tetrate(10, first);
+    var tetrateandlog = Decimal.tetrate(10, first+both).iteratedlog(10, both);
+    if (!Decimal.eq_tolerance(tetrateonly, tetrateandlog))
+    {
+        console.log(first + ", " + both);
+    }
 }
 
 for (var i = 0; i < 1000; ++i)
 {
-	var first = Math.round((Math.random()*30))/10;
-	var both = Math.round((Math.random()*30))/10;
+    var first = Math.round((Math.random()*30))/10;
+    var both = Math.round((Math.random()*30))/10;
   var base = Math.random()*8+2;
-	var tetrateonly = Decimal.tetrate(base, first);
-	var tetrateandlog = Decimal.tetrate(base, first+both).iteratedlog(base, both);
-	if (!Decimal.eq_tolerance(tetrateonly, tetrateandlog))
-	{
-		console.log(first + ", " + both);
-	}
+    var tetrateonly = Decimal.tetrate(base, first);
+    var tetrateandlog = Decimal.tetrate(base, first+both).iteratedlog(base, both);
+    if (!Decimal.eq_tolerance(tetrateonly, tetrateandlog))
+    {
+        console.log(first + ", " + both);
+    }
 }
 
 for (var i = 0; i < 1000; ++i)
 {
-	var first = Math.round((Math.random()*30))/10;
-	var both = Math.round((Math.random()*30))/10;
+    var first = Math.round((Math.random()*30))/10;
+    var both = Math.round((Math.random()*30))/10;
   var base = Math.random()*8+2;
-	var tetrateonly = Decimal.tetrate(base, first, base);
-	var tetrateandlog = Decimal.tetrate(base, first+both, base).iteratedlog(base, both);
-	if (!Decimal.eq_tolerance(tetrateonly, tetrateandlog))
-	{
-		console.log(first + ", " + both);
-	}
+    var tetrateonly = Decimal.tetrate(base, first, base);
+    var tetrateandlog = Decimal.tetrate(base, first+both, base).iteratedlog(base, both);
+    if (!Decimal.eq_tolerance(tetrateonly, tetrateandlog))
+    {
+        console.log(first + ", " + both);
+    }
 }
 
 for (var i = 0; i < 1000; ++i)
@@ -2726,14 +2726,14 @@ for (var i = 0; i < 10; ++i)
     return Decimal;
   }();
 
-	Decimal.dZero = FC_NN(0, 0, 0);
-	Decimal.dOne = FC_NN(1, 0, 1);
-	Decimal.dNegOne = FC_NN(-1, 0, 1);
-	Decimal.dTwo = FC_NN(1, 0, 2);
-	Decimal.dTen = FC_NN(1, 0, 10);
-	Decimal.dNaN = FC_NN(Number.NaN, Number.NaN, Number.NaN);
-	Decimal.dInf = FC_NN(1, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
-	Decimal.dNegInf = FC_NN(-1, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY);
+    Decimal.dZero = FC_NN(0, 0, 0);
+    Decimal.dOne = FC_NN(1, 0, 1);
+    Decimal.dNegOne = FC_NN(-1, 0, 1);
+    Decimal.dTwo = FC_NN(1, 0, 2);
+    Decimal.dTen = FC_NN(1, 0, 10);
+    Decimal.dNaN = FC_NN(Number.NaN, Number.NaN, Number.NaN);
+    Decimal.dInf = FC_NN(1, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
+    Decimal.dNegInf = FC_NN(-1, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY);
   Decimal.dNumberMax = FC(1, 0, Number.MAX_VALUE);
   Decimal.dNumberMin = FC(1, 0, Number.MIN_VALUE);
   

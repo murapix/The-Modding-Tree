@@ -37,8 +37,8 @@ var doNotCallTheseFunctionsEveryTick = ["doReset", "buy", "onPurchase", "blowUpE
 
 ```js
 function addedPlayerData() { return {
-	weather: "Yes",
-	happiness: new Decimal(72),
+    weather: "Yes",
+    happiness: new Decimal(72),
 }}
 ```
 

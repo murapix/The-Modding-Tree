@@ -33,7 +33,7 @@ function makeParticles(data, amount=1, type = "normal") {
         particle.xVel = particle.speed * sin(particle.dir)
         particle.yVel = particle.speed * cos(particle.dir) * -1
         particle.fadeInTimer = particle.fadeInTime
-	    Vue.set(particles, particle.id, particle)
+        Vue.set(particles, particle.id, particle)
 
     }
 }
@@ -45,14 +45,14 @@ function makeShinies(data, amount=1) {
 
 
 function updateParticles(diff) {
-	for (p in particles) {
+    for (p in particles) {
         let particle = particles[p]
-		particle.time -= diff;
+        particle.time -= diff;
         particle.fadeInTimer -= diff;
-		if (particle["time"] < 0) {
-			Vue.delete(particles, p); 
+        if (particle["time"] < 0) {
+            Vue.delete(particles, p); 
             
-		}
+        }
         else {
             if (particle.update) run(particle.update, particle)
             particle.angle += particle.rotation
@@ -62,7 +62,7 @@ function updateParticles(diff) {
             particle.dir = atan(-particle.xVel/particle.yVel)
             particle.yVel += particle.gravity
         }
-	}
+    }
 }
 
 function setDir(particle, dir) {
