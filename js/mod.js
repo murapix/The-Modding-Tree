@@ -26,10 +26,9 @@ let changelog = `
     <h1>Changelog:</h1>
     <br><br>
     <h3>v0.1 - Spring</h3>
-    <br><br>
-    - Created initial content framework
-    - Initial visual design settings
-    - Ripped out obviously useless TMT code
+    <br>- Created initial content framework
+    <br>- Initial visual design settings
+    <br>- Ripped out obviously useless TMT code
 `
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
