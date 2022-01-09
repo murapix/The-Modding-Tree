@@ -77,7 +77,7 @@ class DemolishAction extends Action {
 
 const actions = {
     buildFreeCampsite: new BuildAction("Settle", "campsite").setCanRun("Must be within 2 tiles of Water", () => (temp.oasis.countResourcesAroundSelected?.[2]?.water ?? 0) > 0),
-    buildLoggingCamp: new BuildAction("Set up logging operations", "loggingCamp").costs('stoneTools', 10).setUnlocked(() => temp.oasis.buildings.encampment > 0),
+    buildLoggingCamp: new BuildAction("Set up logging operations", "loggingCamp").costs('stoneTools', 10).setUnlocked(() => player.oasis.resources.stoneTools.unlocked),
     buildSmallWarehouse: new BuildAction("Build a Small Warehouse", "smallWarehouse").setCanRun("Must be within 2 tiles of Civilization", () => (temp.oasis.countResourcesAroundSelected?.[2]?.civilization ?? 0) > 0).costs('stoneTools', 5).costs('sandstone', 30).setUnlocked(() => temp.oasis.buildings.settlement > 0)
 }
 
@@ -86,7 +86,7 @@ function initActions() {
                     [
                         ['campsite', {'food': 10, 'wood': 5}],
                         ['encampment', {'food': 15, 'wood': 15, 'sandstone': 20}, () => player.oasis.resources.sandstone.unlocked],
-                        ['settlement', {'food': 30, 'wood': 80, 'sandstone': 120}, () => temp.oasis.buildings.encampment > 0]
+                        ['settlement', {'food': 30, 'wood': 80, 'sandstone': 120}, () => temp.oasis.buildings.encampment > 0 || temp.oasis.buildings.settlement > 0]
                     ],
                     'Build', 'Upgrade to',
                     ["Must be within 2 tiles of Water", () => (temp.oasis.countResourcesAroundSelected?.[2]?.water ?? 0) > 0])

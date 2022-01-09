@@ -1,6 +1,7 @@
 TODO:
 Add job tooltips
-Limit storage displays to known resources
+Limit storage displays to unlocked resources
+Fix map expansion (with shadowed areas?)
 Add resource colors
 Add resource separators
 Add sandstorms and warning displays
