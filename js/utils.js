@@ -87,7 +87,6 @@ function buyUpg(layer, id) {
     player[layer].upgrades.push(id);
     if (upg.onPurchase != undefined)
         run(upg.onPurchase, upg)
-    needCanvasUpdate = true
 }
 
 function buyMaxBuyable(layer, id) {
@@ -152,7 +151,6 @@ function showTab(name, prev) {
     player.tab = name
     if (tmp[name] && (tmp[name].row !== "side") && (tmp[name].row !== "otherside")) player.lastSafeTab = name
     updateTabFormats()
-    needCanvasUpdate = true
     document.activeElement.blur()
 
 }
@@ -169,7 +167,6 @@ function showNavTab(name, prev) {
         player[name].prevTab = ""
     player.navTab = name
     updateTabFormats()
-    needCanvasUpdate = true
 }
 
 
@@ -246,7 +243,6 @@ function layerunlocked(layer) {
 
 function keepGoing() {
     player.keepGoing = true;
-    needCanvasUpdate = true;
 }
 
 function toNumber(x) {

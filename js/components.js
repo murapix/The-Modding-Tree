@@ -1,6 +1,10 @@
 var app;
 
 function loadVue() {
+
+    loadOasisVue()
+    loadResearchVue()
+
     // data = a function returning the content (actually HTML)
     Vue.component('display-text', {
         props: ['layer', 'data'],
@@ -56,24 +60,6 @@ function loadVue() {
         `
     })
 
-    Vue.component('oasis-row', {
-        props: ['layer', 'data'],
-        computed: {
-            key() {return this.$vnode.key}
-        },
-        template: `
-        <div class="upgTable instant">
-            <div class="upgRow">
-                <div v-for="(item, index) in data" style="margin-top: 0">
-                    <div v-if="!Array.isArray(item)" v-bind:is="item" :layer= "layer" v-bind:style="tmp[layer].componentStyles[item]" :key="key + '-' + index"></div>
-                    <div v-else-if="item.length==3" v-bind:style="[tmp[layer].componentStyles[item[0]], (item[2] ? item[2] : {})]" v-bind:is="item[0]" :layer= "layer" :data= "item[1]" :key="key + '-' + index"></div>
-                    <div v-else-if="item.length==2" v-bind:is="item[0]" :layer= "layer" :data= "item[1]" v-bind:style="tmp[layer].componentStyles[item[0]]" :key="key + '-' + index"></div>
-                </div>
-            </div>
-        </div>
-        `
-    })
-
     // data = an array of Components to be displayed in a column
     Vue.component('column', {
         props: ['layer', 'data'],
@@ -90,50 +76,6 @@ function loadVue() {
                 </div>
             </div>
         </div>
-        `
-    })
-
-    Vue.component('resource-grid', {
-        props: ['layer', 'data'],
-        computed: {
-            key() { return this.$vnode.key },
-            unlocked() { return this.data.filter(resource => player.oasis.resources[resource].unlocked) }
-        },
-        template: `
-        <table>
-            <tr v-for="resource in unlocked">
-                <td style='text-align: left'><display-text :layer="layer" :data="temp.oasis.resources[resource].name"></display-text></td>
-                <td><blank :layer="layer" :data="['20px', '17px']"></blank></td>
-                <td><bar :layer="layer" :data="resource"></bar></td>
-                <td><blank :layer="layer" :data="['20px', '17px']"></blank></td>
-                <td style='text-align: right'><display-text :layer="layer" :data="(temp.oasis.production[resource] ?? 0) + '/day'"></display-text></td>
-            </tr>
-        </table>
-        `
-    })
-
-    Vue.component('job-grid', {
-        props: ['layer', 'data'],
-        computed: {
-            key() { return this.$vnode.key },
-            unlocked() { return this.data.filter(job => player.oasis.jobs[job].unlocked) }
-        },
-        template: `
-        <table>
-            <tr>
-                <td style='text-align: left'><display-text :layer="layer" :data="'Unemployed'"></display-text></td>
-                <td><blank :layer="layer" :data="['20px', '17px']"></blank></td>
-                <td><blank :layer="layer" :data="['20px', '17px']"></blank></td>
-                <td style='text-align: right'><display-text :layer="layer" :data="formatWhole(player.oasis.unemployed)+'/'+formatWhole(player.oasis.resources.people.amount)"></display-text></td>
-            </tr>
-            <tr v-for="job in unlocked">
-                <td style='text-align: left'><display-text :layer="layer" :data="temp.oasis.jobs[job].name"></display-text></td>
-                <td><blank :layer="layer" :data="['20px', '17px']"></blank></td>
-                <td><clickable :layer="layer" :data="job+'-up'"></clickable></td>
-                <td style='text-align: right'><display-text :layer="layer" :data="formatWhole(player.oasis.jobs[job].amount)+'/'+formatWhole(temp.oasis.jobs[job].max)"></display-text></td>
-                <td><clickable :layer="layer" :data="job+'-down'"></clickable></td>
-            </tr>
-        </table>
         `
     })
 

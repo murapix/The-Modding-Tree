@@ -1,10 +1,10 @@
 class Job {
-    constructor(name, produces = {}, consumes = {}) {
+    constructor(id, name, produces = {}, consumes = {}) {
         this.name = name
         this.produces = produces
         this.consumes = consumes
-        this.shown = false
-        this.shouldShow = false
+        this.shouldUnlock = () => temp.oasis.jobs[id].max > 0
+        this.shouldShow = () => true
     }
 
     workAmount() {
@@ -36,14 +36,20 @@ class Job {
         return production
     }
 
-    setShown() { this.shown = true; return this }
+    setShouldUnlock(shouldUnlock) { this.shouldUnlock = shouldUnlock; return this }
     setShouldShow(shouldShow) { this.shouldShow = shouldShow; return this }
 }
 
 const jobs = {
-    builder: new Job("Builder").setShown(),
-    forager: new Job("Forager", {'food': 2}).setShown(),
-    farmer: new Job("Farmer", {'food': 4}),
-    logger: new Job("Logger", {'wood': 1}),
-    miner: new Job("Miner", {'sandstone': 1}),
+    builder: new Job('builder', "Builder"),
+    forager: new Job('forager', "Forager", {'food': 2}).setShouldShow(() => temp.oasis.jobs.forager.max > 0),
+    scavenger: new Job('scavenger', "Scavenger", {'wood': 1}).setShouldShow(() => temp.oasis.jobs.scavenger.max > 0),
+    knapper: new Job('knapper', "Knapper", {'sandstone': 1}).setShouldShow(() => temp.oasis.jobs.knapper.max > 0),
+    farmer: new Job('farmer', "Farmer", {'food': 4}),
+    logger: new Job('logger', "Logger", {'wood': 2}),
+    miner: new Job('miner', "Miner", {'sandstone': 2}),
+    crafter: new Job('crafter', "Crafter", {'stoneTools': 1}, {'wood': 1, 'sandstone': 1}),
+    elder: new Job('elder', "Elder", {'research': 1}),
+    saltFarmer: new Job('saltFarmer', "Salt Farmer", {'salt': 1}),
+    astrologist: new Job('astrologist', "Astrologist", {'research': 3}),
 }

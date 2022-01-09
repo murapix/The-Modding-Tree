@@ -6,7 +6,7 @@ var systemComponents = {
                 <div v-for="tab in Object.keys(data)">
                     <button v-if="data[tab].unlocked == undefined || data[tab].unlocked" v-bind:class="{tabButton: true, notify: subtabShouldNotify(layer, name, tab), resetNotify: subtabResetNotify(layer, name, tab)}"
                     v-bind:style="[{'border-color': tmp[layer].color}, (subtabShouldNotify(layer, name, tab) ? {'box-shadow': 'var(--hqProperty2a), 0 0 20px '  + (data[tab].glowColor || defaultGlow)} : {}), tmp[layer].componentStyles['tab-button'], data[tab].buttonStyle]"
-                        v-on:click="function(){player.subtabs[layer][name] = tab; updateTabFormats(); needCanvasUpdate = true;}">{{tab}}</button>
+                        v-on:click="function(){player.subtabs[layer][name] = tab; updateTabFormats();}">{{tab}}</button>
                 </div>
             </div>
         `
@@ -155,10 +155,12 @@ var systemComponents = {
 
     'node-mark': {
         props: {'layer': {}, data: {}, offset: {default: 0}, scale: {default: 1}},
-        template: `<div v-if='data'>
+        template: `
+        <div v-if='data'>
             <div v-if='data === true' class='star' v-bind:style='{position: "absolute", left: (offset-10) + "px", top: (offset-10) + "px", transform: "scale( " + scale||1 + ", " + scale||1 + ")"}'></div>
             <img v-else class='mark' v-bind:style='{position: "absolute", left: (offset-22) + "px", top: (offset-15) + "px", transform: "scale( " + scale||1 + ", " + scale||1 + ")"}' v-bind:src="data"></div>
         </div>
+        style="border: 2px solid black; border-radius: 50%"
         `
     },
 

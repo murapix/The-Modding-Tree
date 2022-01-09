@@ -33,8 +33,11 @@ addLayer("tree-tab", {
     },
     
     tabFormat: [
+        "blank",
         ["row", [
-            
+            ["display-text", () => `Year: ${player.oasis.time.year}`, {'margin': '0px 4px'}],
+            ["display-text", () => `Month: ${player.oasis.time.month}`, {'margin': '0px 4px'}],
+            ["display-text", () => `Day: ${player.oasis.time.day}`, {'margin': '0px 4px'}]
         ]],
         "blank",
         ['microtabs', 'game']
@@ -43,6 +46,14 @@ addLayer("tree-tab", {
         game: {
             "The Oasis": {
                 embedLayer: "oasis"
+            },
+            "Research": {
+                unlocked() { return player.research.unlocked },
+                embedLayer: "research"
+            },
+            "Expeditions": {
+                unlocked() { return player.expedition.unlocked },
+                embedLayer: "expedition"
             }
         }
     },

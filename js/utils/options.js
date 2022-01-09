@@ -23,7 +23,6 @@ function changeTreeQuality() {
 }
 function toggleAuto(toggle) {
     Vue.set(player[toggle[0]], [toggle[1]], !player[toggle[0]][toggle[1]]);
-    needCanvasUpdate=true
 }
 
 const MS_DISPLAYS = ["ALL", "LAST, AUTO, INCOMPLETE", "AUTOMATION, INCOMPLETE", "INCOMPLETE", "NONE"];

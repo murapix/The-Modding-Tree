@@ -9,6 +9,8 @@ let modInfo = {
 
                "tree.js",
                "layers/oasis.js",
+               "layers/research.js",
+               "layers/expedition.js"
     ],
 
     discordName: "Escapee",
@@ -44,7 +46,8 @@ function getPointGen() {
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
-    gameSpeed: 0
+    gameSpeed: 0,
+    lastUpdate: 0
 }}
 
 // Display extra things at the top of the page

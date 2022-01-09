@@ -93,13 +93,6 @@ td {
     height: 50px !important;
 }
 
-.canvas {
-    top: 0;
-    left: 0;
-    position: absolute;
-    z-index: -999;
-}
-
 .left {
     position: absolute;
     left: 0;
@@ -218,10 +211,6 @@ button > * {
 
 .ghost {
     visibility: hidden
-}
-
-#treeTab td button {
-    margin: 0 10px;
 }
 
 .bg {

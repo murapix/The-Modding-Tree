@@ -9,6 +9,49 @@ class Action {
 
     setCanRun(requirementText, canRun) { this.requirementText = requirementText; this.canRun = canRun; return this }
     setUnlocked(unlocked) { this.unlocked = unlocked; return this }
+
+    static createActionGroup(baseTiles, tiers, buildText, upgradeText, requirementData) {
+        let newActions = {}
+        tiers.forEach(([building, costs, unlockCheck], tier) => {
+            let buildingName = buildings[building].name
+            let vowel = 'AEIOU'.includes(buildingName[0])
+            let buildName = `${buildText} ${vowel ? 'an' : 'a'} ${buildingName}`
+            let upgradeName = `${upgradeText} ${vowel ? 'an' : 'a'} ${buildingName}`
+
+            // build straight to building
+            let buildActionName = `build_${building}`
+            let buildCosts = {...costs}
+            for (let i = 0; i < tier; i++) {
+                for (let [resource, amount] of Object.entries(tiers[i][1])) {
+                    buildCosts[resource] = (buildCosts[resource] ?? 0) + amount
+                }
+            }
+            
+            newActions[buildActionName] = new BuildAction(buildName, building)
+            newActions[buildActionName].cost = {...buildCosts}
+            if (requirementData) newActions[buildActionName].setCanRun(...requirementData)
+            if (unlockCheck) newActions[buildActionName].setUnlocked(unlockCheck)
+            for (let baseTile of baseTiles) buildings[baseTile].upgrades.push(buildActionName)
+
+            // upgrade from lower tiers to tier
+            for (let i = 0; i < tier; i++) {
+                let upgradeActionName = `upgrade_${building}_${tiers[i][0]}`
+                for (let [resource, amount] of Object.entries(tiers[i][1])) {
+                    buildCosts[resource] -= amount
+                    if (buildCosts[resource] <= 0) delete buildCosts[resource]
+                }
+                newActions[upgradeActionName] = new BuildAction(upgradeName, building)
+                newActions[upgradeActionName].cost = {...buildCosts}
+                if (requirementData) newActions[upgradeActionName].setCanRun(...requirementData)
+                if (unlockCheck) newActions[upgradeActionName].setUnlocked(unlockCheck)
+                buildings[tiers[i][0]].upgrades.push(upgradeActionName)
+            }
+        })
+
+        for(let [name, action] of Object.entries(newActions)) {
+            actions[name] = action
+        }
+    }
 }
 
 class BuildAction extends Action {
@@ -18,7 +61,7 @@ class BuildAction extends Action {
         this.cost = {}
     }
 
-    costs(resource, amount) { this.cost[resource] = amount; return this }
+    costs(resource, amount) { this.cost[resource] = (this.cost[resource] ?? 0) + amount; return this }
 }
 
 class DemolishAction extends Action {
@@ -34,25 +77,49 @@ class DemolishAction extends Action {
 
 const actions = {
     buildFreeCampsite: new BuildAction("Settle", "campsite").setCanRun("Must be within 2 tiles of Water", () => (temp.oasis.countResourcesAroundSelected?.[2]?.water ?? 0) > 0),
-    buildCampsite: new BuildAction("Build a Campsite", "campsite").setCanRun("Must be within 2 tiles of Water", () => (temp.oasis.countResourcesAroundSelected?.[2]?.water ?? 0) > 0).costs('wood', 10),
-    demolishCampsite: new DemolishAction("Demolish the Campsite"),
-    upgradeCampsite: new BuildAction("Expand the Campsite", "encampment").costs('wood', 25),
-    demolishEncampment: new DemolishAction("Demolish the Encampment"),
-    
-    buildBasicFarm: new BuildAction("Plow a Farm", "basicFarm").setCanRun("Must be adjacent to Water", () => (temp.oasis.countResourcesAroundSelected?.[1]?.water ?? 0) > 0).costs('labor', 10),
-    demolishBasicFarm: new DemolishAction("Demolish the Farm"),
-    upgradeBasicFarm: new BuildAction("Dig irrigation canals", "irrigatedFarm"),
-    demolishIrrigatedFarm: new DemolishAction("Demolish the Farm"),
-
-    clearCactus: new DemolishAction("Cut down the Cactus").provides('food', 15),
-    clearTrees: new DemolishAction("Cut down the Trees").provides('wood', 15),
-    buildLoggingCamp: new BuildAction("Set up logging operations", "loggingCamp").costs('labor', 10),
-    demolishLoggingCamp: new DemolishAction("Demolish the Logging Camp", "tree"),
-
-    digDigsite: new BuildAction("Dig down to bedrock", "digsite").costs('labor', 60),
-    fillDigsite: new DemolishAction("Fill in the Digsite"),
-    digQuarry: new BuildAction("Mine out a quarry", "quarry").costs('labor', 180),
-    fillQuarry: new DemolishAction("Fill in the Quarry"),
+    buildLoggingCamp: new BuildAction("Set up logging operations", "loggingCamp").costs('stoneTools', 10).setUnlocked(() => temp.oasis.buildings.encampment > 0),
+    buildSmallWarehouse: new BuildAction("Build a Small Warehouse", "smallWarehouse").setCanRun("Must be within 2 tiles of Civilization", () => (temp.oasis.countResourcesAroundSelected?.[2]?.civilization ?? 0) > 0).costs('stoneTools', 5).costs('sandstone', 30).setUnlocked(() => temp.oasis.buildings.settlement > 0)
 }
 
-actions.buildFreeCampsite.stateCheck = () => !(player.oasis.grid[player.oasis.selectedTile]?.action ?? true) && temp.oasis.resources.people.max <= 0
+function initActions() {
+    Action.createActionGroup(['sand', 'soil'],
+                    [
+                        ['campsite', {'food': 10, 'wood': 5}],
+                        ['encampment', {'food': 15, 'wood': 15, 'sandstone': 20}, () => player.oasis.resources.sandstone.unlocked],
+                        ['settlement', {'food': 30, 'wood': 80, 'sandstone': 120}, () => temp.oasis.buildings.encampment > 0]
+                    ],
+                    'Build', 'Upgrade to',
+                    ["Must be within 2 tiles of Water", () => (temp.oasis.countResourcesAroundSelected?.[2]?.water ?? 0) > 0])
+
+    Action.createActionGroup(['soil'],
+                    [
+                        ['basicFarm', {'stoneTools': 30, 'labor': 30}, () => hasResearch('farm')],
+                        ['irrigatedFarm', {'wood': 30, 'sandstone': 60, 'labor': 30}, () => hasResearch('canalFarm')]
+                    ],
+                    'Plow', 'Plow',
+                    ["Must be adjacent to Water", () => (temp.oasis.countResourcesAroundSelected?.[1]?.water ?? 0) > 0])
+    Action.createActionGroup(['soil'],
+                    [
+                        ['canal', {'wood': 30, 'sandstone': 60, 'labor': 30}, () => hasResearch('canal')],
+                        ['irrigatedFarm', {'stoneTools': 30, 'labor': 30}, () => hasResearch('canalFarm')]
+                    ],
+                    'Dig', 'Plow',
+                    ["Must be adjacent to Water", () => (temp.oasis.countResourcesAroundSelected?.[1]?.water ?? 0) > 0])
+
+    Action.createActionGroup(['sand'],
+                    [
+                        ['sandPit', {'labor': 20, 'wood': 10}],
+                        ['quarry', {'labor': 40, 'stoneTools': 20}, () => player.oasis.resources.stoneTools.unlocked]
+                    ],
+                    'Dig out', 'Dig out',
+                    ["Must be within 2 tiles of Civilization", () => (temp.oasis.countResourcesAroundSelected?.[2]?.civilization ?? 0) > 0])
+    
+    Action.createActionGroup(['soil'],
+                    [
+                        ['saltPool', {'sandstone': 120, 'labor': 30}, () => hasResearch('saltPool')]
+                    ],
+                    'Flatten out', 'Flatten out',
+                    ["Must be adjacent to Water", () => (temp.oasis.countResourcesAroundSelected?.[1]?.water ?? 0) > 0])
+    
+    actions.buildFreeCampsite.stateCheck = () => !(player.oasis.grid[player.oasis.selectedTile]?.action ?? true) && temp.oasis.resources.people.max <= 0
+}

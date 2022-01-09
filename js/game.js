@@ -1,5 +1,4 @@
 var player;
-var needCanvasUpdate = true;
 
 // Don't change this
 const TMT_VERSION = {
@@ -196,7 +195,6 @@ function doReset(layer, force=false) {
 
         if (!player[layer].unlocked) {
             player[layer].unlocked = true;
-            needCanvasUpdate = true;
 
             if (tmp[layer].increaseUnlockOrder){
                 lrs = tmp[layer].increaseUnlockOrder
@@ -297,7 +295,6 @@ function completeChallenge(layer, x) {
         return
     }
     if (player[layer].challenges[x] < tmp[layer].challenges[x].completionLimit) {
-        needCanvasUpdate = true
         player[layer].challenges[x] += completions
         player[layer].challenges[x] = Math.min(player[layer].challenges[x], tmp[layer].challenges[x].completionLimit)
         if (layers[layer].challenges[x].onComplete) run(layers[layer].challenges[x].onComplete, layers[layer].challenges[x])
@@ -337,23 +334,31 @@ function gameLoop(diff) {
             diff = limit
     }
     addTime(diff)
-    player.points = player.points.add(tmp.pointGen.times(diff)).max(0)
+
+    switch (player.gameSpeed) {
+        case 0: player.lastUpdate += diff; return;
+        case 1: if (player.timePlayed - player.lastUpdate < 1) return; break
+        case 2: if (player.timePlayed - player.lastUpdate < 0.33) return; break
+        case 3: if (player.timePlayed - player.lastUpdate < 0.1) return; break
+    }
+
+    player.points = player.points.add(tmp.pointGen).max(0)
 
     for (let x = 0; x <= maxRow; x++){
         for (item in TREE_LAYERS[x]) {
             let layer = TREE_LAYERS[x][item]
-            player[layer].resetTime += diff
-            if (tmp[layer].passiveGeneration) generatePoints(layer, diff*tmp[layer].passiveGeneration);
-            if (layers[layer].update) layers[layer].update(diff);
+            player[layer].resetTime += 1
+            if (tmp[layer].passiveGeneration) generatePoints(layer, tmp[layer].passiveGeneration);
+            if (layers[layer].update) layers[layer].update();
         }
     }
 
     for (row in OTHER_LAYERS){
         for (item in OTHER_LAYERS[row]) {
             let layer = OTHER_LAYERS[row][item]
-            player[layer].resetTime += diff
-            if (tmp[layer].passiveGeneration) generatePoints(layer, diff*tmp[layer].passiveGeneration);
-            if (layers[layer].update) layers[layer].update(diff);
+            player[layer].resetTime += 1
+            if (tmp[layer].passiveGeneration) generatePoints(layer, tmp[layer].passiveGeneration);
+            if (layers[layer].update) layers[layer].update();
         }
     }    
 
@@ -381,6 +386,7 @@ function gameLoop(diff) {
         if (layers[layer].achievements) updateAchievements(layer)
     }
 
+    player.lastUpdate = player.timePlayed
 }
 
 function hardReset(resetOptions) {
@@ -403,9 +409,6 @@ var interval = setInterval(function() {
     let trueDiff = diff
     if (player.devSpeed) diff *= player.devSpeed
     player.time = now
-    if (needCanvasUpdate){ resizeCanvas();
-        needCanvasUpdate = false;
-    }
     tmp.scrolled = document.getElementById('treeTab') && document.getElementById('treeTab').scrollTop > 30
     updateTemp();
     updateOomps(diff);
@@ -417,5 +420,3 @@ var interval = setInterval(function() {
     updateParticles(trueDiff)
     ticking = false
 }, 50)
-
-setInterval(function() {needCanvasUpdate = true}, 500)
