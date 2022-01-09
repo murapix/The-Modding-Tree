@@ -20,12 +20,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-    num: "0.1",
-    name: "Spring",
+    num: "0.2",
+    name: "Stars",
 }
 
 let changelog = `
     <h1>Changelog:</h1>
+    <br><br>
+    <h3>v0.2 - Stars</h3>
+    <br>- Fixed a few bugs
+    <br>- Reworked progression
+    <br>- Added the research system
     <br><br>
     <h3>v0.1 - Spring</h3>
     <br>- Created initial content framework
