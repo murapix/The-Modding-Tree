@@ -3,25 +3,38 @@ const maxVision = 12
 
 const baseSize = 2*baseVision+1
 const maxSize = 2*maxVision+1
-const oasis = ((baseSize+1)*100 + (baseSize+1))/2
+const center = ((maxSize+1)*100 + (maxSize+1))/2
 const freshOasis = function() {
-    let distances = new Array(baseVision+1).fill().map(u => ([]))
-    for (let row = 1; row <= baseSize; row++) {
-        for (let col = 1; col <= baseSize; col++) {
-            let distance = Math.max(Math.abs(row-(baseVision+1)), Math.abs(col-(baseVision+1)))
+    let grid = {}
+    let distances = new Array(maxVision+1).fill().map(u => ([]))
+    for (let row = 1; row <= maxSize; row++) {
+        for (let col = 1; col <= maxSize; col++) {
+            let distance = Math.max(Math.abs(row-(maxVision+1)), Math.abs(col-(maxVision+1)))
             distances[distance].push(row*100+col)
+            grid[row*100+col] = {
+                building: 'sand',
+                progress: {},
+                action: '',
+                sand: 0
+            }
         }
     }
-
-    let grid = {}
-    distances[0].forEach(id => grid[id] = 'oasis')
-    distances[1].sort(() => 0.5 - Math.random()).forEach((id, index) => grid[id] = index < 3 ? 'tree' : 'soil')
-    distances[2].sort(() => 0.5 - Math.random()).forEach((id, index) => grid[id] = index < 3 ? 'cactus' : 'sand')
-    distances[3].sort(() => 0.5 - Math.random()).forEach((id, index) => grid[id] = index < 3 ? 'cactus' : 'sand')
-    distances[4].sort(() => 0.5 - Math.random()).forEach((id, index) => grid[id] = index < 4 ? 'cactus' : 'sand')
+    distances[0].forEach(id => grid[id].building = 'oasis')
+    distances[1].sort(() => 0.5 - Math.random()).forEach((id, index) => grid[id].building = index < 3 ? 'tree' : 'soil')
+    distances[2].sort(() => 0.5 - Math.random()).forEach((id, index) => grid[id].building = index < 3 ? 'cactus' : 'sand')
+    distances[3].sort(() => 0.5 - Math.random()).forEach((id, index) => grid[id].building = index < 3 ? 'cactus' : 'sand')
+    distances[4].sort(() => 0.5 - Math.random()).forEach((id, index) => grid[id].building = index < 4 ? 'cactus' : 'sand')
+    distances[5].sort(() => 0.5 - Math.random()).forEach((id, index) => grid[id].building = index < 4 ? 'cactus' : 'sand')
+    distances[6].sort(() => 0.5 - Math.random()).forEach((id, index) => grid[id].building = index < 4 ? 'cactus' : 'sand')
+    distances[7].sort(() => 0.5 - Math.random()).forEach((id, index) => grid[id].building = index < 5 ? 'cactus' : 'sand')
+    distances[8].sort(() => 0.5 - Math.random()).forEach((id, index) => grid[id].building = index < 5 ? 'cactus' : 'sand')
+    distances[9].sort(() => 0.5 - Math.random()).forEach((id, index) => grid[id].building = index < 4 ? 'cactus' : 'sand')
+    distances[10].sort(() => 0.5 - Math.random()).forEach((id, index) => grid[id].building = index < 3 ? 'cactus' : 'sand')
+    distances[11].sort(() => 0.5 - Math.random()).forEach((id, index) => grid[id].building = index < 2 ? 'cactus' : 'sand')
+    distances[12].sort(() => 0.5 - Math.random()).forEach((id, index) => grid[id].building = index < 1 ? 'cactus' : 'sand')
 
     return grid
-}()
+}
 
 addLayer("oasis", {
     type: "none",
@@ -31,13 +44,16 @@ addLayer("oasis", {
     color: "#f6d7b0",
     
     startData() {
-        let startData  = {
+        let startData = {
             unlocked: true,
             unemployed: 0,
             resources: {},
             jobs: {},
             time: { day: 1, month: 1, year: 1 },
-            previousPopulation: 0
+            previousPopulation: 0,
+            map: freshOasis(),
+            firstTick: true,
+            stormDirection: Math.floor(Math.random()*4)
         }
         for ([resource, data] of Object.entries(resources)) {
             startData.resources[resource] = {
@@ -56,8 +72,6 @@ addLayer("oasis", {
     },
 
     update() {
-        if (temp.oasis.explored != temp.oasis.lastExplored) shiftOasis()
-
         if (temp.oasis.resources.people.max <= 0) player.gameSpeed = 0
         { // Update time
             player.oasis.time.day++
@@ -68,6 +82,9 @@ addLayer("oasis", {
             if (player.oasis.time.month > 12) {
                 player.oasis.time.month -= 12
                 player.oasis.time.year++
+            }
+            if (player.oasis.time.month === 7 && player.oasis.time.day === 1) {
+                player.oasis.stormDirection = Math.floor(Math.random()*4)
             }
         }
 
@@ -86,12 +103,13 @@ addLayer("oasis", {
             }
         }
         
+        let freeBuilders = player.oasis.jobs.builder.amount
         { // Update build projects
-            let builderCount = player.oasis.jobs.builder.amount
+            let builderCount = freeBuilders
             let buildProjects = []
-            for (let row = 1; row <= temp.oasis.grid.rows; row++) {
-                for (let col = 1; col <= temp.oasis.grid.cols; col++) {
-                    if (player.oasis.grid[row*100+col].action) {
+            for (let row = 1; row <= maxSize; row++) {
+                for (let col = 1; col <= maxSize; col++) {
+                    if (player.oasis.map[row*100+col].action) {
                         buildProjects.push(row*100+col)
                     }
                 }
@@ -104,45 +122,52 @@ addLayer("oasis", {
             }
 
             for (let i = 0; i < buildProjects.length; i++) {
-                for ([resource, amount] of Object.entries(player.oasis.grid[buildProjects[i]].progress)) {
+                if (player.oasis.map[buildProjects[i]].sand > 0) {
+                    let sandRemoved = Math.min(player.oasis.map[buildProjects[i]].sand, builderCounts[i])
+                    player.oasis.map[buildProjects[i]].sand -= sandRemoved
+                    builderCounts[i] -= sandRemoved
+                }
+                for ([resource, amount] of Object.entries(player.oasis.map[buildProjects[i]].progress)) {
                     if (resource === 'labor') continue
                     if (builderCounts[i] === 0) break
                     let resourceAmount = player.oasis.resources[resource].amount
                     let usableAmount = Math.min(resourceAmount, builderCounts[i], amount)
-                    player.oasis.grid[buildProjects[i]].progress[resource] -= usableAmount
+                    player.oasis.map[buildProjects[i]].progress[resource] -= usableAmount
                     player.oasis.resources[resource].amount -= usableAmount
                     builderCounts[i] -= usableAmount
                 }
-                if (builderCounts[i] > 0 && (player.oasis.grid[buildProjects[i]].progress.labor ?? 0) > 0) {
-                    let usableAmount = Math.min(player.oasis.grid[buildProjects[i]].progress.labor, builderCounts[i])
-                    player.oasis.grid[buildProjects[i]].progress.labor -= usableAmount
+                if (builderCounts[i] > 0 && (player.oasis.map[buildProjects[i]].progress.labor ?? 0) > 0) {
+                    let usableAmount = Math.min(player.oasis.map[buildProjects[i]].progress.labor, builderCounts[i])
+                    player.oasis.map[buildProjects[i]].progress.labor -= usableAmount
                     builderCounts[i] -= usableAmount
                 }
-                if (Object.values(player.oasis.grid[buildProjects[i]].progress).filter(amount => amount > 0).length === 0) {
-                    player.oasis.grid[buildProjects[i]].building = actions[player.oasis.grid[buildProjects[i]].action].building
-                    player.oasis.grid[buildProjects[i]].action = ''
-                    player.oasis.grid[buildProjects[i]].progress = {}
+                if (Object.values(player.oasis.map[buildProjects[i]].progress).filter(amount => amount > 0).length === 0) {
+                    player.oasis.map[buildProjects[i]].building = actions[player.oasis.map[buildProjects[i]].action].building
+                    player.oasis.map[buildProjects[i]].action = ''
+                    player.oasis.map[buildProjects[i]].progress = {}
                 }
-                if (i < buildProjects.length - 1 && builderCounts[i] > 0)
-                    builderCounts[i+1] += builderCounts[i]
+                if(builderCounts[i] > 0) {
+                    if (i < buildProjects.length - 1) builderCounts[i+1] += builderCounts[i]
+                    else freeBuilders = builderCounts[i]
+                }
             }
         }
 
         { // Update sand/soil
             let waterLocs = []
-            for (let row = 1; row < temp.oasis.grid.rows; row++) {
-                for (let col = 1; col < temp.oasis.grid.cols; col++) {
+            for (let row = 1; row < maxSize; row++) {
+                for (let col = 1; col < maxSize; col++) {
                     let loc = row*100+col
-                    if (buildings[player.oasis.grid[loc].building].provided.includes('water'))
+                    if (buildings[player.oasis.map[loc].building].provided.includes('water'))
                         waterLocs.push(loc)
-                    else if (player.oasis.grid[loc].building === 'soil') player.oasis.grid[loc].building = 'sand'
+                    else if (player.oasis.map[loc].building === 'soil') player.oasis.map[loc].building = 'sand'
                 }
             }
 
             for (waterLoc of waterLocs) {
                 for (adjacent of [waterLoc-101, waterLoc-100, waterLoc-99, waterLoc-1, waterLoc+1, waterLoc+99, waterLoc+100, waterLoc+101]) {
-                    if (!player.oasis.grid[adjacent]) continue
-                    if (player.oasis.grid[adjacent].building === 'sand') player.oasis.grid[adjacent].building = 'soil'
+                    if (!player.oasis.map[adjacent]) continue
+                    if (player.oasis.map[adjacent].building === 'sand') player.oasis.map[adjacent].building = 'soil'
                 }
             }
         }
@@ -153,27 +178,300 @@ addLayer("oasis", {
             for ([job, data] of Object.entries(temp.oasis.jobs))
                 if (data.unlocked) player.oasis.jobs[job].unlocked = true
         }
+
+        { // Update sandstorms
+            if (player.oasis.time.month <= temp.oasis.stormLength.months && player.oasis.time.day <= temp.oasis.stormLength.days) {
+                let positions = new Array(temp.oasis.grid.size**2)
+                let index = 0
+                for (let row = 1; row <= temp.oasis.grid.size; row++) {
+                    for (let col = 1; col <= temp.oasis.grid.size; col++) {
+                        positions[index++] = row*100+col + temp.oasis.grid.hiddenRings*101
+                    }
+                }
+
+                let sandTotal = temp.oasis.stormStrength * (temp.oasis.grid.size**2) / 30
+                if (sandTotal >= temp.oasis.grid.size**2) {
+                    let sandAmount = ~~(sandTotal / temp.oasis.grid.size**2)
+                    sandTotal -= sandAmount * temp.oasis.grid.size**2
+                    switch (player.oasis.stormDirection) { // from 'north', 'east', 'south', 'west'
+                        case 0: {
+                            for (let col = 1; col <= temp.oasis.grid.size; col++) {
+                                let heightRows = {}
+                                for (let row = 1; row <= temp.oasis.grid.size; row++) {
+                                    let loc = row*100+col + temp.oasis.grid.hiddenRings*101
+                                    let building = player.oasis.map[loc].building
+                                    let tileSand = sandAmount
+                                    for ([heightRow, height] of Object.entries(heightRows)) {
+                                        if (tileSand === 0) break
+                                        if (row - heightRow <= height) {
+                                            let heightLoc = heightRow*100+col + temp.oasis.grid.hiddenRings*101
+                                            let tileAmount = Math.min(tileSand, buildings[building].sandLimit+1 - player.oasis.map[heightLoc].building)
+                                            player.oasis.map[heightLoc].sand += tileAmount
+                                            tileSand -= tileAmount
+                                        }
+                                    }
+                                    player.oasis.map[loc].sand += tileSand
+                                    if (buildings[building].height > 0)
+                                        heightRows[row] = buildings[building].height
+                                }
+                            }
+                            break
+                        }
+                        case 1: {
+                            for (let row = 1; row <= temp.oasis.grid.size; row++) {
+                                let heightRows = {}
+                                for (let col = temp.oasis.grid.size; col >= 1; col--) {
+                                    let loc = row*100+col + temp.oasis.grid.hiddenRings*101
+                                    let building = player.oasis.map[loc].building
+                                    let tileSand = sandAmount
+                                    for ([heightCol, height] of Object.entries(heightRows)) {
+                                        if (tileSand === 0) break
+                                        if (heightCol - col <= height) {
+                                            let heightLoc = heightRow*100+col + temp.oasis.grid.hiddenRings*101
+                                            let tileAmount = Math.min(tileSand, buildings[building].sandLimit+1 - player.oasis.map[heightLoc].building)
+                                            player.oasis.map[heightLoc].sand += tileAmount
+                                            tileSand -= tileAmount
+                                        }
+                                    }
+                                    player.oasis.map[loc].sand += tileSand
+                                    if (buildings[building].height > 0)
+                                        heightRows[col] = buildings[building].height
+                                }
+                            }
+                            break
+                        }
+                        case 2: {
+                            for (let col = 1; col <= temp.oasis.grid.size; col++) {
+                                let heightRows = {}
+                                for (let row = temp.oasis.grid.size; row >= 1; row++) {
+                                    let loc = row*100+col + temp.oasis.grid.hiddenRings*101
+                                    let building = player.oasis.map[loc].building
+                                    let tileSand = sandAmount
+                                    for ([heightRow, height] of Object.entries(heightRows)) {
+                                        if (tileSand === 0) break
+                                        if (heightRow - row <= height) {
+                                            let heightLoc = heightRow*100+col + temp.oasis.grid.hiddenRings*101
+                                            let tileAmount = Math.min(tileSand, buildings[building].sandLimit+1 - player.oasis.map[heightLoc].building)
+                                            player.oasis.map[heightLoc].sand += tileAmount
+                                            tileSand -= tileAmount
+                                        }
+                                    }
+                                    player.oasis.map[loc].sand += tileSand
+                                    if (buildings[building].height > 0)
+                                        heightRows[row] = buildings[building].height
+                                }
+                            }
+                            break
+                        }
+                        case 3: {
+                            for (let row = 1; row <= temp.oasis.grid.size; row++) {
+                                let heightRows = {}
+                                for (let col = 1; col <= temp.oasis.grid.size; col--) {
+                                    let loc = row*100+col + temp.oasis.grid.hiddenRings*101
+                                    let building = player.oasis.map[loc].building
+                                    let tileSand = sandAmount
+                                    for ([heightCol, height] of Object.entries(heightRows)) {
+                                        if (tileSand === 0) break
+                                        if (col - heightCol <= height) {
+                                            let heightLoc = heightRow*100+col + temp.oasis.grid.hiddenRings*101
+                                            let tileAmount = Math.min(tileSand, buildings[building].sandLimit+1 - player.oasis.map[heightLoc].building)
+                                            player.oasis.map[heightLoc].sand += tileAmount
+                                            tileSand -= tileAmount
+                                        }
+                                    }
+                                    player.oasis.map[loc].sand += tileSand
+                                    if (buildings[building].height > 0)
+                                        heightRows[col] = buildings[building].height
+                                }
+                            }
+                            break
+                        }
+                    }
+                }
+                let clearTileCount = temp.oasis.grid.size**2 - sandTotal
+                let toFill = []
+                while (positions.length > clearTileCount)
+                    toFill.push(positions.splice(Math.floor(Math.random() * positions.length), 1))
+                sandLoop: for (let loc of toFill) {
+                    let locRow = ~~(loc/100)
+                    let locCol = loc%100
+                    switch (player.oasis.stormDirection) { // from 'north', 'east', 'south', 'west'
+                        case 0: {
+                            for (let row = 1; row <= locRow; row++) {
+                                let heightLoc = row*100+locCol + temp.oasis.grid.hiddenRings*101
+                                if (locRow - row <= buildings[player.oasis.map[heightLoc].building].height && player.oasis.map[heightLoc].sand <= buildings[player.oasis.map[heightLoc].building].sandLimit) {
+                                    player.oasis.map[heightLoc].sand++
+                                    continue sandLoop
+                                }
+                            }
+                            break
+                        }
+                        case 1: {
+                            for (let col = temp.oasis.grid.size; col >= locCol; col--) {
+                                let heightLoc = locRow*100+col + temp.oasis.grid.hiddenRings*101
+                                if (col - locCol <= buildings[player.oasis.map[heightLoc].building].height && player.oasis.map[heightLoc].sand <= buildings[player.oasis.map[heightLoc].building].sandLimit) {
+                                    player.oasis.map[heightLoc].sand++
+                                    continue sandLoop
+                                }
+                            }
+                            break
+                        }
+                        case 2: {
+                            for (let row = temp.oasis.grid.size; row >= locRow; row--) {
+                                let heightLoc = row*100+locCol + temp.oasis.grid.hiddenRings*101
+                                if (row - locRow <= buildings[player.oasis.map[heightLoc].building].height && player.oasis.map[heightLoc].sand <= buildings[player.oasis.map[heightLoc].building].sandLimit) {
+                                    player.oasis.map[heightLoc].sand++
+                                    continue sandLoop
+                                }
+                            }
+                            break
+                        }
+                        case 3: {
+                            for (let col = 1; col <= locCol; col++) {
+                                let heightLoc = locRow*100+col + temp.oasis.grid.hiddenRings*101
+                                if (locCol - col <= buildings[player.oasis.map[heightLoc].building].height && player.oasis.map[heightLoc].sand <= buildings[player.oasis.map[heightLoc].building].sandLimit) {
+                                    player.oasis.map[heightLoc].sand++
+                                    continue sandLoop
+                                }
+                            }
+                            break
+                        }
+                    }
+                    player.oasis.map[loc + temp.oasis.grid.hiddenRings*101].sand++
+                }
+            }
+
+            if (temp.oasis.production.sand + ~~(freeBuilders/5) > 0) {
+                let sandBuildings = {
+                    importantBuried: [],
+                    buried: [],
+                    oasis: [],
+                    buildings: [],
+                    blockers: [],
+                    terrain: []
+                }
+                for (let row = 1; row <= temp.oasis.grid.size; row++) {
+                    for (let col = 1; col <= temp.oasis.grid.size; col++) {
+                        let loc = row*100+col + temp.oasis.grid.hiddenRings*101
+                        if (player.oasis.map[loc].sand <= 0) continue
+                        let building = player.oasis.map[loc].building
+                        if (Object.keys(buildings[building].jobs).length > 0) {
+                            if (player.oasis.map[loc].sand > buildings[building].sandLimit) sandBuildings.importantBuried.push(loc)
+                            else sandBuildings.buildings.push(loc)
+                        }
+                        else if (building === 'oasis') sandBuildings.oasis.push(loc)
+                        else if (['sand', 'soil'].includes(building)) sandBuildings.terrain.push(loc)
+                        else if (['wall'].includes(building)) sandBuildings.blockers.push(loc)
+                        else if (player.oasis.map[loc].sand > buildings[building].sandLimit) sandBuildings.buried.push(loc)
+                        else sandBuildings.buildings.push(loc)
+                    }
+                }
+
+                let sandRemoval = temp.oasis.production.sand + ~~(freeBuilders/5)
+                while (sandRemoval > 0) {
+                    let start = sandRemoval
+                    if (sandBuildings.importantBuried.length > 0)
+                        sandRemoval = removeSand(sandBuildings.importantBuried, sandRemoval)
+                    else if (sandBuildings.buried.length > 0)
+                        sandRemoval = removeSand(sandBuildings.buried, sandRemoval)
+                    else if (sandBuildings.oasis.length > 0)
+                        sandRemoval = removeSand(sandBuildings.oasis, sandRemoval)
+                    else if (sandBuildings.buildings.length > 0)
+                        sandRemoval = removeSand(sandBuildings.buildings, sandRemoval)
+                    else if (sandBuildings.blockers.length > 0)
+                        sandRemoval = removeSand(sandBuildings.blockers, sandRemoval)
+                    else if (sandBuildings.terrain.length > 0)
+                        sandRemoval = removeSand(sandBuildings.terrain, sandRemoval)
+                    if (sandRemoval = start) break
+                }
+            }
+        }
+    },
+
+    stormLength() {
+        if (player.oasis.time.year < 4) return { months: 0, days: 0 }
+        let duration = (player.oasis.time.year-2)
+        duration = Math.min(duration, 12)
+        return { months: ~~(duration/2), days: duration%2 ? 15 : 30 }
+    },
+    inStorm() {
+        if (player.oasis.time.year < 4) return false
+        return player.oasis.time.month <= temp.oasis.stormLength.months && player.oasis.time.day <= temp.oasis.stormLength.days
+    },
+    stormStrength() {
+        if (player.oasis.time.year <= 3) return 0
+        return (player.oasis.time.year-3)**1.2
+    },
+    stormDescription() {
+        let stormDirection = ['north', 'east', 'south', 'west'][player.oasis.stormDirection]
+
+        const descriptions = [
+            () => 'The skies are clear. A light breeze blows over the oasis',
+            () => `A strong breeze has picked up sand from the ${stormDirection}, casting shade over the oasis`,
+            () => `Winds from the ${stormDirection} blow sand over the oasis`,
+            () => `A dust storm hangs over the oasis, blotting out the sun and bringing sand in from the ${stormDirection}`,
+            () => `Dust and sand swirl in the air, carried by strong winds from the ${stormDirection}`,
+            () => `A sandstorm rages in the oasis, sands from the ${stormDirection} whipping through the air`,
+            () => `Fierce winds blow from the ${stormDirection}, flinging sand at whatever is in their path`,
+            () => `The sun is blocked by clouds of dust and sand, the ${stormDirection}ern squall tossing anything and everything into the air`,
+            () => `Day has become night as the winds from the ${stormDirection} pick up anything not nailed down`,
+            () => `Extreme winds rip through the oasis from the ${stormDirection}, bringing death and destruction to all in their way`
+        ]
+        if (player.oasis.time.year < 4) return descriptions[0]()
+        if (temp.oasis.inStorm) {
+            if (player.oasis.time.year <= descriptions.length*3) return descriptions[~~((player.oasis.time.year-1)/3)]()
+            return descriptions[descriptions.length-1]()
+        }
+
+        let predictionTime = 0
+        let predictionStrength = player.oasis.jobs.astrologist.amount
+        if (predictionStrength >= 1024) predictionTime = 6
+        else if (predictionStrength >= 256) predictionTime = 5
+        else if (predictionStrength >= 64) predictionTime = 4
+        else if (predictionStrength >= 16) predictionTime = 3
+        else if (predictionStrength >= 4) predictionTime = 2
+        else if (predictionStrength >= 1) predictionTime = 1
+
+        if (player.oasis.time.month === 7 && predictionTime >= 6) return `One storm just passed, but cold winds already blow from the ${stormDirection}`
+        if (player.oasis.time.month === 8 && predictionTime >= 5) return `Weather patterns point to another storm brewing to the ${stormDirection}`
+        if (player.oasis.time.month === 9 && predictionTime >= 4) return ``
+        if (player.oasis.time.month === 10 && predictionTime >= 3) return ``
+        if (player.oasis.time.month === 11 && predictionTime >= 2) return `The elders can feel it in their bones, a storm brews to the ${stormDirection}`
+        if (player.oasis.time.month === 12 && predictionTime >= 1) return `Dark clouds loom over the ${stormDirection}ern horizon`
+
+        return 'The skies are clear'
     },
 
     grid: {
-        rows: () => 2*temp.oasis.explored+1, maxRows: maxSize,
-        cols: () => 2*temp.oasis.explored+1, maxCols: maxSize,
-        getStartData(id) { return {
-            building: freshOasis[id] ?? 'sand',
-            progress: {},
-            action: '',
-         } },
+        size: () => {
+            let size = baseSize
+            if (temp.oasis.buildings.lookoutTower > 0) size += 6
+            return size
+        },
+        hiddenRings: () => (maxSize - temp.oasis.grid.size) / 2,
+        rows: () => temp.oasis.grid.size, maxRows: maxSize,
+        cols: () => temp.oasis.grid.size, maxCols: maxSize,
+        getStartData(id) { return '' },
         getUnlocked(id) { return true },
         getCanClick(data, id) { return true },
         onClick(data, id) {
+            id += temp.oasis.grid.hiddenRings*101
             if (player.oasis.selectedTile == id) player.oasis.selectedTile = 0
             else player.oasis.selectedTile = id
         },
-        getDisplay(data, id) { return buildings[data.building].display },
+        getDisplay(data, id) { return buildings[player.oasis.map[id+temp.oasis.grid.hiddenRings*101].building].display },
         getStyle(data, id) {
+            id += temp.oasis.grid.hiddenRings*101
             let style = {}
-            if (id == player.oasis.selectedTile) style['border'] = '1px solid #888888'
-            else if (data.action) style['border'] = '1px solid #f6d7b0'
+            if (id == player.oasis.selectedTile) style.border = '1px solid #888888'
+            else if (player.oasis.map[id].action) style.border = '1px solid #f6d7b0'
+            else style.border = 'none'
+
+            let sandBorder = 0
+            if (player.oasis.map[id].sand > buildings[player.oasis.map[id].building].sandLimit) sandBorder = 50
+            else if (player.oasis.map[id].sand > buildings[player.oasis.map[id].building].sandLimit * 0.5) sandBorder = 25
+            if (sandBorder > 0) style['background-image'] = `linear-gradient(to top, #f6d7b0${sandBorder === 25 ? '80' : ''} ${sandBorder}%, #00000000 ${sandBorder}%)`
+
             return style
         }
     },
@@ -210,15 +508,15 @@ addLayer("oasis", {
         }
     },
     countResourcesAroundSelected() {
-        if (player.oasis.grid[player.oasis.selectedTile]) {
+        if (player.oasis.map[player.oasis.selectedTile]) {
             let selectedRow = ~~(player.oasis.selectedTile/100)
             let selectedCol = player.oasis.selectedTile%100
             let distances = new Array(maxSize).fill().map(u => ({}))
 
-            for (let row = 1; row <= temp.oasis.grid.rows; row++) {
-                for(let col = 1; col <= temp.oasis.grid.cols; col++) {
+            for (let row = 1; row <= maxSize; row++) {
+                for(let col = 1; col <= maxSize; col++) {
                     let distance = Math.max(Math.abs(row-selectedRow), Math.abs(col-selectedCol))
-                    for (resource of buildings[player.oasis.grid[row*100+col].building].provided) {
+                    for (resource of buildings[player.oasis.map[row*100+col].building].provided) {
                         distances[distance][resource] = (distances[distance][resource] ?? 0) + 1
                     }
                 }
@@ -282,17 +580,21 @@ addLayer("oasis", {
         }
     },
 
-    lastExplored() {
-        return temp.oasis.explored
-    },
-    explored() {
-        return baseVision
-    },
-
     buildings() {
         let buildingCounts = {}
-        for (let data of Object.values(player.oasis.grid))
-            buildingCounts[data.building] = (buildingCounts[data.building] ?? 0) + 1
+        let min = player.oasis.firstTick ? 1 : temp.oasis.grid.hiddenRings+1
+        let max = player.oasis.firstTick ? maxSize : maxSize - temp.oasis.grid.hiddenRings
+        for (let row = min; row <= max; row++) {
+            for (let col = min; col <= max; col++) {
+                let building = player.oasis.map[row*100+col].building
+                if (player.oasis.map[row*100+col].sand > buildings[building].sandLimit) {
+                    if (buildings[buildings[building].buried])
+                        buildingCounts[buildings[building].buried] = (buildingCounts[buildings[building].buried] ?? 0) + 1
+                }
+                else buildingCounts[building] = (buildingCounts[building] ?? 0) + 1
+            }
+        }
+        delete player.oasis.firstTick
         return buildingCounts
     },
     production() {
@@ -351,7 +653,10 @@ addLayer("oasis", {
     },
 
     tabFormat: () => {
-        let oasisHeight = `${temp.oasis.grid.rows*24 + 34}px`
+        let oasisHeight = temp.oasis.grid.size*24 + 34
+        let resourceHeight = Object.values(player.oasis.resources).filter(data => data.unlocked).length*33 + 34
+        let jobsHeight = Object.values(player.oasis.jobs).filter(data => data.unlocked).length*21 + 51
+        let lineHeight = `${Math.max(oasisHeight, resourceHeight, jobsHeight)}px`
         let oasisScale = `scale(${(temp.oasis.resources.people.max > 0) ? 1 : 0}, 1)`
         let tabFormat = [
             "blank",
@@ -362,7 +667,7 @@ addLayer("oasis", {
                     ["resource-grid", ["people", "food", "driedFood", "wood", "sandstone", "salt", "stoneTools" ]]
                 ], {'width': '275px', 'transform-origin': 'right', 'transform': oasisScale, 'transition': 'transform 0.5s !important'}],
                 ["blank", ['20px', '20px']],
-                ["v-line", oasisHeight, {'transform-origin': 'right', 'transform': oasisScale}],
+                ["v-line", lineHeight, {'transform-origin': 'right', 'transform': oasisScale}],
                 ["blank", ['20px', '20px']],    
                 ["column", [
                     ["display-text", `${temp.oasis.resources.people.max > 0 ? 'Map' : 'Your people look for a place to settle down'}`],
@@ -370,21 +675,21 @@ addLayer("oasis", {
                     "grid"
                 ]],
                 ["blank", ['20px', '20px']],
-                ["v-line", oasisHeight, {'transform-origin': 'left', 'transform': oasisScale}],
+                ["v-line", lineHeight, {'transform-origin': 'left', 'transform': oasisScale}],
                 ["blank", ['20px', '20px']],
                 ["column", [
                     ["display-text", "Jobs"],
                     "blank",
-                    ["job-grid", ["builder", "forager", "scavenger", "knapper", "farmer", "logger", "miner", "saltFarmer", "crafter", "elder"]]
+                    ["job-grid", ["builder", "forager", "scavenger", "knapper", "farmer", "logger", "miner", "saltFarmer", "crafter", "elder", "astrologist", "sweeper", "shoveler"]]
                 ], {'width': '275px', 'transform-origin': 'left', 'transform': oasisScale, 'transition': 'transform 0.5s !important'}]
             ]],
             "blank"
         ]
 
-        if (player.oasis.grid[player.oasis.selectedTile]) {
-            let building = player.oasis.grid[player.oasis.selectedTile].building
+        if (player.oasis.map[player.oasis.selectedTile]) {
+            let building = player.oasis.map[player.oasis.selectedTile].building
 
-            let toDisplay = [`<h2>${buildings[player.oasis.grid[player.oasis.selectedTile].building].name}</h2>`,
+            let toDisplay = [`<h2>${buildings[player.oasis.map[player.oasis.selectedTile].building].name}</h2>`,
                              buildings[building].description]
             let provided = buildings[building].provided
             if (provided.length > 0) toDisplay.push(`Provides a source of ${provided.map(resource => terrainResources[resource].name).join(', ')}`)
@@ -392,11 +697,16 @@ addLayer("oasis", {
             if (Object.keys(stored).length > 0) toDisplay.push(`Contains space for ${Object.entries(stored).map(([resource, amount]) => `${formatWhole(amount)} ${resources[resource].name}`).join(', ')}`)
             let buildingJobs = buildings[building].jobs
             if (Object.keys(buildingJobs).length > 0) toDisplay.push(`Supports ${Object.entries(buildingJobs).map(([job, amount]) => `${formatWhole(amount)} ${jobs[job].name}${amount === 1 ? '' : 's'}`).join(', ')}`)
-            if (player.oasis.grid[player.oasis.selectedTile].action) {
+            if (buildings[building].height > 0) toDisplay.push(`Blocks sand from reaching up to ${buildings[building].height} tiles behind it`)
+            if (buildings[building].sandLimit >= Number.MAX_SAFE_INTEGER);
+            else if (buildings[building].sandLimit > 0) toDisplay.push(`Can function under ${formatWhole(buildings[building].sandLimit+1)} feet of sand`)
+            else toDisplay.push('Unusable when buried under sand')
+            if (player.oasis.map[player.oasis.selectedTile].sand > 0) toDisplay.push(`Currently buried under ${formatWhole(player.oasis.map[player.oasis.selectedTile].sand)} ${player.oasis.map[player.oasis.selectedTile].sand === 1 ? 'foot' : 'feet'} of sand`)
+            if (player.oasis.map[player.oasis.selectedTile].action) {
                 toDisplay.push('<br>',
-                               `In Progress: ${actions[player.oasis.grid[player.oasis.selectedTile].action].name}`,
+                               `In Progress: ${actions[player.oasis.map[player.oasis.selectedTile].action].name}`,
                                'Remaining Resources:')
-                for ([resource, amount] of Object.entries(player.oasis.grid[player.oasis.selectedTile].progress)) {
+                for ([resource, amount] of Object.entries(player.oasis.map[player.oasis.selectedTile].progress)) {
                     if (amount > 0) toDisplay.push(`${resources[resource].name}: ${formatWhole(amount)}`)
                 }
             }
@@ -422,26 +732,13 @@ addLayer("oasis", {
     }
 })
 
-function shiftOasis() {
-    let prevSize = temp.oasis.lastExplored
-    let newSize = temp.oasis.explored
-
-    let shift = newSize - prevSize
-    console.log(shift)
-    // if (shift > 0) {
-    //     for (let row = temp.oasis.grid.rows; row > shift; row--) {
-    //         for (let col = temp.oasis.grid.cols; col > shift; col--) {
-    //             player.oasis.grid[row*100+col] = player.oasis.grid[(row-shift)*100+(col-shift)]
-    //         }
-    //     }
-    // }
-    // else {
-    //     for (let row = 1; row < temp.oasis.grid.rows-shift; row++) {
-    //         for (let col = 1; col < temp.oasis.grid.rows-shift; col++) {
-    //             player.oasis.grid[row*100+col] = player.oasis.grid[(row+shift)*100+(col+shift)]
-    //         }
-    //     }
-    // }
+function removeSand(list, amount) {
+    let removed = Math.min(player.oasis.map[list[0]].sand, amount)
+    player.oasis.map[list[0]].sand -= removed
+    amount -= removed
+    if (player.oasis.map[list[0]].sand <= 0)
+        list.shift()
+    return amount
 }
 
 function createResourceBars(bars) {
@@ -451,8 +748,8 @@ function createResourceBars(bars) {
             width: 100,
             height: 20,
             progress() { return player.oasis.resources[this.id].amount / temp.oasis.resources[this.id].max },
-            display() { return `<span>${formatWhole(player.oasis.resources[this.id].amount)}/${formatWhole(temp.oasis.resources[this.id].max)}</span>` },
-            fillStyle() { return { 'background-color': '#0000ff' } },
+            display() { return `${formatWhole(player.oasis.resources[this.id].amount)}/${formatWhole(temp.oasis.resources[this.id].max)}` },
+            fillStyle() { return { 'background-color': resources[this.id].color ?? '#0000ff' } }
         }
     }
 }
@@ -513,8 +810,8 @@ function createActionButtons(clickables) {
                 unlocked() { return actions[this.action].stateCheck() && actions[this.action].unlocked() },
                 canClick() { return actions[this.action].stateCheck() && actions[this.action].canRun() },
                 onClick() {
-                    player.oasis.grid[player.oasis.selectedTile].action = this.action
-                    player.oasis.grid[player.oasis.selectedTile].progress = {...actions[this.action].cost}
+                    player.oasis.map[player.oasis.selectedTile].action = this.action
+                    player.oasis.map[player.oasis.selectedTile].progress = {...actions[this.action].cost}
                 },
                 tooltip() {
                     let building = buildings[actions[this.action].building]
@@ -523,9 +820,13 @@ function createActionButtons(clickables) {
                     let provided = building.provided
                     if (provided.length > 0) toDisplay.push(`Provides a source of ${provided.map(resource => terrainResources[resource].name).join(', ')}`)
                     let stored = building.storage
-            if (Object.keys(stored).length > 0) toDisplay.push(`Contains space for ${Object.entries(stored).map(([resource, amount]) => `${formatWhole(amount)} ${resources[resource].name}`).join(', ')}`)
+                    if (Object.keys(stored).length > 0) toDisplay.push(`Contains space for ${Object.entries(stored).filter(([resource]) => player.oasis.resources[resource].unlocked).map(([resource, amount]) => `${formatWhole(amount)} ${resources[resource].name}`).join(', ')}`)
                     let buildingJobs = building.jobs
                     if (Object.keys(buildingJobs).length > 0) toDisplay.push(`Supports ${Object.entries(buildingJobs).map(([job, amount]) => `${formatWhole(amount)} ${jobs[job].name}${amount === 1 ? '' : 's'}`).join(', ')}`)
+                    if (building.height > 0) toDisplay.push(`Blocks sand from reaching up to ${building.height} tiles behind it`)
+                    if (building.sandLimit >= Number.MAX_SAFE_INTEGER);
+                    else if (building.sandLimit > 0) toDisplay.push(`Can function under ${formatWhole(building.sandLimit+1)} feet of sand`)
+                    else toDisplay.push('Unusable when buried under sand')
                     if (!temp.oasis.clickables[this.id].canClick) toDisplay.push(`<br>${colored(actions[this.action].requirementText, '#dd0000', 'h3')}`)
 
                     if (Object.keys(actions[this.action].cost).length > 0) {
@@ -554,9 +855,9 @@ function createActionButtons(clickables) {
                 unlocked() { return actions[this.action].stateCheck() && actions[this.action].unlocked() },
                 canClick() { return actions[this.action].stateCheck() && actions[this.action].canRun() },
                 onClick() {
-                    player.oasis.grid[player.oasis.selectedTile].action = ''
-                    player.oasis.grid[player.oasis.selectedTile].progress = {}
-                    player.oasis.grid[player.oasis.selectedTile].building = actions[this.action].getOutputBuilding()
+                    player.oasis.map[player.oasis.selectedTile].action = ''
+                    player.oasis.map[player.oasis.selectedTile].progress = {}
+                    player.oasis.map[player.oasis.selectedTile].building = actions[this.action].getOutputBuilding()
                 },
                 tooltip() {
                     let building = buildings[actions[this.action].getOutputBuilding()]
@@ -582,20 +883,20 @@ function createActionButtons(clickables) {
     }
 
     clickables.buildFreeCampsite.onClick = () => {
-        player.oasis.grid[player.oasis.selectedTile].action = ''
-        player.oasis.grid[player.oasis.selectedTile].progress = {}
-        player.oasis.grid[player.oasis.selectedTile].building = 'campsite'
+        player.oasis.map[player.oasis.selectedTile].action = ''
+        player.oasis.map[player.oasis.selectedTile].progress = {}
+        player.oasis.map[player.oasis.selectedTile].building = 'campsite'
         player.gameSpeed = 1
     }
 
     clickables.cancelBuild = {
         title: 'Cancel Construction',
         display: 'Spent resources will be lost',
-        unlocked() { return Boolean(player.oasis.grid[player.oasis.selectedTile]?.action) },
-        canClick() { return Boolean(player.oasis.grid[player.oasis.selectedTile]?.action) },
+        unlocked() { return Boolean(player.oasis.map[player.oasis.selectedTile]?.action) },
+        canClick() { return Boolean(player.oasis.map[player.oasis.selectedTile]?.action) },
         onClick() {
-            player.oasis.grid[player.oasis.selectedTile].action = ''
-            player.oasis.grid[player.oasis.selectedTile].progress = {}
+            player.oasis.map[player.oasis.selectedTile].action = ''
+            player.oasis.map[player.oasis.selectedTile].progress = {}
         },
         style() { return {
             'background-color': '#000000',
@@ -632,7 +933,7 @@ function loadOasisVue() {
             unlocked() { return this.data.filter(resource => player.oasis.resources[resource].unlocked) }
         },
         template: `
-        <table>
+        <table class="resourceTable">
             <tr v-for="resource in unlocked">
                 <td style='text-align: left'><display-text :layer="layer" :data="temp.oasis.resources[resource].name"></display-text></td>
                 <td><blank :layer="layer" :data="['20px', '17px']"></blank></td>
@@ -659,7 +960,12 @@ function loadOasisVue() {
                 <td style='text-align: right'><display-text :layer="layer" :data="formatWhole(player.oasis.unemployed)+'/'+formatWhole(player.oasis.resources.people.amount)"></display-text></td>
             </tr>
             <tr v-for="job in unlocked">
-                <td style='text-align: left'><display-text :layer="layer" :data="temp.oasis.jobs[job].name"></display-text></td>
+                <td>
+                    <div class="tooltipBox opaqueTooltip" style='text-align: left'>
+                        {{temp.oasis.jobs[job].name}}
+                        <tooltip v-if="jobs[job].tooltip" v-html="jobs[job].tooltip" class="opaque"></tooltip>
+                    </div>
+                </td>
                 <td><blank :layer="layer" :data="['20px', '17px']"></blank></td>
                 <td><clickable :layer="layer" :data="job+'-up'"></clickable></td>
                 <td style='text-align: right'><display-text :layer="layer" :data="formatWhole(player.oasis.jobs[job].amount)+'/'+formatWhole(temp.oasis.jobs[job].max)"></display-text></td>

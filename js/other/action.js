@@ -3,7 +3,7 @@ class Action {
         this.name = name
         this.canRun = () => true
         this.requirementText = ''
-        this.stateCheck = () => !player.oasis.grid[player.oasis.selectedTile]?.action && temp.oasis.resources.people.max > 0
+        this.stateCheck = () => !player.oasis.map[player.oasis.selectedTile]?.action && temp.oasis.resources.people.max > 0
         this.unlocked = () => true
     }
 
@@ -78,7 +78,8 @@ class DemolishAction extends Action {
 const actions = {
     buildFreeCampsite: new BuildAction("Settle", "campsite").setCanRun("Must be within 2 tiles of Water", () => (temp.oasis.countResourcesAroundSelected?.[2]?.water ?? 0) > 0),
     buildLoggingCamp: new BuildAction("Set up logging operations", "loggingCamp").costs('stoneTools', 10).setUnlocked(() => player.oasis.resources.stoneTools.unlocked),
-    buildSmallWarehouse: new BuildAction("Build a Small Warehouse", "smallWarehouse").setCanRun("Must be within 2 tiles of Civilization", () => (temp.oasis.countResourcesAroundSelected?.[2]?.civilization ?? 0) > 0).costs('stoneTools', 5).costs('sandstone', 30).setUnlocked(() => temp.oasis.buildings.settlement > 0)
+    buildCactusFarm: new BuildAction("Plant a Cactus Farm", "cactusFarm").costs('stoneTools', 10).setCanRun("Must be within 2 tiles of Water", () => (temp.oasis.countResourcesAroundSelected?.[2]?.water ?? 0) > 0).setUnlocked(() => hasResearch('cactusFarm')),
+    buildLookoutTower: new BuildAction("Build a Lookout Tower", "lookoutTower").setCanRun("Must be adjacent to at least two sources of Civilization", () => (temp.oasis.countResourcesAroundSelected?.[1]?.civilization ?? 0) > 1).costs('stoneTools', 30).costs('sandstone', 200).costs('wood', 150).setUnlocked(() => hasResearch('lookout')),
 }
 
 function initActions() {
@@ -94,14 +95,12 @@ function initActions() {
     Action.createActionGroup(['soil'],
                     [
                         ['basicFarm', {'stoneTools': 30, 'labor': 30}, () => hasResearch('farm')],
-                        ['irrigatedFarm', {'wood': 30, 'sandstone': 60, 'labor': 30}, () => hasResearch('canalFarm')]
                     ],
                     'Plow', 'Plow',
                     ["Must be adjacent to Water", () => (temp.oasis.countResourcesAroundSelected?.[1]?.water ?? 0) > 0])
     Action.createActionGroup(['soil'],
                     [
                         ['canal', {'wood': 30, 'sandstone': 60, 'labor': 30}, () => hasResearch('canal')],
-                        ['irrigatedFarm', {'stoneTools': 30, 'labor': 30}, () => hasResearch('canalFarm')]
                     ],
                     'Dig', 'Plow',
                     ["Must be adjacent to Water", () => (temp.oasis.countResourcesAroundSelected?.[1]?.water ?? 0) > 0])
@@ -120,6 +119,18 @@ function initActions() {
                     ],
                     'Flatten out', 'Flatten out',
                     ["Must be adjacent to Water", () => (temp.oasis.countResourcesAroundSelected?.[1]?.water ?? 0) > 0])
+    Action.createActionGroup(['sand', 'soil'],
+                    [
+                        ['smallWarehouse', {'stoneTools': 5, 'sandstone': 30}, () => temp.oasis.buildings.settlement > 0]
+                    ],
+                    'Build', 'Upgrade to',
+                    ["Must be within 2 tiles of Civilization", () => (temp.oasis.countResourcesAroundSelected?.[2]?.civilization ?? 0) > 0])
+    Action.createActionGroup(['sand', 'soil'],
+                    [
+                        ['smallWall', {'labor': 10, 'wood': 20}, () => hasResearch('walls')]
+                    ],
+                    'Build', 'Upgrade to',
+                    ["Must be within 2 tiles of Civilization", () => (temp.oasis.countResourcesAroundSelected?.[2]?.civilization ?? 0) > 0])
     
-    actions.buildFreeCampsite.stateCheck = () => !(player.oasis.grid[player.oasis.selectedTile]?.action ?? true) && temp.oasis.resources.people.max <= 0
+    actions.buildFreeCampsite.stateCheck = () => !(player.oasis.map[player.oasis.selectedTile]?.action ?? true) && temp.oasis.resources.people.max <= 0
 }

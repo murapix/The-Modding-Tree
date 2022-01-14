@@ -239,7 +239,6 @@ function resetRow(row) {
     }
     player.points = decimalZero
     updateTemp();
-    resizeCanvas();
 }
 
 function startChallenge(layer, x) {

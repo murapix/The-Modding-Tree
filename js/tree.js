@@ -39,6 +39,8 @@ addLayer("tree-tab", {
             ["display-text", () => `Month: ${player.oasis.time.month}`, {'margin': '0px 4px'}],
             ["display-text", () => `Day: ${player.oasis.time.day}`, {'margin': '0px 4px'}]
         ]],
+        ["display-text", () => temp.oasis.stormDescription],
+        ["display-text", () => temp.oasis.inStorm ? 'The ongoing storm causes outdoor activities to be reduced by 50%' : '<br>'],
         "blank",
         ['microtabs', 'game']
     ],

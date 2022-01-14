@@ -161,15 +161,15 @@ ul {
 
 .tooltipBox { 
     position: relative;
-  }
+}
   
-  .tooltipBox:hover .tooltip{
+.tooltipBox:hover .tooltip{
     opacity: 1;
-  }
+}
 
-  .forceTooltip .tooltip{
+.forceTooltip .tooltip{
     opacity: 1;
-  }
+}
   
 .respecCheckbox {
     display: inline-block;

@@ -1,11 +1,14 @@
 class Research {
-    constructor(title, display, cost, pos, prerequisites) {
+    constructor(title, type, display, tooltip, cost) {
         this.title = title
+        this.type = type
         this.display = display
+        this.tooltip = tooltip
         this.cost = cost
-        this.pos = pos
-        this.prerequisites = prerequisites
     }
+
+    withPos(row, col) { this.pos = [row, col]; return this }
+    withPrereqs(...prereqs) { this.prerequisites = prereqs; return this }
 
     addToQueue() {
         if (player.research.researched.includes(this.id) || player.research.queue.includes(this.id)) return
@@ -25,6 +28,11 @@ class Research {
         }
     }
 }
+
+class AgricultureResearch extends Research { constructor(title, display, tooltip, cost) { super(title, 'Agriculture', display, tooltip, cost) } }
+class ConstructionResearch extends Research { constructor(title, display, tooltip, cost) { super(title, 'Construction', display, tooltip, cost) } }
+class ExplorationResearch extends Research { constructor(title, display, tooltip, cost) { super(title, 'Exploration', display, tooltip, cost) } }
+class UniqueResearch extends Research { constructor(title, display, tooltip, cost) { super(title, '', display, tooltip, cost) } }
 
 addLayer("research", {
     type: "none",
@@ -65,74 +73,46 @@ addLayer("research", {
     },
 
     research: {
-        saltPool: new Research(
-            'Evaporation Pools',
-            buildings.saltPool.display,
-            10,
-            [0,1]
-        ),
-        canal: new Research(
-            'Canals',
-            buildings.canal.display,
-            50,
-            [1,2],
-            ['saltPool']
-        ),
-        farm: new Research(
-            'Agriculture',
-            buildings.basicFarm.display,
-            10,
-            [0,3]
-        ),
-        canalFarm: new Research(
-            'Irrigation',
-            buildings.irrigatedFarm.display,
-            100,
-            [2,3],
-            ['canal', 'farm']
-        ),
-        walls: new Research(
-            'Construction',
-            colored('|¯¯|', '#ffffff', 'span'),
-            100,
-            [2,1],
-            ['canal']
-        ),
-        stars: new Research(
-            'Astrology',
-            '',
-            500,
-            [3,2],
-            ['walls']
-        ),
-        travel: new Research(
-            'Expeditions',
-            '',
-            100,
-            [2,0],
-            ['saltPool']
-        ),
-        lookout: new Research(
-            'Expansion',
-            buildings.lookoutTower.display,
-            500,
-            [3,0],
-            ['travel', 'walls']
-        ),
-        mine: new Research(
-            'Mining',
-            buildings.quarry.display,
-            500,
-            [3,1],
-            ['travel', 'walls']
-        ),
-        writing: new Research(
-            'Writing',
-            '',
-            1000,
-            [4,2],
-            ['stars']
-        )
+        saltPool: new AgricultureResearch('Evaporation Pools', buildings.saltPool.display, `The heat and insects ruin food quickly<br>Maybe some salt can be drawn from the oasis to help with preservation<br>Unlocks the ${buildings.saltPool.name}`, 30)
+                        .withPos(0, 1),
+        farm: new AgricultureResearch('Agriculture', buildings.basicFarm.display, `Careful cultivation of the fertile land around the oasis<br>should allow for more food for the tribe<br>Unlocks the ${buildings.basicFarm.name}`, 30)
+                        .withPos(0,3),
+        canal: new ConstructionResearch('Canals', buildings.canal.display, `The land around the oasis is rich and wet,<br>but the sands are greedy and dry<br>Unlocks the ${buildings.canal.name}`, 120)
+                        .withPos(1,2)
+                        .withPrereqs('saltPool'),
+        travel: new ExplorationResearch('Expeditions', '', 'Ruins full of treasure dot the land, waiting only for someone to take them<br>Unlocks Expeditions', 600)
+                        .withPos(2,0)
+                        .withPrereqs('saltPool'),
+        walls: new ConstructionResearch('Construction', buildings.smallWall.display, `The sandstorms are disruptive and dangerous, the people need protection<br>Unlocks the ${buildings.smallWall.name}`, 450)
+                        .withPos(2,2)
+                        .withPrereqs('canal'),
+        cactusFarm: new AgricultureResearch('Desert Farming', buildings.cactusFarm.display, `While the sparse cacti don't seem to need much,<br>it may be possible to grow more with some dedicated work<br>Unlocks the ${buildings.cactusFarm.name}`, 300)
+                        .withPos(2,3)
+                        .withPrereqs('canal', 'farm'),
+        mine: new ConstructionResearch('Mining', buildings.quarry.display, `Better construction allows for deeper and more stable mines<br>Unlocks the ${buildings.mine.name}`, 8100)
+                        .withPos(3,0)
+                        .withPrereqs('travel', 'walls'),
+        lookout: new ConstructionResearch('Expansion', buildings.lookoutTower.display, `With the oasis becoming cluttered,<br>it's time to look for arable land beyond the oasis valley<br>Unlocks the ${buildings.lookoutTower.name}`, 9000)
+                        .withPos(3,1)
+                        .withPrereqs('travel', 'walls'),
+        storage: new ConstructionResearch('Engineering', buildings.mediumWarehouse.display, `Better building techniques allow for larger and more spacious structures<br>Unlocks the ${buildings.mediumWarehouse.name}`, 7500)
+                        .withPos(3,2)
+                        .withPrereqs('walls'),
+        stars: new ExplorationResearch('Astrology', '', `The portents of the stars hold the secrets of the world<br>Upgrades ${jobs.elder.name}s to ${jobs.astrologist.name}s`, 7000)
+                        .withPos(3,3)
+                        .withPrereqs('walls'),
+        smelting: new ConstructionResearch('Metalurgy', buildings.smelter.display, `Raw ores from beneath the earth require processing to be truly useful<br>Unlocks the ${buildings.smelter.name}`, 25000)
+                        .withPos(4,0)
+                        .withPrereqs('mine'),
+        camels: new AgricultureResearch('Animal Husbandry', buildings.camelFarm.display, `Raising and breeding camels will allow larger<br>and further expeditions into the desert<br>Unlocks the ${buildings.camelFarm.name}`, 24000)
+                        .withPos(4,1)
+                        .withPrereqs('lookout'),
+        village: new ConstructionResearch('Community', buildings.village.display, `The community is the key to survival<br>Unlocks the ${buildings.village.name}`, 30000)
+                        .withPos(4,2)
+                        .withPrereqs('storage', 'lookout'),
+        writing: new ExplorationResearch('Writing', '', 'To leave behind a legacy of knowledge, you must write it down<br>Unlocks Monuments (soon™)', 36000)
+                        .withPos(4,3)
+                        .withPrereqs('stars'),
     },
 
     tabFormat: [
@@ -171,15 +151,16 @@ function loadResearchVue() {
                 return (layers.research.research[this.data].prerequisites?.filter(prereq => !player.research.researched.includes(prereq)).length ?? 0) === 0
             },
             inQueue() { return player.research.queue.includes(this.data) },
-            progress() { return player.research.queue[0] === this.data ? 0.5 : 0 },
+            progress() { return player.research.queue[0] === this.data ? (player.research.progress / temp.research.research[this.data].cost) : 0 },
             index() { return player.research.queue.indexOf(this.data) }
         },
         template: `
-            <button :class="{ researchContainer: true, tooltipBox: true, can: !researched, researchable: (prerequisitesResearched && !researched), notResearchable: !prerequisitesResearched }"
-                    :style="[{}]"
+            <button :class="{ researchContainer: true, tooltipBox: true, can: !researched, researchable: (prerequisitesResearched && !researched), notResearchable: !prerequisitesResearched, researched: researched }"
+                    :style="[index === 0 ? { 'background-image': 'linear-gradient(to right, #0000ff40 '+(progress*100-5)+'%, #0f0f0f '+(progress*100+5)+'%)' } : {}]"
                     v-on:click="clickResearch(data)" :id='"research-" + layer + "-" + data'>
                 <div>
                     <div :class="{ researchDisplay: true, researched: researched }" v-html="run(layers.research.research[data].display, layers.research.research[data])"></div>
+                    <div class="researchType">{{temp.research.research[data].type}}</div>
                     <div v-if="!researched && player.research.queue[0] !== data" class="progressDisplay">{{formatWhole(temp.research.research[data].cost)}}</div>
                     <div v-else-if="!researched && player.research.queue[0] === data" class="progressDisplay">{{formatWhole(player.research.progress)}}/{{formatWhole(temp.research.research[data].cost)}}</div>
                     <div v-if="index >= 0" class="queueIndex">{{index+1}}</div>
@@ -200,10 +181,10 @@ function loadResearchVue() {
             rows() { return this.size[1] },
             cols() { return this.size[0] },
             grid() {
-                let grid = new Array(this.rows).fill().map(() => new Array(this.cols*2-1).fill(''))
+                let grid = new Array(this.rows).fill().map(() => new Array(this.cols*2+1).fill(''))
                 for (research in layers.research.research) {
                     let [col, row] = layers.research.research[research].pos
-                    grid[row][col*2] = research
+                    grid[row][col*2+1] = research
                 }
                 return grid
             },
@@ -217,12 +198,12 @@ function loadResearchVue() {
                             dependents[prereq].push(research)
                 }
                 for (research in layers.research.research) {
-                    let splitX = Math.min(...dependents[research].map(dep => layers.research.research[dep].pos[0]))*(300+this.blankWidth)-this.blankWidth/2
+                    let splitX = Math.min(...dependents[research].map(dep => layers.research.research[dep].pos[0]))*(300+this.blankWidth)+this.blankWidth/2
                     let color = player.research.researched.includes(research) ? 'white' : 'grey'
                     for (dep of dependents[research]) {
-                        let startX = (layers.research.research[research].pos[0])*(300+this.blankWidth)+300
+                        let startX = (layers.research.research[research].pos[0]+1)*(300+this.blankWidth)
                         let startY = layers.research.research[research].pos[1]*50+25
-                        let endX = (layers.research.research[dep].pos[0])*(300+this.blankWidth)
+                        let endX = (layers.research.research[dep].pos[0])*(300+this.blankWidth)+this.blankWidth
                         let endY = layers.research.research[dep].pos[1]*50+25
                         if (startY === endY) {
                             lines.push([color, `M ${startX},${startY} H ${endX}`])
@@ -242,7 +223,8 @@ function loadResearchVue() {
             }
         },
         template: `
-        <div style="overflow-x: auto; max-width: 90vw" class="researchTableDiv">
+        <div :style="'height: '+(rows*51+150)+'px'" class="researchTableDiv">
+            <blank :data="'30px'"></blank>
             <svg :width="(cols*(300+blankWidth)-blankWidth)" :height="(rows*51)">
                 <g v-for="line in lines" fill="none" stroke-width="4" stroke-linecap="round">
                     <path :stroke="line[0]" :d="line[1]" />
@@ -258,7 +240,7 @@ function loadResearchVue() {
                     </tr>
                 </table>
             </div>
-            <blank>
+            <div class="researchFade" :style="{'margin-top': -(rows*51)+'px', height: (rows*51)+'px'}" />
         </div>
         `
     })

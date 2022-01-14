@@ -36,6 +36,11 @@
     <script src="js/utils/save.js"></script>
     <script src="js/utils/themes.js"></script>
 
+    <script src="js/other/resource.js"></script>
+    <script src="js/other/job.js"></script>
+    <script src="js/other/action.js"></script>
+    <script src="js/other/building.js"></script>
+
 </head>
 
 
@@ -63,7 +68,7 @@
             <br><br>
         </div>
 
-        <div id="treeOverlay" v-if="!(tmp.gameEnded && !player.keepGoing) && (player.tab === 'none' || !readData(layoutInfo.showTree))" class="treeOverlay" onscroll="resizeCanvas()"
+        <div id="treeOverlay" v-if="!(tmp.gameEnded && !player.keepGoing) && (player.tab === 'none' || !readData(layoutInfo.showTree))" class="treeOverlay"
             v-bind:class="{ fullWidth: (player.tab == 'none' || player.navTab == 'none'), col: (player.tab !== 'none' && player.navTab !== 'none'), left: (player.tab !== 'none' && player.navTab !== 'none') }"
             :style="{'margin-top': !readData(layoutInfo.showTree) && player.tab == 'info-tab' ? '50px' : ''}">
             <div id="version" onclick="showTab('changelog-tab')" class="overlayThing" style="margin-right: 13px" >
@@ -94,14 +99,14 @@
             </div>
         </div>
         
-        <div v-if="!(tmp.gameEnded && !player.keepGoing) && (player.tab === 'none')" id="treeTab"  onscroll="resizeCanvas()" 
+        <div v-if="!(tmp.gameEnded && !player.keepGoing) && (player.tab === 'none')" id="treeTab"
             v-bind:class="{ fullWidth: (player.tab == 'none' || player.navTab == 'none'), col: (player.tab !== 'none' && player.navTab !== 'none'), left: (player.tab !== 'none' && player.navTab !== 'none')}">
             <overlay-head id="fakeHead" style="visibility: hidden;"></overlay-head>
             <layer-tab :layer="player.navTab == 'none' ? player.tab : player.navTab" :key="'left'"></layer-tab>
             <bg :layer="player.navTab == 'none' ? player.tab : player.navTab" ></bg>
         </div>
 
-        <div style="position: absolute; right: 4px; top: 10px; margin-right: 13px; z-index: 999; display: inline-flex; align-items: center">
+        <div style="position: absolute; right: 4px; top: 10px; margin-right: 13px; z-index: 1; display: inline-flex; align-items: center">
             <display-text :layer="'tree-tab'" :data="player.gameSpeed > 2 ? 'Fastest' : (player.gameSpeed > 1 ? 'Fast' : (player.gameSpeed > 0 ? 'Normal' : 'Paused'))" style="text-align: right; min-height: 20px; margin: 4px"></display-text>
             <clickable :layer="'tree-tab'" :data="'pause'" style="margin: 4px; padding-bottom: 3px"></clickable>
             <clickable :layer="'tree-tab'" :data="'play'" style="margin: 4px"></clickable>
@@ -125,7 +130,7 @@
                 </div>
         </div>
 
-        <div v-if="player.navTab !== 'none' && player.tab !== 'none' && !(tmp.gameEnded && !player.keepGoing)" onscroll="resizeCanvas()" v-bind:class="{ fullWidth: true, col: player.navTab != 'none', right: player.navTab != 'none', fast: true, tab: true}">
+        <div v-if="player.navTab !== 'none' && player.tab !== 'none' && !(tmp.gameEnded && !player.keepGoing)" v-bind:class="{ fullWidth: true, col: player.navTab != 'none', right: player.navTab != 'none', fast: true, tab: true}">
             <div v-for="layer in LAYERS">
                 <div v-if="player.tab==layer">
                     <layer-tab :layer="layer" :back="'none'" :spacing="'50px'" :key="'left'"></layer-tab>

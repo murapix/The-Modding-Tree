@@ -2,12 +2,7 @@ let modInfo = {
     name: "Oasis",
     id: "igm-2022-oasis",
     author: "Escapee",
-    modFiles: ["other/resource.js",
-               "other/job.js",
-               "other/action.js",
-               "other/building.js",
-
-               "tree.js",
+    modFiles: ["tree.js",
                "layers/oasis.js",
                "layers/research.js",
                "layers/expedition.js"
