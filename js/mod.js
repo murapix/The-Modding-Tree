@@ -15,12 +15,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-    num: "0.2",
-    name: "Stars",
+    num: "0.3",
+    name: "Sand",
 }
 
 let changelog = `
     <h1>Changelog:</h1>
+    <br><br>
+    <h3>v0.3 - Sand</h3>
+    <br>- Added tooltips to jobs and research
+    <br>- Added sandstorms and sand management
+    <br>- Several small changes and additions to other systems
     <br><br>
     <h3>v0.2 - Stars</h3>
     <br>- Fixed a few bugs

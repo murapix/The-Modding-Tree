@@ -1,5 +1,10 @@
 # Oasis - Changelog:
 
+## v0.3 - Sand
+- Added tooltips to jobs and research
+- Added sandstorms and sand management
+- Several small changes and additions to other systems
+
 ## v0.2 - Stars
 - Fixed a few bugs
 - Reworked progression
