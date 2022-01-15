@@ -16,6 +16,3 @@ function changeTheme() {
     document.body.style.setProperty('--points', colors["points"]);
     document.body.style.setProperty("--locked", colors["locked"]);
 }
-function getThemeName() {
-    return options.theme? options.theme : "default";
-}

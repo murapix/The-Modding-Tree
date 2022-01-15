@@ -150,6 +150,7 @@ function fixSave() {
                     player.subtabs[layer][item] = Object.keys(layers[layer].microtabs[item])[0];
         }
     }
+    player.expedition.expeditions = player.expedition.expeditions.map(val => Object.assign(new Expedition(), val))
 }
 function fixData(defaultData, newData) {
     for (item in defaultData) {

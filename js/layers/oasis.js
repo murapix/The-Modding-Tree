@@ -15,7 +15,8 @@ const freshOasis = function() {
                 building: 'sand',
                 progress: {},
                 action: '',
-                sand: 0
+                sand: 0,
+                ruined: ''
             }
         }
     }
@@ -52,7 +53,7 @@ addLayer("oasis", {
             time: { day: 1, month: 1, year: 1 },
             previousPopulation: 0,
             map: freshOasis(),
-            firstTick: true,
+            firstTick: 1,
             stormDirection: Math.floor(Math.random()*4)
         }
         for ([resource, data] of Object.entries(resources)) {
@@ -72,7 +73,9 @@ addLayer("oasis", {
     },
 
     update() {
-        if (temp.oasis.resources.people.max <= 0) player.gameSpeed = 0
+        if (!player.started || (player.oasis.resources.people.amount + player.expedition.onExpedition.people) <= 0) player.gameSpeed = 0
+        if (temp.oasis.buildings.campsite > 0) player.started = true
+
         { // Update time
             player.oasis.time.day++
             if (player.oasis.time.day > 30) {
@@ -154,20 +157,28 @@ addLayer("oasis", {
         }
 
         { // Update sand/soil
-            let waterLocs = []
-            for (let row = 1; row < maxSize; row++) {
-                for (let col = 1; col < maxSize; col++) {
+            for (let row = 1; row <= maxSize; row++) {
+                for (let col = 1; col <= maxSize; col++) {
                     let loc = row*100+col
-                    if (buildings[player.oasis.map[loc].building].provided.includes('water'))
-                        waterLocs.push(loc)
-                    else if (player.oasis.map[loc].building === 'soil') player.oasis.map[loc].building = 'sand'
+                    if (buildings[player.oasis.map[loc].building].dried) {
+                        player.oasis.map[loc].building = buildings[player.oasis.map[loc].building].dried
+                    }
                 }
             }
-
-            for (waterLoc of waterLocs) {
-                for (adjacent of [waterLoc-101, waterLoc-100, waterLoc-99, waterLoc-1, waterLoc+1, waterLoc+99, waterLoc+100, waterLoc+101]) {
-                    if (!player.oasis.map[adjacent]) continue
-                    if (player.oasis.map[adjacent].building === 'sand') player.oasis.map[adjacent].building = 'soil'
+            let waterLocs = [center]
+            while (waterLocs.length > 0) {
+                let waterLoc = waterLocs.shift()
+                let tileData = player.oasis.map[waterLoc]
+                if (tileData.sand <= buildings[tileData.building].sandLimit) {
+                    for (let adjacent of [waterLoc-101, waterLoc-100, waterLoc-99, waterLoc-1, waterLoc+1, waterLoc+99, waterLoc+100, waterLoc+101]) {
+                        if (!player.oasis.map[adjacent]) continue
+                        let adjacentData = player.oasis.map[adjacent]
+                        if (buildings[adjacentData.building].wet) {
+                            adjacentData.building = buildings[adjacentData.building].wet
+                            if (buildings[adjacentData.building].provided.includes('water'))
+                                waterLocs.push(adjacent)
+                        }
+                    }
                 }
             }
         }
@@ -291,7 +302,7 @@ addLayer("oasis", {
                 let clearTileCount = temp.oasis.grid.size**2 - sandTotal
                 let toFill = []
                 while (positions.length > clearTileCount)
-                    toFill.push(positions.splice(Math.floor(Math.random() * positions.length), 1))
+                    toFill.push(positions.splice(Math.floor(Math.random() * positions.length), 1)[0])
                 sandLoop: for (let loc of toFill) {
                     let locRow = ~~(loc/100)
                     let locCol = loc%100
@@ -396,7 +407,8 @@ addLayer("oasis", {
     },
     inStorm() {
         if (player.oasis.time.year < 4) return false
-        return player.oasis.time.month <= temp.oasis.stormLength.months && player.oasis.time.day <= temp.oasis.stormLength.days
+        if (player.oasis.time.month < temp.oasis.stormLength.months) return true
+        return player.oasis.time.month === temp.oasis.stormLength.months && player.oasis.time.day <= temp.oasis.stormLength.days
     },
     stormStrength() {
         if (player.oasis.time.year <= 3) return 0
@@ -545,6 +557,7 @@ addLayer("oasis", {
         return jobData
     }(),
     countJobs() {
+        // Count available jobs
         let jobs = Object.fromEntries(Object.entries(temp.oasis.jobs).map(entry => [entry[0], 0]))
         for (let job in jobs) { jobs[job] = 0 }
 
@@ -557,6 +570,14 @@ addLayer("oasis", {
             layers.oasis.jobs[job].max = amount
             temp.oasis.jobs[job].max = amount
         }
+        // Factor in job upgrades
+        if (hasResearch('stars')) {
+            temp.oasis.jobs.astrologist.max = temp.oasis.jobs.elder.max
+            temp.oasis.jobs.elder.max = 0
+            player.oasis.jobs.astrologist.amount += player.oasis.jobs.elder.amount
+            player.oasis.jobs.elder.amount = 0
+        }
+        // Remove workers from over-maxed jobs
         if (temp.oasis.buildings) {
             for ([job, data] of Object.entries(player.oasis.jobs)) {
                 if (temp.oasis.jobs[job].max < data.amount) {
@@ -594,7 +615,23 @@ addLayer("oasis", {
                 else buildingCounts[building] = (buildingCounts[building] ?? 0) + 1
             }
         }
-        delete player.oasis.firstTick
+        if (player.oasis.firstTick === 1) player.oasis.firstTick++
+        else delete player.oasis.firstTick
+        return buildingCounts
+    },
+    ruinedBuildings() {
+        let buildingCounts = {}
+        let min = player.oasis.firstTick ? 1 : temp.oasis.grid.hiddenRings+1
+        let max = player.oasis.firstTick ? maxSize : maxSize - temp.oasis.grid.hiddenRings
+        for (let row = min; row <= max; row++) {
+            for (let col = min; col <= max; col++) {
+                let building = player.oasis.map[row*100+col].ruined
+                if (!building) continue
+                buildingCounts[building] = (buildingCounts[building] ?? 0) + 1
+            }
+        }
+        if (player.oasis.firstTick === 1) player.oasis.firstTick++
+        else delete player.oasis.firstTick
         return buildingCounts
     },
     production() {
@@ -641,11 +678,11 @@ addLayer("oasis", {
         }
         else {
             if (player.oasis.time.day === 1) player.oasis.previousPopulation = player.oasis.resources.people.amount
-            if (player.oasis.resources.people.amount < temp.oasis.resources.people.max) {
+            if (player.oasis.resources.people.amount < temp.oasis.resources.people.max - player.expedition.onExpedition.people) {
                 if (player.oasis.previousPopulatoin > 60)
-                    production.people = Math.min(~~(player.oasis.previousPopulation/60), temp.oasis.resources.people.max - player.oasis.resources.people.amount)
+                    production.people = Math.min(~~(player.oasis.previousPopulation/60), temp.oasis.resources.people.max - player.expedition.onExpedition.people - player.oasis.resources.people.amount)
                 else if (player.oasis.time.day <= player.oasis.previousPopulation/2)
-                    production.people = Math.min(1, temp.oasis.resources.people.max - player.oasis.resources.people.amount)
+                    production.people = Math.min(1, temp.oasis.resources.people.max - player.expedition.onExpedition.people - player.oasis.resources.people.amount)
             }
         }
 
@@ -657,20 +694,20 @@ addLayer("oasis", {
         let resourceHeight = Object.values(player.oasis.resources).filter(data => data.unlocked).length*33 + 34
         let jobsHeight = Object.values(player.oasis.jobs).filter(data => data.unlocked).length*21 + 51
         let lineHeight = `${Math.max(oasisHeight, resourceHeight, jobsHeight)}px`
-        let oasisScale = `scale(${(temp.oasis.resources.people.max > 0) ? 1 : 0}, 1)`
+        let oasisScale = `scale(${player.started ? 1 : 0}, 1)`
         let tabFormat = [
             "blank",
             ["oasis-row", [
                 ["column", [
                     ["display-text", "Resources"],
                     "blank",
-                    ["resource-grid", ["people", "food", "driedFood", "wood", "sandstone", "salt", "stoneTools" ]]
+                    ["resource-grid", ["people", "food", "driedFood", "wood", "sandstone", "salt", "metal", "stoneTools", "metalTools" ]]
                 ], {'width': '275px', 'transform-origin': 'right', 'transform': oasisScale, 'transition': 'transform 0.5s !important'}],
                 ["blank", ['20px', '20px']],
                 ["v-line", lineHeight, {'transform-origin': 'right', 'transform': oasisScale}],
                 ["blank", ['20px', '20px']],    
                 ["column", [
-                    ["display-text", `${temp.oasis.resources.people.max > 0 ? 'Map' : 'Your people look for a place to settle down'}`],
+                    ["display-text", `${player.started ? 'Map' : 'Your people look for a place to settle down'}`],
                     "blank",
                     "grid"
                 ]],
@@ -688,9 +725,11 @@ addLayer("oasis", {
 
         if (player.oasis.map[player.oasis.selectedTile]) {
             let building = player.oasis.map[player.oasis.selectedTile].building
+            let ruined = player.oasis.map[player.oasis.selectedTile].ruined
 
             let toDisplay = [`<h2>${buildings[player.oasis.map[player.oasis.selectedTile].building].name}</h2>`,
                              buildings[building].description]
+            if (ruined && ['sand', 'soil', 'tree', 'cactus'].includes(building)) toDisplay.push(ruinedBuildings[ruined].description)
             let provided = buildings[building].provided
             if (provided.length > 0) toDisplay.push(`Provides a source of ${provided.map(resource => terrainResources[resource].name).join(', ')}`)
             let stored = buildings[building].storage
@@ -886,6 +925,7 @@ function createActionButtons(clickables) {
         player.oasis.map[player.oasis.selectedTile].action = ''
         player.oasis.map[player.oasis.selectedTile].progress = {}
         player.oasis.map[player.oasis.selectedTile].building = 'campsite'
+        player.started = true
         player.gameSpeed = 1
     }
 

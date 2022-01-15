@@ -1,16 +1,19 @@
 class Job {
-    constructor(id, name, produces = {}, consumes = {}) {
+    constructor(id, name, produces = {}, consumes = {}, limits = {}) {
         this.name = name
         this.produces = produces
         this.consumes = consumes
+        this.stores = limits
         this.shouldUnlock = () => temp.oasis.jobs[id].max > 0
         this.shouldShow = () => true
         this.tooltip = (() => {
             let tooltip = []
-            if (Object.keys(produces).length > 0)
-                tooltip.push(`Production: ${Object.entries(produces).map(([resource, amount]) => `${formatWhole(amount)} ${resources[resource].name}`).join(', ')}`)
-            if (Object.keys(consumes).length > 0)
-                tooltip.push(`Consumption: ${Object.entries(consumes).map(([resource, amount]) => `${formatWhole(amount)} ${resources[resource].name}`).join(', ')}`)
+            if (Object.keys(this.stores).length > 0)
+                tooltip.push(`Storage: ${Object.entries(this.stores).map(([resource, amount]) => `${formatWhole(amount)} ${resources[resource].name}`).join(', ')}`)
+            if (Object.keys(this.produces).length > 0)
+                tooltip.push(`Production: ${Object.entries(this.produces).map(([resource, amount]) => `${formatWhole(amount)} ${resources[resource].name}`).join(', ')}`)
+            if (Object.keys(this.consumes).length > 0)
+                tooltip.push(`Consumption: ${Object.entries(this.consumes).map(([resource, amount]) => `${formatWhole(amount)} ${resources[resource].name}`).join(', ')}`)
             return tooltip.join('<br>')
         })()
         this.outdoors = false
@@ -42,7 +45,7 @@ class Job {
         for ([resource, amount] of Object.entries(this.produces))
             production[resource] = (production[resource] ?? 0) + (amount * workAmount)
 
-        if (this.outdoors && temp.oasis.inStorm)
+        if (this.outdoors && player.oasis.time.year >= 10 && temp.oasis.inStorm)
             for (resource in production)
                 production[resource] = ~~(production[resource]/2)
 
@@ -63,10 +66,13 @@ const jobs = {
     farmer: new Job('farmer', "Farmer", {'food': 4}).setOutdoors(),
     logger: new Job('logger', "Logger", {'wood': 2}).setOutdoors(),
     miner: new Job('miner', "Miner", {'sandstone': 2}).setOutdoors(),
+    metalMiner: new Job('metalMiner', "Deep Miner", {'metal': 1}).setOutdoors(),
     crafter: new Job('crafter', "Crafter", {'stoneTools': 1}, {'wood': 1, 'sandstone': 1}),
-    elder: new Job('elder', "Elder", {'research': 1}),
+    smith: new Job('smith', "Smith", {'metalTools': 1}, {'wood': 1, 'metal': 1}),
+    elder: new Job('elder', "Elder", {'research': 1}).setShouldShow(() => !hasResearch('stars')),
     saltFarmer: new Job('saltFarmer', "Salt Farmer", {'salt': 1}).setOutdoors(),
-    astrologist: new Job('astrologist', "Astrologist", {'research': 3}),
+    camelFarmer: new Job('camelFarmer', "Herdsman", {}, {'food': 1}, {'camels': 10}),
+    astrologist: new Job('astrologist', "Astrologist", {'research': 3}).setShouldShow(() => hasResearch('stars')),
     sweeper: new Job('sweeper', "Sweeper", {'sand': 1}).setTooltip('Removes 1 foot of sand per day'),
     shoveler: new Job('shoveler', "Shoveler", {'sand': 5}).setTooltip('Removes 5 feet of sand per day'),
 }

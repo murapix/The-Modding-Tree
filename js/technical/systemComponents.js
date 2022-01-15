@@ -128,15 +128,12 @@ var systemComponents = {
                 <td><button class="opt" onclick="hardReset()">HARD RESET</button></td>
             </tr>
             <tr>
-                <td><button class="opt" onclick="exportSave()">Export to clipboard</button></td>
-                <td></td>
                 <td><button class="opt" onclick="importSave()">Import</button></td>
+                <td><button class="opt" onclick="exportSave()">Export to clipboard</button></td>
+                <td><button class="opt" onclick="toggleOpt('newGameConfirmation')">Confirm New Game: {{ options.newGameConfirmation?"ON":"OFF" }}</button></td>
             </tr>
             <tr>
-                <td><button class="opt" onclick="adjustMSDisp()">Show Milestones: {{ MS_DISPLAYS[MS_SETTINGS.indexOf(options.msDisplay)]}}</button></td>
-                <td><button class="opt" onclick="toggleOpt('hideChallenges')">Completed Challenges: {{ options.hideChallenges?"HIDDEN":"SHOWN" }}</button></td>
-                <td><button class="opt" onclick="toggleOpt('forceTooltips'); needsCanvasUpdate = true">Shift-Click to Toggle Tooltips: {{ options.forceTooltips?"ON":"OFF" }}</button></td>
-                </tr> 
+            </tr> 
         </table>`
     },
 

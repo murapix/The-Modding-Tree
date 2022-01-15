@@ -8,6 +8,11 @@ const resources = {
         initialAmount: 3,
         color: 'blue'
     },
+    camels: {
+        name: "Camels",
+        shouldUnlock: () => hasResearch('camels'),
+        color: 'goldenrod'
+    },
     food: {
         name: "Food",
         shouldUnlock: () => temp.oasis.resources.people.max > 0,
@@ -17,7 +22,7 @@ const resources = {
         name: "Wood",
         shouldUnlock: () => temp.oasis.jobs.scavenger.max > 0,
         baseStorage: 50,
-        color: 'brown'
+        color: 'saddlebrown'
     },
     sandstone: {
         name: "Sandstone",
@@ -30,6 +35,12 @@ const resources = {
         shouldUnlock: () => temp.oasis.jobs.crafter.max > 0,
         baseStorage: 10,
         color: 'dimgrey'
+    },
+    metalTools: {
+        name: "Metal Tools",
+        shouldUnlock: () => temp.oasis.jobs.smith.max > 0,
+        baseStorage: 10,
+        color: 'lightslategrey'
     },
     salt: {
         name: "Salt",
@@ -47,6 +58,11 @@ const resources = {
         shouldUnlock: () => temp.oasis.jobs.saltFarmer.max > 0,
         baseStorage: 100,
         color: 'olive'
+    },
+    metal: {
+        name: "Metal",
+        shouldUnlock: () => player.oasis.resources.metal.amount > 0,
+        color: 'darkslategrey'
     },
     labor: {
         name : "Days of Work",

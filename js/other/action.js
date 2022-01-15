@@ -80,6 +80,8 @@ const actions = {
     buildLoggingCamp: new BuildAction("Set up logging operations", "loggingCamp").costs('stoneTools', 10).setUnlocked(() => player.oasis.resources.stoneTools.unlocked),
     buildCactusFarm: new BuildAction("Plant a Cactus Farm", "cactusFarm").costs('stoneTools', 10).setCanRun("Must be within 2 tiles of Water", () => (temp.oasis.countResourcesAroundSelected?.[2]?.water ?? 0) > 0).setUnlocked(() => hasResearch('cactusFarm')),
     buildLookoutTower: new BuildAction("Build a Lookout Tower", "lookoutTower").setCanRun("Must be adjacent to at least two sources of Civilization", () => (temp.oasis.countResourcesAroundSelected?.[1]?.civilization ?? 0) > 1).costs('stoneTools', 30).costs('sandstone', 200).costs('wood', 150).setUnlocked(() => hasResearch('lookout')),
+    buildCamelFarm: new BuildAction("Build a Camel Pen", "camelFarm").costs('stoneTools', 10).costs('wood', 60).setCanRun("Must be within 2 tiles of Civilization", () => (temp.oasis.countResourcesAroundSelected?.[2]?.civilization ?? 0) > 0).setUnlocked(() => hasResearch('camels')),
+    buildSmelter: new BuildAction("Build a Smithy", "smelter").costs('stoneTools', 50).costs('sandstone', 200).costs('wood', 50).setCanRun("Must be within 2 tiles of Civilization", () => (temp.oasis.countResourcesAroundSelected?.[2]?.civilization ?? 0) > 0).setUnlocked(() => hasResearch('smelting')),
 }
 
 function initActions() {
@@ -87,7 +89,8 @@ function initActions() {
                     [
                         ['campsite', {'food': 10, 'wood': 5}],
                         ['encampment', {'food': 15, 'wood': 15, 'sandstone': 20}, () => player.oasis.resources.sandstone.unlocked],
-                        ['settlement', {'food': 30, 'wood': 80, 'sandstone': 120}, () => temp.oasis.buildings.encampment > 0 || temp.oasis.buildings.settlement > 0]
+                        ['settlement', {'food': 30, 'wood': 80, 'sandstone': 120}, () => temp.oasis.buildings.encampment > 0 || temp.oasis.buildings.settlement > 0 || hasResearch('village')],
+                        ['village', {'food': 60, 'wood': 150, 'sandstone': 300}, () => hasResearch('village')]
                     ],
                     'Build', 'Upgrade to',
                     ["Must be within 2 tiles of Water", () => (temp.oasis.countResourcesAroundSelected?.[2]?.water ?? 0) > 0])
@@ -108,7 +111,8 @@ function initActions() {
     Action.createActionGroup(['sand'],
                     [
                         ['sandPit', {'labor': 20, 'wood': 10}],
-                        ['quarry', {'labor': 40, 'stoneTools': 20}, () => player.oasis.resources.stoneTools.unlocked]
+                        ['quarry', {'labor': 40, 'stoneTools': 20}, () => player.oasis.resources.stoneTools.unlocked],
+                        ['mine', {'labor': 90, 'wood': 30, 'stoneTools': 60, 'metal': 15}, () => hasResearch('mine')]
                     ],
                     'Dig out', 'Dig out',
                     ["Must be within 2 tiles of Civilization", () => (temp.oasis.countResourcesAroundSelected?.[2]?.civilization ?? 0) > 0])
@@ -121,13 +125,15 @@ function initActions() {
                     ["Must be adjacent to Water", () => (temp.oasis.countResourcesAroundSelected?.[1]?.water ?? 0) > 0])
     Action.createActionGroup(['sand', 'soil'],
                     [
-                        ['smallWarehouse', {'stoneTools': 5, 'sandstone': 30}, () => temp.oasis.buildings.settlement > 0]
+                        ['smallWarehouse', {'stoneTools': 5, 'sandstone': 30}, () => temp.oasis.buildings.settlement > 0 || temp.oasis.buildings.village > 0 || hasResearch('storage')],
+                        ['mediumWarehouse', {'stoneTools': 20, 'sandstone': 90, 'wood': 30}, () => hasResearch('storage')]
                     ],
                     'Build', 'Upgrade to',
                     ["Must be within 2 tiles of Civilization", () => (temp.oasis.countResourcesAroundSelected?.[2]?.civilization ?? 0) > 0])
     Action.createActionGroup(['sand', 'soil'],
                     [
-                        ['smallWall', {'labor': 10, 'wood': 20}, () => hasResearch('walls')]
+                        ['smallWall', {'labor': 10, 'wood': 20}, () => hasResearch('walls')],
+                        ['mediumWall', {'labor': 30, 'metal': 20, 'sandstone': 40}, () => hasResearch('bigWalls')]
                     ],
                     'Build', 'Upgrade to',
                     ["Must be within 2 tiles of Civilization", () => (temp.oasis.countResourcesAroundSelected?.[2]?.civilization ?? 0) > 0])

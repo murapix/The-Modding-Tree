@@ -58,10 +58,12 @@ addLayer("research", {
 
         if (player.research.queue.length > 0) {
             let cost = temp.research.research[player.research.queue[0]].cost
+            let type = temp.research.research[player.research.queue[0]].type
             let remProgress = cost - player.research.progress
-            let change = Math.min(remProgress, temp.oasis.production.research*2, player.research.points)
-            player.research.progress += change
-            player.research.points -= change
+            let progressChange = Math.min(remProgress, temp.oasis.production.research*2*temp.research.bonuses[type], player.research.points*temp.research.bonuses[type])
+            let pointChange = Math.ceil(progressChange/temp.research.bonuses[type])
+            player.research.progress += progressChange
+            player.research.points -= pointChange
             if (player.research.progress >= cost) {
                 player.research.researched.push(player.research.queue.shift())
                 player.research.progress = 0
@@ -70,6 +72,13 @@ addLayer("research", {
         else {
             player.research.progress = 0
         }
+    },
+
+    bonuses() {
+        let bonuses = { Agriculture: 1, Construction: 1, Exploration: 1 }
+        for (let [building, count] of Object.entries(temp.oasis.ruinedBuildings))
+            bonuses[ruinedBuildings[building].type] += ruinedBuildings[building].bonus*count
+        return bonuses
     },
 
     research: {
@@ -89,7 +98,7 @@ addLayer("research", {
         cactusFarm: new AgricultureResearch('Desert Farming', buildings.cactusFarm.display, `While the sparse cacti don't seem to need much,<br>it may be possible to grow more with some dedicated work<br>Unlocks the ${buildings.cactusFarm.name}`, 300)
                         .withPos(2,3)
                         .withPrereqs('canal', 'farm'),
-        mine: new ConstructionResearch('Mining', buildings.quarry.display, `Better construction allows for deeper and more stable mines<br>Unlocks the ${buildings.mine.name}`, 8100)
+        mine: new ConstructionResearch('Mining', buildings.mine.display, `Better construction allows for deeper and more stable mines<br>Unlocks the ${buildings.mine.name}`, 8100)
                         .withPos(3,0)
                         .withPrereqs('travel', 'walls'),
         lookout: new ConstructionResearch('Expansion', buildings.lookoutTower.display, `With the oasis becoming cluttered,<br>it's time to look for arable land beyond the oasis valley<br>Unlocks the ${buildings.lookoutTower.name}`, 9000)
@@ -115,12 +124,24 @@ addLayer("research", {
                         .withPrereqs('stars'),
     },
 
-    tabFormat: [
-        "blank",
-        ["display-text", () => `Research Points: ${formatWhole(player.research.points)}`],
-        "blank",
-        'researchScreen'
-    ]
+    tabFormat: () => {
+        let format = [
+            "blank",
+            ["display-text", `Research Points: ${formatWhole(player.research.points)}`],
+            "blank",
+            'researchScreen',
+            "blank"
+        ]
+        if (Math.max(...Object.values(temp.research.bonuses)) > 1) {
+            format.push(...[
+                ["display-text", 'Archaeological Research Bonus:'],
+                ["display-text", `Agriculture: ${formatWhole(temp.research.bonuses.Agriculture*100)}%`],
+                ["display-text", `Construction: ${formatWhole(temp.research.bonuses.Construction*100)}%`],
+                ["display-text", `Exploration: ${formatWhole(temp.research.bonuses.Exploration*100)}%`]
+            ])
+        }
+        return format
+    }
 })
 
 function linkResearchIDs() {
