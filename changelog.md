@@ -1,5 +1,13 @@
 # Oasis - Changelog:
 
+## v1.0 - Oasis
+- Added expeditions
+- Added ruination
+- Some color changes
+- Research categories (and bonuses)
+- Backend modifications for lategame research effects
+- Filled out content for all remaining researches
+
 ## v0.3 - Sand
 - Added tooltips to jobs and research
 - Added sandstorms and sand management

@@ -327,11 +327,8 @@ function gameLoop(diff) {
         clearParticles()
     }
 
-    if (maxTickLength) {
-        let limit = maxTickLength()
-        if(diff > limit)
-            diff = limit
-    }
+    if(diff > 1)
+        diff = 1
     addTime(diff)
 
     switch (player.gameSpeed) {

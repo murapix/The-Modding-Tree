@@ -15,12 +15,20 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-    num: "0.3",
-    name: "Sand",
+    num: "1.0",
+    name: "Oasis",
 }
 
 let changelog = `
     <h1>Changelog:</h1>
+    <br><br>
+    <h3>v1.0 - Oasis</h3>
+    <br>- Added expeditions
+    <br>- Added ruination
+    <br>- Some color changes
+    <br>- Research categories (and bonuses)
+    <br>- Backend modifications for lategame research effects
+    <br>- Filled out content for all remaining researches
     <br><br>
     <h3>v0.3 - Sand</h3>
     <br>- Added tooltips to jobs and research
@@ -46,7 +54,7 @@ var doNotCallTheseFunctionsEveryTick = ["blowUpEverything"]
 
 // Calculate points/sec!
 function getPointGen() {
-    return decimalOne
+    return decimalZero
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
@@ -58,7 +66,6 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-    () => `<h2  class="overlayThing" id="points">${formatTime(player.points)} have passed</h2>`
 ]
 
 // Determines when the game "ends"
@@ -73,11 +80,6 @@ function isEndgame() {
 // Style for the background, can be a function
 var backgroundStyle = {
 
-}
-
-// You can change this if you have things that can be messed up by long tick lengths
-function maxTickLength() {
-    return(3600) // Default is 1 hour which is just arbitrarily large
 }
 
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
