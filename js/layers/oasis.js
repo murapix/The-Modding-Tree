@@ -765,6 +765,7 @@ addLayer("oasis", {
                 tabFormat.push(["row", actionList.slice(i, i+5).map(action => ["clickable", action])])
             }
             tabFormat.push(["clickable", "cancelBuild"])
+            tabFormat.push(["blank", ['20px', '200px']])
         }
 
         return tabFormat
