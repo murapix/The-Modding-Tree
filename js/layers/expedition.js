@@ -148,15 +148,15 @@ addLayer("expedition", {
         }),
         'years-up': createExpeditionClickable({
             display: '+',
-            canClick() { return player.expedition.numYears > 0 },
+            canClick: true,
             limit() { return 100 },
             onClick(increment) { player.expedition.numYears += increment }
         }),
         'years-down': createExpeditionClickable({
             display: '-',
-            canClick() { return player.expedition.numPeople > 0 },
-            limit() { return player.expedition.numPeople },
-            onClick(increment) { player.expedition.numPeople -= increment }
+            canClick() { return player.expedition.numYears > 0 },
+            limit() { return player.expedition.numYears },
+            onClick(increment) { player.expedition.numYears -= increment }
         }),
         'months-up': createExpeditionClickable({
             display: '+',
@@ -185,7 +185,10 @@ addLayer("expedition", {
         'send': {
             title: 'Embark',
             display: '',
-            canClick() { return player.oasis.resources.driedFood.amount >= foodCost() && player.oasis.unemployed >= player.expedition.numPeople },
+            canClick() { return player.expedition.numPeople > 0
+                            && (player.expedition.numYears > 0 || player.expedition.numMonths > 0)
+                            && player.oasis.resources.driedFood.amount >= foodCost()
+                            && player.oasis.unemployed >= player.expedition.numPeople },
             onClick() {
                 player.oasis.resources.driedFood.amount -= foodCost()
                 player.oasis.unemployed -= player.expedition.numPeople
