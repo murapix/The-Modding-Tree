@@ -52,7 +52,7 @@ const buildings = {
                 .withSandLimit(Number.MAX_SAFE_INTEGER)
                 .withWet('soil'),
     soil: new Building("Soil", "Soft and fertile, perfect for plants to thrive", colored('____', '#9b7653', 'span'))
-                .withUpgrades('buildFreeCampsite')
+                .withUpgrades('buildFreeCampsite', 'buildCactusFarm', 'buildLookoutTower')
                 .withSandLimit(Number.MAX_SAFE_INTEGER)
                 .withDried('sand'),
     cactus: new Building("Cactus", "Lonely and tall, a valuable source of fruit", `${colored('〜', '#f6d7b0', 'sub')}${colored('🌵', '#00cc00', 'span')}`)
@@ -151,6 +151,7 @@ const buildings = {
                 .withSandLimit(2)
                 .withWet('saltPool'),
     smallWall: new Building("Rudimentary Wall", "A rudimentary wall, built to protect the settlement from the encroaching sands", colored('|-|', '#ffffff', 'span'))
+                .withDemolish('Tear down the Wall')
                 .withSandLimit(9)
                 .withHeight(2)
                 .withRuined('smallWall'),
@@ -162,7 +163,7 @@ const buildings = {
                 .withSandLimit(Number.MAX_SAFE_INTEGER)
                 .withHeight(3)
                 .withRuined('lookoutTower'),
-    mine: new Building("Mine", "A deep mine from which the earth's bounty may be extracted", colored('⛏⛏', '#f6d7b0', 'h2'))
+    mine: new Building("Mine", "A deep mine from which the earth's bounty may be extracted", colored('⛏⛏', '#f6d7b0', 'span'))
                 .hasJob('metalMiner', 5)
                 .withDemolish('Decomission the Mine')
                 .withSandLimit(24)
@@ -173,10 +174,11 @@ const buildings = {
                 .withSandLimit(14)
                 .withHeight(1),
     mediumWall: new Building("Sturdy Wall", "A sturdy wall, built to protect the settlement from the encroaching sands", colored('|=|', '#ffffff', 'span'))
+                .withDemolish('Tear down the Wall')
                 .withSandLimit(19)
                 .withHeight(3)
                 .withRuined('mediumWall'),
-    camelFarm: new Building("Camel Pen", "An enclosed area in which camels can be raised and fed", colored('|🐪|', '#ffffff', 'span'))
+    camelFarm: new Building("Camel Pen", "An enclosed area in which camels can be raised and fed", `${colored('|', '#ffffff', 'span')}${colored('🐪', '#ffffff', 'sub')}${colored('|', '#ffffff', 'span')}`)
                 .hasJob('camelFarmer', 3)
                 .withDemolish('Abandon the Camels')
                 .withSandLimit(2)
@@ -185,7 +187,7 @@ const buildings = {
                 .provides('civilization')
                 .hasStorage('people', 45).hasStorage('food', 450)
                 .hasJob('builder', 12).hasJob('crafter', 5).hasJob('elder', 3).hasJob('sweeper', 2)
-                .withDemolish('Demolish the Settlement')
+                .withDemolish('Demolish the Village')
                 .withSandLimit(6)
                 .withHeight(1)
                 .withBuried('buriedVillage')
@@ -199,6 +201,7 @@ const buildings = {
                 .withRuined('smelter'),
 
     largeWall: new Building("Towering Wall", "A towering wall, built to protect the settlement from the encroaching sands", colored('|≡|', '#ffffff', 'span'))
+                .withDemolish('Tear down the Wall')
                 .withSandLimit(39)
                 .withHeight(4),
 }

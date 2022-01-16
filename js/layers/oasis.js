@@ -216,7 +216,7 @@ addLayer("oasis", {
                                         if (tileSand === 0) break
                                         if (row - heightRow <= height) {
                                             let heightLoc = heightRow*100+col + temp.oasis.grid.hiddenRings*101
-                                            let tileAmount = Math.min(tileSand, buildings[building].sandLimit+1 - player.oasis.map[heightLoc].building)
+                                            let tileAmount = Math.min(tileSand, buildings[building].sandLimit+1 - player.oasis.map[heightLoc].sand)
                                             player.oasis.map[heightLoc].sand += tileAmount
                                             tileSand -= tileAmount
                                         }
@@ -239,7 +239,7 @@ addLayer("oasis", {
                                         if (tileSand === 0) break
                                         if (heightCol - col <= height) {
                                             let heightLoc = heightRow*100+col + temp.oasis.grid.hiddenRings*101
-                                            let tileAmount = Math.min(tileSand, buildings[building].sandLimit+1 - player.oasis.map[heightLoc].building)
+                                            let tileAmount = Math.min(tileSand, buildings[building].sandLimit+1 - player.oasis.map[heightLoc].sand)
                                             player.oasis.map[heightLoc].sand += tileAmount
                                             tileSand -= tileAmount
                                         }
@@ -262,7 +262,7 @@ addLayer("oasis", {
                                         if (tileSand === 0) break
                                         if (heightRow - row <= height) {
                                             let heightLoc = heightRow*100+col + temp.oasis.grid.hiddenRings*101
-                                            let tileAmount = Math.min(tileSand, buildings[building].sandLimit+1 - player.oasis.map[heightLoc].building)
+                                            let tileAmount = Math.min(tileSand, buildings[building].sandLimit+1 - player.oasis.map[heightLoc].sand)
                                             player.oasis.map[heightLoc].sand += tileAmount
                                             tileSand -= tileAmount
                                         }
@@ -285,7 +285,7 @@ addLayer("oasis", {
                                         if (tileSand === 0) break
                                         if (col - heightCol <= height) {
                                             let heightLoc = heightRow*100+col + temp.oasis.grid.hiddenRings*101
-                                            let tileAmount = Math.min(tileSand, buildings[building].sandLimit+1 - player.oasis.map[heightLoc].building)
+                                            let tileAmount = Math.min(tileSand, buildings[building].sandLimit+1 - player.oasis.map[heightLoc].sand)
                                             player.oasis.map[heightLoc].sand += tileAmount
                                             tileSand -= tileAmount
                                         }
@@ -512,6 +512,12 @@ addLayer("oasis", {
                 storage[resource] = (storage[resource] ?? 0) + amount*count
             }
         }
+        for ([job, data] of Object.entries(player.oasis.jobs)) {
+            if (!jobs[job].stores) continue
+            for ([resource, amount] of Object.entries(jobs[job].stores)) {
+                storage[resource] = (storage[resource] ?? 0) + amount*data.amount
+            }
+        }
         for (resource in temp.oasis.resources)
             storage[resource] = Math.max(resources[resource].baseStorage ?? 0, storage[resource] ?? 0)
         for ([resource, amount] of Object.entries(storage)) {
@@ -717,7 +723,7 @@ addLayer("oasis", {
                 ["column", [
                     ["display-text", "Jobs"],
                     "blank",
-                    ["job-grid", ["builder", "forager", "scavenger", "knapper", "farmer", "logger", "miner", "saltFarmer", "crafter", "elder", "astrologist", "sweeper", "shoveler"]]
+                    ["job-grid", ["builder", "forager", "scavenger", "knapper", "farmer", "camelFarmer", "logger", "miner", "metalMiner", "saltFarmer", "crafter", "smith", "elder", "astrologist", "sweeper", "shoveler"]]
                 ], {'width': '275px', 'transform-origin': 'left', 'transform': oasisScale, 'transition': 'transform 0.5s !important'}]
             ]],
             "blank"
@@ -735,7 +741,7 @@ addLayer("oasis", {
             let stored = buildings[building].storage
             if (Object.keys(stored).length > 0) toDisplay.push(`Contains space for ${Object.entries(stored).map(([resource, amount]) => `${formatWhole(amount)} ${resources[resource].name}`).join(', ')}`)
             let buildingJobs = buildings[building].jobs
-            if (Object.keys(buildingJobs).length > 0) toDisplay.push(`Supports ${Object.entries(buildingJobs).map(([job, amount]) => `${formatWhole(amount)} ${jobs[job].name}${amount === 1 ? '' : 's'}`).join(', ')}`)
+            if (Object.keys(buildingJobs).length > 0) toDisplay.push(`Supports ${Object.entries(buildingJobs).map(([job, amount]) => `${formatWhole(amount)} ${amount === 1 ? jobs[job].name : (jobs[job].plural ?? `${jobs[job].name}s`)}`).join(', ')}`)
             if (buildings[building].height > 0) toDisplay.push(`Blocks sand from reaching up to ${buildings[building].height} tiles behind it`)
             if (buildings[building].sandLimit >= Number.MAX_SAFE_INTEGER);
             else if (buildings[building].sandLimit > 0) toDisplay.push(`Can function under ${formatWhole(buildings[building].sandLimit+1)} feet of sand`)
@@ -862,7 +868,7 @@ function createActionButtons(clickables) {
                     let stored = building.storage
                     if (Object.keys(stored).length > 0) toDisplay.push(`Contains space for ${Object.entries(stored).filter(([resource]) => player.oasis.resources[resource].unlocked).map(([resource, amount]) => `${formatWhole(amount)} ${resources[resource].name}`).join(', ')}`)
                     let buildingJobs = building.jobs
-                    if (Object.keys(buildingJobs).length > 0) toDisplay.push(`Supports ${Object.entries(buildingJobs).map(([job, amount]) => `${formatWhole(amount)} ${jobs[job].name}${amount === 1 ? '' : 's'}`).join(', ')}`)
+                    if (Object.keys(buildingJobs).length > 0) toDisplay.push(`Supports ${Object.entries(buildingJobs).map(([job, amount]) => `${formatWhole(amount)} ${amount === 1 ? jobs[job].name : (jobs[job].plural ?? `${jobs[job].name}s`)}`).join(', ')}`)
                     if (building.height > 0) toDisplay.push(`Blocks sand from reaching up to ${building.height} tiles behind it`)
                     if (building.sandLimit >= Number.MAX_SAFE_INTEGER);
                     else if (building.sandLimit > 0) toDisplay.push(`Can function under ${formatWhole(building.sandLimit+1)} feet of sand`)
@@ -906,7 +912,7 @@ function createActionButtons(clickables) {
                     let provided = building.provided
                     if (provided.length > 0) toDisplay.push(`Provides a source of ${provided.map(resource => terrainResources[resource].name).join(', ')}`)
                     let buildingJobs = building.jobs
-                    if (Object.keys(buildingJobs).length > 0) toDisplay.push(`Supports ${Object.entries(buildingJobs).map(entry => `${formatWhole(entry[1])} ${jobs[entry[0]].name}${entry[1] === 1 ? '' : 's'}`).join(', ')}`)
+                    if (Object.keys(buildingJobs).length > 0) toDisplay.push(`Supports ${Object.entries(buildingJobs).map(entry => `${formatWhole(entry[1])} ${amount === 1 ? jobs[job].name : (jobs[job].plural ?? `${jobs[job].name}s`)}`).join(', ')}`)
                     if (!temp.oasis.clickables[this.id].canClick) toDisplay.push(`<br>${colored(actions[this.action].requirementText, '#880000', 'span')}`)
                     return toDisplay.join('<br>')
                 },

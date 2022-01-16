@@ -56,6 +56,7 @@ class Job {
     setShouldShow(shouldShow) { this.shouldShow = shouldShow; return this }
     setTooltip(tooltip) { this.tooltip = tooltip; return this }
     setOutdoors() { this.outdoors = true; return this }
+    setPlural(plural) { this.plural = plural; return this }
 }
 
 const jobs = {
@@ -68,10 +69,10 @@ const jobs = {
     miner: new Job('miner', "Miner", {'sandstone': 2}).setOutdoors(),
     metalMiner: new Job('metalMiner', "Deep Miner", {'metal': 1}).setOutdoors(),
     crafter: new Job('crafter', "Crafter", {'stoneTools': 1}, {'wood': 1, 'sandstone': 1}),
-    smith: new Job('smith', "Smith", {'metalTools': 1}, {'wood': 1, 'metal': 1}),
+    smith: new Job('smith', "Blacksmith", {'metalTools': 1}, {'wood': 1, 'metal': 1}),
     elder: new Job('elder', "Elder", {'research': 1}).setShouldShow(() => !hasResearch('stars')),
     saltFarmer: new Job('saltFarmer', "Salt Farmer", {'salt': 1}).setOutdoors(),
-    camelFarmer: new Job('camelFarmer', "Herdsman", {}, {'food': 1}, {'camels': 10}),
+    camelFarmer: new Job('camelFarmer', "Herdsman", {}, {'food': 1}, {'camels': 10}).setPlural("Herdsmen"),
     astrologist: new Job('astrologist', "Astrologist", {'research': 3}).setShouldShow(() => hasResearch('stars')),
     sweeper: new Job('sweeper', "Sweeper", {'sand': 1}).setTooltip('Removes 1 foot of sand per day'),
     shoveler: new Job('shoveler', "Shoveler", {'sand': 5}).setTooltip('Removes 5 feet of sand per day'),
