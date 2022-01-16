@@ -254,7 +254,7 @@ addLayer("oasis", {
                         case 2: {
                             for (let col = 1; col <= temp.oasis.grid.size; col++) {
                                 let heightRows = {}
-                                for (let row = temp.oasis.grid.size; row >= 1; row++) {
+                                for (let row = temp.oasis.grid.size; row >= 1; row--) {
                                     let loc = row*100+col + temp.oasis.grid.hiddenRings*101
                                     let building = player.oasis.map[loc].building
                                     let tileSand = sandAmount
@@ -277,7 +277,7 @@ addLayer("oasis", {
                         case 3: {
                             for (let row = 1; row <= temp.oasis.grid.size; row++) {
                                 let heightRows = {}
-                                for (let col = 1; col <= temp.oasis.grid.size; col--) {
+                                for (let col = 1; col <= temp.oasis.grid.size; col++) {
                                     let loc = row*100+col + temp.oasis.grid.hiddenRings*101
                                     let building = player.oasis.map[loc].building
                                     let tileSand = sandAmount
