@@ -212,7 +212,7 @@ addLayer("oasis", {
                                     let loc = row*100+col + temp.oasis.grid.hiddenRings*101
                                     let building = player.oasis.map[loc].building
                                     let tileSand = sandAmount
-                                    for ([heightRow, height] of Object.entries(heightRows)) {
+                                    for ([heightRow, height] of Object.entries(heightRows).map(([k,v]) => [Number(k),v])) {
                                         if (tileSand === 0) break
                                         if (row - heightRow <= height) {
                                             let heightLoc = heightRow*100+col + temp.oasis.grid.hiddenRings*101
@@ -235,10 +235,10 @@ addLayer("oasis", {
                                     let loc = row*100+col + temp.oasis.grid.hiddenRings*101
                                     let building = player.oasis.map[loc].building
                                     let tileSand = sandAmount
-                                    for ([heightCol, height] of Object.entries(heightRows)) {
+                                    for ([heightCol, height] of Object.entries(heightRows).map(([k,v]) => [Number(k),v])) {
                                         if (tileSand === 0) break
                                         if (heightCol - col <= height) {
-                                            let heightLoc = heightRow*100+col + temp.oasis.grid.hiddenRings*101
+                                            let heightLoc = row*100+heightCol + temp.oasis.grid.hiddenRings*101
                                             let tileAmount = Math.min(tileSand, buildings[building].sandLimit+1 - player.oasis.map[heightLoc].sand)
                                             player.oasis.map[heightLoc].sand += tileAmount
                                             tileSand -= tileAmount
@@ -258,7 +258,7 @@ addLayer("oasis", {
                                     let loc = row*100+col + temp.oasis.grid.hiddenRings*101
                                     let building = player.oasis.map[loc].building
                                     let tileSand = sandAmount
-                                    for ([heightRow, height] of Object.entries(heightRows)) {
+                                    for ([heightRow, height] of Object.entries(heightRows).map(([k,v]) => [Number(k),v])) {
                                         if (tileSand === 0) break
                                         if (heightRow - row <= height) {
                                             let heightLoc = heightRow*100+col + temp.oasis.grid.hiddenRings*101
@@ -281,10 +281,10 @@ addLayer("oasis", {
                                     let loc = row*100+col + temp.oasis.grid.hiddenRings*101
                                     let building = player.oasis.map[loc].building
                                     let tileSand = sandAmount
-                                    for ([heightCol, height] of Object.entries(heightRows)) {
+                                    for ([heightCol, height] of Object.entries(heightRows).map(([k,v]) => [Number(k),v])) {
                                         if (tileSand === 0) break
                                         if (col - heightCol <= height) {
-                                            let heightLoc = heightRow*100+col + temp.oasis.grid.hiddenRings*101
+                                            let heightLoc = row*100+heightCol + temp.oasis.grid.hiddenRings*101
                                             let tileAmount = Math.min(tileSand, buildings[building].sandLimit+1 - player.oasis.map[heightLoc].sand)
                                             player.oasis.map[heightLoc].sand += tileAmount
                                             tileSand -= tileAmount
@@ -707,7 +707,7 @@ addLayer("oasis", {
                 ["column", [
                     ["display-text", "Resources"],
                     "blank",
-                    ["resource-grid", ["people", "food", "driedFood", "wood", "sandstone", "salt", "metal", "stoneTools", "metalTools" ]]
+                    ["resource-grid", ["people", "camels", "food", "driedFood", "wood", "sandstone", "salt", "metal", "stoneTools", "metalTools" ]]
                 ], {'width': '275px', 'transform-origin': 'right', 'transform': oasisScale, 'transition': 'transform 0.5s !important'}],
                 ["blank", ['20px', '20px']],
                 ["v-line", lineHeight, {'transform-origin': 'right', 'transform': oasisScale}],
